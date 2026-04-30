@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>관리자 - SBS 아카데미</title>
+<style>
+:root {
+  --bg: #f7f7f4;
+  --bg-elevated: #ffffff;
+  --bg-soft: #f0efea;
+  --bg-section: #ebebe5;
+  
+  --text: #1a1a1a;
+  --text-mid: #404040;
+  --text-soft: #5c5c5c;
+  --text-faint: #909090;
+  
+  --border: rgba(0, 0, 0, 0.08);
+  --border-mid: rgba(0, 0, 0, 0.12);
+  
+  --accent: #1e3a5f;
+  --accent-soft: #e8eef5;
+  --accent-deep: #14283f;
+  
+  --danger: #c8323a;
+  --danger-bg: #fce8e9;
+  --success: #047857;
+  --success-bg: #d1fae5;
+  
+  --shadow-xs: 0 1px 1px rgba(0,0,0,0.03);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard', 'Noto Sans KR', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.011em;
+}
+
+button { font-family: inherit; cursor: pointer; }
+input, textarea, select { font-family: inherit; }
+
+/* ===== 로그인 화면 ===== */
+.login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.login-card {
+  background: var(--bg-elevated);
+  border-radius: 16px;
+  padding: 40px 32px;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: var(--shadow-sm);
+  border: 0.5px solid var(--border);
+}
+.login-logo {
+  width: 56px; height: 56px;
+  background: var(--accent);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 800;
+  font-size: 16px;
+  margin: 0 auto 18px;
+  letter-spacing: -0.04em;
+}
+.login-title {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+.login-subtitle {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-soft);
+  margin-bottom: 28px;
+}
+.login-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border-mid);
+  border-radius: 10px;
+  font-size: 14px;
+  margin-bottom: 12px;
+  background: var(--bg);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.login-input:focus { border-color: var(--accent); }
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.login-btn:hover { background: var(--accent-deep); }
+.login-error {
+  font-size: 12px;
+  color: var(--danger);
+  text-align: center;
+  margin-top: 12px;
+  display: none;
+}
+
+/* ===== 메인 레이아웃 ===== */
+.app { display: none; min-height: 100vh; }
+.app.active { display: flex; }
+
+/* 사이드바 */
+.sidebar {
+  width: 240px;
+  background: var(--bg-elevated);
+  border-right: 0.5px solid var(--border);
+  padding: 18px 14px;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  flex-shrink: 0;
+}
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px 22px;
+  border-bottom: 0.5px solid var(--border);
+  margin-bottom: 14px;
+}
+.sidebar-logo {
+  width: 36px; height: 36px;
+  background: var(--accent);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+.sidebar-text { line-height: 1.25; }
+.sidebar-name { font-size: 11px; color: var(--text-soft); font-weight: 500; }
+.sidebar-title { font-size: 14px; font-weight: 700; letter-spacing: -0.02em; }
+
+.nav-section {
+  font-size: 10.5px;
+  color: var(--text-faint);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 10px 8px 6px;
+  text-transform: uppercase;
+}
+.nav-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  font-size: 13.5px;
+  color: var(--text-mid);
+  font-weight: 500;
+  text-align: left;
+  margin-bottom: 1px;
+  letter-spacing: -0.01em;
+  transition: background 0.12s;
+}
+.nav-item:hover { background: var(--bg-soft); }
+.nav-item.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+.nav-icon {
+  width: 16px; height: 16px;
+  flex-shrink: 0;
+  stroke-width: 2;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 0.5px solid var(--border);
+}
+.sidebar-footer-link {
+  display: block;
+  padding: 8px 10px;
+  font-size: 12px;
+  color: var(--text-faint);
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background 0.12s;
+}
+.sidebar-footer-link:hover { background: var(--bg-soft); color: var(--text); }
+
+/* ===== 메인 영역 ===== */
+.main {
+  flex: 1;
+  padding: 24px 28px;
+  min-width: 0;
+}
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+}
+.main-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+.main-subtitle {
+  font-size: 12.5px;
+  color: var(--text-soft);
+  margin-top: 3px;
+}
+
+/* 상단 액션 */
+.action-bar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid var(--border-mid);
+  background: var(--bg-elevated);
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.12s;
+}
+.btn:hover { background: var(--bg-soft); border-color: var(--border-mid); }
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.btn-primary:hover { background: var(--accent-deep); }
+.btn-danger {
+  color: var(--danger);
+  border-color: var(--danger-bg);
+}
+.btn-danger:hover { background: var(--danger-bg); }
+.btn-icon { width: 14px; height: 14px; stroke-width: 2.2; }
+
+/* ===== 테이블/리스트 ===== */
+.data-table {
+  background: var(--bg-elevated);
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-xs);
+}
+.table-row {
+  display: grid;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 0.5px solid var(--border);
+  transition: background 0.12s;
+}
+.table-row:last-child { border-bottom: none; }
+.table-row:hover { background: var(--bg); }
+.table-row.header {
+  background: var(--bg);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-faint);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  padding: 10px 16px;
+}
+.table-row.header:hover { background: var(--bg); }
+
+/* 공지 테이블 그리드 */
+.posts-table .table-row {
+  grid-template-columns: 80px 1fr 100px 80px;
+  gap: 12px;
+}
+/* 일정 테이블 그리드 */
+.schedule-table .table-row {
+  grid-template-columns: 100px 80px 1fr 80px;
+  gap: 12px;
+}
+
+.cell-tag {
+  display: flex;
+  justify-content: flex-start;
+}
+.tag {
+  font-size: 10.5px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.tag::before {
+  content: '';
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.7;
+}
+.tag-학사 { background: #fce8e9; color: #9a2329; }
+.tag-세미나 { background: #ebe9fc; color: #4a3f9a; }
+.tag-특강 { background: #ebe9fc; color: #4a3f9a; }
+.tag-시설 { background: #ddf3eb; color: #0a5c47; }
+.tag-평가 { background: #fbecd5; color: #7a4505; }
+.tag-이벤트 { background: #fce8e9; color: #9a2329; }
+.tag-취업 { background: #dfeefa; color: #1d4ed8; }
+.tag-기타 { background: #ebe9e3; color: #4a4a45; }
+
+.cell-title {
+  font-size: 13.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cell-date {
+  font-size: 12px;
+  color: var(--text-soft);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+.cell-actions {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
+.icon-btn {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-soft);
+  transition: all 0.12s;
+}
+.icon-btn:hover {
+  background: var(--bg-soft);
+  color: var(--text);
+}
+.icon-btn.danger:hover {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 56px 20px;
+  color: var(--text-faint);
+  font-size: 13px;
+}
+.empty-state-icon {
+  width: 44px; height: 44px;
+  background: var(--bg-soft);
+  border-radius: 50%;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-faint);
+}
+
+/* ===== 모달 ===== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+.modal-backdrop.active { display: flex; }
+.modal {
+  background: var(--bg-elevated);
+  border-radius: 14px;
+  width: 100%;
+  max-width: 540px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-lg);
+}
+.modal-header {
+  padding: 18px 22px;
+  border-bottom: 0.5px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-title {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.modal-close {
+  background: none;
+  border: none;
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  color: var(--text-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s;
+}
+.modal-close:hover { background: var(--bg-soft); }
+.modal-body {
+  padding: 20px 22px;
+  overflow-y: auto;
+}
+.modal-footer {
+  padding: 14px 22px;
+  border-top: 0.5px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  background: var(--bg);
+}
+
+/* ===== 폼 ===== */
+.form-row {
+  margin-bottom: 16px;
+}
+.form-row.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-mid);
+  margin-bottom: 6px;
+  letter-spacing: -0.005em;
+}
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-mid);
+  border-radius: 8px;
+  font-size: 13.5px;
+  background: var(--bg);
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+  color: var(--text);
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--accent);
+  background: var(--bg-elevated);
+}
+.form-textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.6;
+  font-family: inherit;
+}
+.form-help {
+  font-size: 11px;
+  color: var(--text-faint);
+  margin-top: 4px;
+}
+
+/* ===== 토스트 ===== */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--text);
+  color: var(--bg-elevated);
+  padding: 11px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s;
+  z-index: 200;
+  box-shadow: var(--shadow-lg);
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ===== 확인 모달 ===== */
+.confirm-modal { max-width: 400px; }
+.confirm-text {
+  font-size: 14px;
+  color: var(--text-mid);
+  line-height: 1.6;
+  padding: 4px 0 8px;
+}
+
+/* 데모 배너 */
+.demo-banner {
+  background: #fef3c7;
+  color: #78350f;
+  padding: 8px 14px;
+  font-size: 12px;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+  .app.active { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: static;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 12px;
+    gap: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .sidebar-brand { 
+    flex-shrink: 0; 
+    border-right: 0.5px solid var(--border);
+    border-bottom: none;
+    padding: 0 14px 0 4px;
+    margin: 0;
+  }
+  .sidebar-footer { display: none; }
+  .nav-section { display: none; }
+  .nav-item { 
+    flex-shrink: 0; 
+    margin-bottom: 0;
+    padding: 8px 12px;
+  }
+  .main { padding: 18px 16px; }
+  .main-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .posts-table .table-row {
+    grid-template-columns: 70px 1fr 70px;
+  }
+  .posts-table .table-row > .cell-date { display: none; }
+  .schedule-table .table-row {
+    grid-template-columns: 80px 70px 1fr 70px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- 로그인 화면 -->
+<div class="login-screen" id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">SBS</div>
+    <div class="login-title">관리자 로그인</div>
+    <div class="login-subtitle">SBS 아카데미 컴퓨터아트학원</div>
+    <input type="password" class="login-input" id="login-password" placeholder="관리자 비밀번호" autocomplete="current-password">
+    <button class="login-btn" onclick="login()">로그인</button>
+    <div class="login-error" id="login-error">비밀번호가 일치하지 않습니다</div>
+  </div>
+</div>
+
+<!-- 메인 앱 -->
+<div class="app" id="app">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-logo">SBS</div>
+      <div class="sidebar-text">
+        <div class="sidebar-name">컴퓨터아트학원</div>
+        <div class="sidebar-title">관리자</div>
+      </div>
+    </div>
+
+    <div class="nav-section">콘텐츠 관리</div>
+    <button class="nav-item active" data-view="posts" onclick="switchView('posts')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      공지사항
+    </button>
+    <button class="nav-item" data-view="schedule" onclick="switchView('schedule')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      학사일정
+    </button>
+
+    <div class="sidebar-footer">
+      <a href="index.html" class="sidebar-footer-link">← 수강생 페이지</a>
+      <button class="sidebar-footer-link" style="width: 100%; text-align: left; background: none; border: none;" onclick="logout()">로그아웃</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- 공지사항 뷰 -->
+    <section id="view-posts" class="view">
+      <div class="main-header">
+        <div>
+          <h1 class="main-title">공지사항</h1>
+          <div class="main-subtitle" id="posts-count">전체 0건</div>
+        </div>
+        <div class="action-bar">
+          <button class="btn btn-primary" onclick="openPostModal()">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            새 공지 작성
+          </button>
+        </div>
+      </div>
+
+      <div class="data-table posts-table">
+        <div class="table-row header">
+          <div>카테고리</div>
+          <div>제목</div>
+          <div>작성일</div>
+          <div></div>
+        </div>
+        <div id="posts-list"></div>
+      </div>
+    </section>
+
+    <!-- 학사일정 뷰 -->
+    <section id="view-schedule" class="view" style="display: none;">
+      <div class="main-header">
+        <div>
+          <h1 class="main-title">학사일정</h1>
+          <div class="main-subtitle" id="schedule-count">전체 0건</div>
+        </div>
+        <div class="action-bar">
+          <button class="btn btn-primary" onclick="openScheduleModal()">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            새 일정 추가
+          </button>
+        </div>
+      </div>
+
+      <div class="data-table schedule-table">
+        <div class="table-row header">
+          <div>날짜</div>
+          <div>카테고리</div>
+          <div>제목</div>
+          <div></div>
+        </div>
+        <div id="schedule-list"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- 공지 작성/편집 모달 -->
+<div class="modal-backdrop" id="post-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="post-modal-title">새 공지 작성</div>
+      <button class="modal-close" onclick="closeModal('post-modal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="post-id">
+      <div class="form-row split">
+        <div>
+          <label class="form-label">카테고리</label>
+          <select class="form-select" id="post-category">
+            <option value="학사">학사</option>
+            <option value="세미나">세미나</option>
+            <option value="특강">특강</option>
+            <option value="시설">시설</option>
+            <option value="평가">평가</option>
+            <option value="이벤트">이벤트</option>
+            <option value="취업">취업</option>
+            <option value="기타">기타</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">날짜</label>
+          <input type="date" class="form-input" id="post-date">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">제목</label>
+        <input type="text" class="form-input" id="post-title" placeholder="공지 제목을 입력하세요">
+      </div>
+      <div class="form-row">
+        <label class="form-label">본문</label>
+        <textarea class="form-textarea" id="post-content" placeholder="본문을 입력하세요. 줄바꿈은 그대로 표시됩니다."></textarea>
+        <div class="form-help">수강생 페이지에서 줄바꿈이 그대로 반영됩니다.</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('post-modal')">취소</button>
+      <button class="btn btn-primary" onclick="savePost()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 일정 작성/편집 모달 -->
+<div class="modal-backdrop" id="schedule-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="schedule-modal-title">새 일정 추가</div>
+      <button class="modal-close" onclick="closeModal('schedule-modal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="schedule-id">
+      <div class="form-row split">
+        <div>
+          <label class="form-label">날짜</label>
+          <input type="date" class="form-input" id="schedule-date">
+        </div>
+        <div>
+          <label class="form-label">카테고리</label>
+          <select class="form-select" id="schedule-category">
+            <option value="학사">학사</option>
+            <option value="세미나">세미나</option>
+            <option value="특강">특강</option>
+            <option value="평가">평가</option>
+            <option value="이벤트">이벤트</option>
+            <option value="기타">기타</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">제목</label>
+        <input type="text" class="form-input" id="schedule-title" placeholder="일정 제목 (예: 어린이날 휴강)">
+      </div>
+      <div class="form-row">
+        <label class="form-label">설명 (선택)</label>
+        <input type="text" class="form-input" id="schedule-description" placeholder="추가 설명 (예: A강의장, 14:00)">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('schedule-modal')">취소</button>
+      <button class="btn btn-primary" onclick="saveSchedule()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 삭제 확인 모달 -->
+<div class="modal-backdrop" id="confirm-modal">
+  <div class="modal confirm-modal">
+    <div class="modal-header">
+      <div class="modal-title" id="confirm-title">삭제 확인</div>
+    </div>
+    <div class="modal-body">
+      <div class="confirm-text" id="confirm-text">정말 삭제하시겠습니까?</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('confirm-modal')">취소</button>
+      <button class="btn btn-danger" id="confirm-action-btn" onclick="confirmAction()">삭제</button>
+    </div>
+  </div>
+</div>
+
+<!-- 토스트 -->
+<div class="toast" id="toast"></div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="config.js"></script>
+<script>
+const ADMIN_TOKEN_KEY = 'admin_token';
+let currentView = 'posts';
+let pendingAction = null;
+
+// ============================================================
+// 인증
+// ============================================================
+function isLoggedIn() {
+  return !!localStorage.getItem(ADMIN_TOKEN_KEY);
+}
+
+function getAuth() {
+  return localStorage.getItem(ADMIN_TOKEN_KEY) || '';
+}
+
+async function login() {
+  const password = document.getElementById('login-password').value;
+  if (!password) return;
+
+  try {
+    const ok = await window.api.verifyAuth(password);
+    if (ok) {
+      localStorage.setItem(ADMIN_TOKEN_KEY, password);
+      showApp();
+    } else {
+      showLoginError();
+    }
+  } catch (e) {
+    console.error(e);
+    showLoginError();
+  }
+}
+
+function showLoginError() {
+  const err = document.getElementById('login-error');
+  err.style.display = 'block';
+  setTimeout(() => err.style.display = 'none', 3000);
+}
+
+function logout() {
+  localStorage.removeItem(ADMIN_TOKEN_KEY);
+  location.reload();
+}
+
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').classList.add('active');
+  loadView();
+}
+
+// ============================================================
+// 뷰 전환
+// ============================================================
+function switchView(view) {
+  currentView = view;
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelector(`[data-view="${view}"]`).classList.add('active');
+  document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+  document.getElementById('view-' + view).style.display = 'block';
+  loadView();
+}
+
+async function loadView() {
+  if (currentView === 'posts') await loadPosts();
+  else if (currentView === 'schedule') await loadSchedule();
+}
+
+// ============================================================
+// 공지 관리
+// ============================================================
+async function loadPosts() {
+  const posts = await window.api.call('getPosts');
+  document.getElementById('posts-count').textContent = `전체 ${posts.length}건`;
+  
+  if (posts.length === 0) {
+    document.getElementById('posts-list').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+        </div>
+        등록된 공지가 없습니다
+      </div>
+    `;
+    return;
+  }
+  
+  document.getElementById('posts-list').innerHTML = posts.map(p => `
+    <div class="table-row">
+      <div class="cell-tag">
+        <span class="tag tag-${p.category}">${escapeHtml(p.category)}</span>
+      </div>
+      <div class="cell-title" title="${escapeHtml(p.title)}">${escapeHtml(p.title)}</div>
+      <div class="cell-date">${formatDate(p.date)}</div>
+      <div class="cell-actions">
+        <button class="icon-btn" onclick="editPost('${p.id}')" title="편집">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="icon-btn danger" onclick="confirmDeletePost('${p.id}', '${escapeHtml(p.title).replace(/'/g, "\\'")}')" title="삭제">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openPostModal() {
+  document.getElementById('post-modal-title').textContent = '새 공지 작성';
+  document.getElementById('post-id').value = '';
+  document.getElementById('post-category').value = '학사';
+  document.getElementById('post-title').value = '';
+  document.getElementById('post-content').value = '';
+  document.getElementById('post-date').value = new Date().toISOString().split('T')[0];
+  openModal('post-modal');
+  setTimeout(() => document.getElementById('post-title').focus(), 100);
+}
+
+async function editPost(id) {
+  const post = await window.api.call('getPost', { id });
+  if (!post) return;
+  document.getElementById('post-modal-title').textContent = '공지 편집';
+  document.getElementById('post-id').value = post.id;
+  document.getElementById('post-category').value = post.category;
+  document.getElementById('post-title').value = post.title;
+  document.getElementById('post-content').value = post.content;
+  document.getElementById('post-date').value = post.date;
+  openModal('post-modal');
+}
+
+async function savePost() {
+  const data = {
+    id: document.getElementById('post-id').value || undefined,
+    category: document.getElementById('post-category').value,
+    title: document.getElementById('post-title').value.trim(),
+    content: document.getElementById('post-content').value.trim(),
+    date: document.getElementById('post-date').value
+  };
+  
+  if (!data.title) {
+    toast('제목을 입력해주세요', 'error');
+    return;
+  }
+  if (!data.date) {
+    toast('날짜를 선택해주세요', 'error');
+    return;
+  }
+  
+  try {
+    await window.api.call('savePost', data, getAuth());
+    closeModal('post-modal');
+    toast(data.id ? '공지가 수정되었습니다' : '새 공지가 등록되었습니다');
+    await loadPosts();
+  } catch (e) {
+    toast('저장에 실패했습니다: ' + e.message, 'error');
+  }
+}
+
+function confirmDeletePost(id, title) {
+  document.getElementById('confirm-title').textContent = '공지 삭제';
+  document.getElementById('confirm-text').textContent = `"${title}" 공지를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.`;
+  pendingAction = async () => {
+    try {
+      await window.api.call('deletePost', { id }, getAuth());
+      toast('공지가 삭제되었습니다');
+      await loadPosts();
+    } catch (e) {
+      toast('삭제에 실패했습니다', 'error');
+    }
+  };
+  openModal('confirm-modal');
+}
+
+// ============================================================
+// 일정 관리
+// ============================================================
+async function loadSchedule() {
+  const schedule = await window.api.call('getSchedule');
+  document.getElementById('schedule-count').textContent = `전체 ${schedule.length}건`;
+  
+  if (schedule.length === 0) {
+    document.getElementById('schedule-list').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
+        </div>
+        등록된 일정이 없습니다
+      </div>
+    `;
+    return;
+  }
+  
+  document.getElementById('schedule-list').innerHTML = schedule.map(s => `
+    <div class="table-row">
+      <div class="cell-date">${formatScheduleDate(s.date)}</div>
+      <div class="cell-tag">
+        <span class="tag tag-${s.category}">${escapeHtml(s.category)}</span>
+      </div>
+      <div class="cell-title">
+        ${escapeHtml(s.title)}
+        ${s.description ? `<span style="color: var(--text-faint); font-weight: 400; margin-left: 8px;">${escapeHtml(s.description)}</span>` : ''}
+      </div>
+      <div class="cell-actions">
+        <button class="icon-btn" onclick="editSchedule('${s.id}')" title="편집">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="icon-btn danger" onclick="confirmDeleteSchedule('${s.id}', '${escapeHtml(s.title).replace(/'/g, "\\'")}')" title="삭제">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openScheduleModal() {
+  document.getElementById('schedule-modal-title').textContent = '새 일정 추가';
+  document.getElementById('schedule-id').value = '';
+  document.getElementById('schedule-category').value = '학사';
+  document.getElementById('schedule-title').value = '';
+  document.getElementById('schedule-description').value = '';
+  document.getElementById('schedule-date').value = new Date().toISOString().split('T')[0];
+  openModal('schedule-modal');
+  setTimeout(() => document.getElementById('schedule-title').focus(), 100);
+}
+
+async function editSchedule(id) {
+  const all = await window.api.call('getSchedule');
+  const item = all.find(s => s.id === id);
+  if (!item) return;
+  document.getElementById('schedule-modal-title').textContent = '일정 편집';
+  document.getElementById('schedule-id').value = item.id;
+  document.getElementById('schedule-category').value = item.category;
+  document.getElementById('schedule-title').value = item.title;
+  document.getElementById('schedule-description').value = item.description || '';
+  document.getElementById('schedule-date').value = item.date;
+  openModal('schedule-modal');
+}
+
+async function saveSchedule() {
+  const data = {
+    id: document.getElementById('schedule-id').value || undefined,
+    category: document.getElementById('schedule-category').value,
+    title: document.getElementById('schedule-title').value.trim(),
+    description: document.getElementById('schedule-description').value.trim(),
+    date: document.getElementById('schedule-date').value
+  };
+  
+  if (!data.title) {
+    toast('제목을 입력해주세요', 'error');
+    return;
+  }
+  if (!data.date) {
+    toast('날짜를 선택해주세요', 'error');
+    return;
+  }
+  
+  try {
+    await window.api.call('saveSchedule', data, getAuth());
+    closeModal('schedule-modal');
+    toast(data.id ? '일정이 수정되었습니다' : '새 일정이 추가되었습니다');
+    await loadSchedule();
+  } catch (e) {
+    toast('저장에 실패했습니다: ' + e.message, 'error');
+  }
+}
+
+function confirmDeleteSchedule(id, title) {
+  document.getElementById('confirm-title').textContent = '일정 삭제';
+  document.getElementById('confirm-text').textContent = `"${title}" 일정을 삭제하시겠습니까?`;
+  pendingAction = async () => {
+    try {
+      await window.api.call('deleteSchedule', { id }, getAuth());
+      toast('일정이 삭제되었습니다');
+      await loadSchedule();
+    } catch (e) {
+      toast('삭제에 실패했습니다', 'error');
+    }
+  };
+  openModal('confirm-modal');
+}
+
+function confirmAction() {
+  if (pendingAction) {
+    pendingAction();
+    pendingAction = null;
+  }
+  closeModal('confirm-modal');
+}
+
+// ============================================================
+// 모달 헬퍼
+// ============================================================
+function openModal(id) {
+  document.getElementById(id).classList.add('active');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+}
+
+// 모달 외부 클릭 시 닫기
+document.querySelectorAll('.modal-backdrop').forEach(el => {
+  el.addEventListener('click', (e) => {
+    if (e.target === el) el.classList.remove('active');
+  });
+});
+
+// ESC 키로 모달 닫기
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-backdrop.active').forEach(m => m.classList.remove('active'));
+  }
+});
+
+// 로그인 input Enter 처리
+document.getElementById('login-password').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') login();
+});
+
+// ============================================================
+// 토스트
+// ============================================================
+let toastTimer = null;
+function toast(msg, type = 'success') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.background = type === 'error' ? 'var(--danger)' : 'var(--text)';
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+// ============================================================
+// 유틸
+// ============================================================
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  if (isNaN(d)) return dateStr;
+  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function formatScheduleDate(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  const days = ['일','월','화','수','목','금','토'];
+  return `${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')} ${days[d.getDay()]}`;
+}
+
+// ============================================================
+// 시작
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  if (isLoggedIn()) {
+    showApp();
+  } else {
+    document.getElementById('login-password').focus();
+  }
+});
+</script>
+
+</body>
+</html>

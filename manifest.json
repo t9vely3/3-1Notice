@@ -1,0 +1,22 @@
+{
+  "name": "SBS 아카데미 수강생 안내",
+  "short_name": "수강생안내",
+  "description": "SBS 아카데미 컴퓨터아트학원 수강생 정보",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fafaf7",
+  "theme_color": "#fafaf7",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
