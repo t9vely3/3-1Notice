@@ -1,6 +1,6 @@
 # SBS 아카데미 수강생 안내 페이지
 
-GitHub Pages + Firebase Firestore + Firebase Storage로 동작하는 학원 안내 사이트.
+GitHub Pages + Firebase Firestore + Storage로 동작하는 학원 안내 사이트.
 
 ## 파일 구조
 
@@ -14,54 +14,113 @@ academy-info/
 └── icon-512.png    # PWA 아이콘 (선택)
 ```
 
-## 동작 구조
+## Firestore 컬렉션
 
-```
-[수강생 폰] ──→ [GitHub Pages] ──→ [Firestore (데이터)]
-[관리자 PC] ──→ [admin.html]   ──→ [Firestore + Storage (이미지)]
-```
-
----
-
-## Firestore 컬렉션 구조
-
-| 컬렉션 | 용도 | 필드 |
-|--------|------|------|
-| `posts` | 공지사항 | category, title, content, date |
-| `schedule` | 학사일정 | date, category, title, description |
-| `curriculum` | 커리큘럼 | name, startDate, endDate, description, classroom |
-| `classrooms` | 강의장 | name, programs, description |
-| `rules` | 학칙 | section, content, order |
-| `settings` | 학원 정보 | (단일 문서 `default`) |
-| `materialCategories` | 수업자료 카테고리 | name, parentId, color, icon, order, hidden |
-| `materials` | 수업자료 콘텐츠 | categoryId, title, description, steps[], order, hidden |
-| `_admin` | 관리자 비밀번호 | (단일 문서 `password`: value) |
-
-### materials.steps 구조 (단계별 가이드)
-```js
-steps: [
-  {
-    title: "1단계 제목",
-    content: "본문 텍스트 (줄바꿈 그대로)",
-    imageUrl: "https://...",   // Firebase Storage URL
-    imagePath: "materials/..." // 삭제용 경로
-  },
-  ...
-]
-```
+| 컬렉션 | 용도 |
+|--------|------|
+| `posts` | 공지사항 |
+| `schedule` | 학사일정 (colorId 기반) |
+| `scheduleColors` | 학사일정 색상 정의 |
+| `curriculum` | 커리큘럼 (개강/종강/요일 패턴) |
+| `classrooms` | 강의장 |
+| `rules` | 학칙 |
+| `settings` | 학원 정보 (단일 문서 `default`) |
+| `materialCategories` | 수업자료 카테고리 |
+| `materials` | 수업자료 콘텐츠 |
+| `_admin` | 관리자 비밀번호 (`password.value`) |
 
 ---
 
-## Firebase 콘솔 셋업 (1회)
+## 관리자 기능 (admin.html)
+
+### 콘텐츠
+- **공지사항** — 카테고리별 공지 작성/편집/삭제
+- **학사일정** — 단일/반복 일정 등록, 색상으로 구분
+- **수업자료** — 카테고리 트리 + 단계별 가이드 (이미지 첨부)
+
+### 학원 정보
+- **커리큘럼** — 과정명, 개강/종강일, 강의장, 수업 요일
+- **강의장** — 강의장 이름, 설명, 설치 프로그램
+- **학칙** — 학칙 항목 추가/순서 변경
+
+### 설정
+- **일정 색상** — 학사일정에서 사용할 색상 정의 (예: 정상=초록, 휴강=빨강, 월수금=파랑, 화목금=노랑)
+- **학원 정보** — 전화/이메일/주소/운영시간 (수강생 페이지 "문의" 메뉴에 표시)
+
+---
+
+## 학사일정 사용법
+
+### 1. 색상 먼저 정의
+**일정 색상** 메뉴에서 사용할 색상을 추가합니다.
+
+기본 제공:
+- 정상 일정 (초록)
+- 휴강/공강 (빨강)
+- 월수금 수업 (파랑)
+- 화목금 수업 (노랑)
+
+원하는 만큼 색상을 추가/수정/삭제할 수 있습니다 (예: "특강", "평가일", "이벤트" 등).
+
+### 2. 일정 등록 (단일)
+**학사일정** → **단일 일정** 버튼
+- 날짜 1개
+- 색상 선택
+- 제목
+
+### 3. 일정 등록 (반복)
+**학사일정** → **반복 일정** 버튼
+- 시작일 ~ 종료일 입력
+- 요일 선택 (월/수/금 또는 화/목 등)
+- 색상 선택
+- 제목
+
+→ 시스템이 자동으로 해당 기간의 모든 해당 요일 일정을 한 번에 등록합니다.
+
+예시: "5월 12일 ~ 6월 30일, 월·수·금, 정상 수업" → 약 21일 자동 생성
+
+### 4. 수강생 페이지에서
+- 캘린더에 색상 동그라미로 표시
+- 캘린더 위에 **색상 범례** 자동 표시 (어떤 색이 무슨 의미인지)
+- 날짜 클릭 시 해당 날짜의 일정 상세 표시
+
+---
+
+## 수업자료 사용법
+
+### 카테고리 구조 (2단계)
+- 1단계: 최상위 (예: 준비물, 자격증, 따즈아)
+- 2단계: 하위 (자격증 안에 컴퓨터그래픽스, GTQ 등)
+
+부모 카테고리는 콘텐츠를 직접 갖지 않고, leaf(하위 없는) 카테고리에만 콘텐츠를 추가할 수 있습니다.
+
+### 단계별 가이드 작성
+관리자 → 수업자료 → 카테고리 선택 → "새 자료 작성"
+
+각 자료는 여러 단계로 구성:
+- 단계 제목
+- 본문 (줄바꿈 그대로)
+- 이미지 첨부 (선택, 5MB 이하)
+
+### 숨김 기능
+- 카테고리 숨김: 수강생에게 안 보임 (운영자만 보임)
+- 자료 숨김: 해당 자료만 안 보임
+
+---
+
+## Firebase 콘솔 셋업
 
 ### 1. Firestore 활성화
-- Firestore Database → 데이터베이스 만들기 → 위치 asia-northeast3 → 테스트 모드
+- Firestore Database → 데이터베이스 만들기
+- 위치: asia-northeast3 → 테스트 모드
 
-### 2. Firebase Storage 활성화 (이미지용)
-- 좌측 메뉴 **빌드 → Storage**
-- **시작하기** → 위치 asia-northeast3 → 테스트 모드
+### 2. Storage 활성화 (이미지용)
+- Storage → 시작하기
+- 위치: asia-northeast3 → 테스트 모드
 
-### 3. Firestore 보안 규칙
+### 3. 보안 규칙
+
+**Firestore:**
 ```
 rules_version = '2';
 service cloud.firestore {
@@ -78,80 +137,32 @@ service cloud.firestore {
 }
 ```
 
-### 4. Storage 보안 규칙
-Storage → 규칙 탭:
+**Storage:**
 ```
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
     match /{allPaths=**} {
       allow read: if true;
-      allow write: if true;  // 임시. 운영 시 강화
+      allow write: if true;
     }
   }
 }
 ```
 
-### 5. 관리자 비밀번호 등록
-- Firestore → `_admin` 컬렉션 시작
-- 문서 ID: `password`
-- 필드: `value` (string), 값: 원하는 비밀번호
+### 4. 관리자 비밀번호 등록
+Firestore → `_admin` 컬렉션 → `password` 문서 → 필드 `value` (string) → 원하는 비밀번호
 
 ---
 
-## 수업자료 사용법
+## 첫 사용 순서 추천
 
-### 카테고리 구조
-- 1단계: 최상위 카테고리 (예: 준비물, 자격증, 따즈아)
-- 2단계: 하위 분류 (자격증 안에 컴퓨터그래픽스, GTQ 등)
-
-부모 카테고리는 콘텐츠를 직접 갖지 않고, leaf(하위가 없는) 카테고리에만 콘텐츠를 추가할 수 있습니다.
-
-### 단계별 가이드 작성
-관리자 페이지 → 수업자료 → 카테고리 선택 → "새 자료 작성"
-
-각 자료는 여러 단계(step)로 구성:
-- 단계 제목
-- 본문 (줄바꿈 그대로 표시됨)
-- 이미지 첨부 (선택, 최대 5MB)
-
-단계 순서 위/아래 이동 가능, 추가/삭제 가능.
-
-### 숨김 기능
-- 카테고리 숨김: 해당 카테고리와 그 안의 모든 자료가 수강생에게 안 보임
-- 자료 숨김: 해당 자료만 수강생에게 안 보임
-
-운영자(관리자 페이지)에는 항상 보이며 "[숨김]" 표시.
-
----
-
-## GitHub Pages 배포
-
-1. https://github.com/new → 새 저장소 (Public)
-2. 파일 6개 업로드
-3. Settings → Pages → main 브랜치 / root → Save
-4. 1-2분 후 `https://{username}.github.io/{repo}/` 접근
-
----
-
-## 카테고리 색상
-
-학원 메뉴(상단)에서 사용하는 6가지 색상 (`m-1` ~ `m-6`):
-- 1: 보라
-- 2: 초록
-- 3: 주황
-- 4: 파랑
-- 5: 핑크
-- 6: 회색
-
-수업자료 카테고리도 이 6가지 중 선택.
-
----
-
-## 향후 확장
-
-- 자료 검색 (현재는 공지/일정/커리큘럼만 검색됨)
-- 카테고리 순서 드래그 변경
-- 단계 안에 여러 이미지 첨부
-- 동영상 첨부 (YouTube 임베드)
-- Firebase Auth 도입으로 보안 강화
+1. **Firebase 셋업 완료**
+2. **GitHub Pages 배포**
+3. **관리자 페이지 접속 → 로그인**
+4. **학원 정보** 탭에서 학원명/연락처 등 입력
+5. **일정 색상** 탭에서 색상 정의 (기본 4개로 시작 OK)
+6. **커리큘럼** 탭에서 진행 중인 과정 추가
+7. **학사일정** 탭에서 반복 일정으로 수업일 일괄 등록
+   - 휴강일/이벤트는 단일 일정으로
+8. **공지사항** / **수업자료** 등 콘텐츠 추가

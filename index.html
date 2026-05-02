@@ -556,15 +556,18 @@ body {
 
 .cal-events {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 2px;
-  margin-top: 3px;
+  justify-content: center;
+  gap: 3px;
+  margin-top: 4px;
   width: 100%;
+  flex-wrap: wrap;
 }
 .cal-event-dot {
-  width: 4px; height: 4px;
+  width: 7px; height: 7px;
   border-radius: 50%;
+  flex-shrink: 0;
 }
 .cal-event-bar {
   width: 100%;
@@ -572,13 +575,32 @@ body {
   border-radius: 2px;
   margin-top: 1px;
 }
-.cal-event-bar.학사 { background: #c8323a; }
-.cal-event-bar.세미나, .cal-event-bar.특강 { background: #5b21b6; }
-.cal-event-bar.시설 { background: #047857; }
-.cal-event-bar.평가 { background: #b45309; }
-.cal-event-bar.이벤트 { background: #c8323a; }
-.cal-event-bar.취업 { background: #1d4ed8; }
-.cal-event-bar.기타 { background: #64748b; }
+
+/* 캘린더 범례 */
+.cal-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  padding: 12px 14px;
+  background: var(--bg-elevated);
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-xs);
+}
+.cal-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--text-mid);
+  font-weight: 500;
+}
+.cal-legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
 
 /* 선택된 날짜 일정 */
 .cal-selected-day {
@@ -1460,6 +1482,7 @@ body {
       </button>
     </div>
   </div>
+  <div id="cal-legend"></div>
   <div class="cal-grid">
     <div class="cal-week-header">
       <div class="cal-week-day sun">일</div>
@@ -1737,6 +1760,16 @@ function tagClass(category) {
   return known.includes(category) ? `tag-${category}` : 'tag-기타';
 }
 
+// 구버전 호환: category 기반 색상
+function getCategoryFallbackColor(category) {
+  const map = {
+    '학사': '#c8323a', '세미나': '#5b21b6', '특강': '#5b21b6',
+    '시설': '#047857', '평가': '#b45309', '이벤트': '#c8323a',
+    '취업': '#1d4ed8', '기타': '#64748b'
+  };
+  return map[category] || '#64748b';
+}
+
 function getGreeting() {
   const h = new Date().getHours();
   if (h < 6) return '새벽이네요';
@@ -1755,6 +1788,15 @@ async function loadHome() {
     data = await window.api.call('getHome');
   } catch (e) {
     data = { posts: [], schedule: [], settings: {} };
+  }
+  
+  // 색상 정보 캐시 (홈에서도 일정 카드 색상 표시용)
+  if (!state.cal.colors) {
+    try {
+      state.cal.colors = await window.api.call('getScheduleColors');
+    } catch (e) {
+      state.cal.colors = window.DEFAULT_SCHEDULE_COLORS || [];
+    }
   }
 
   // 인사 카드
@@ -1875,6 +1917,13 @@ function renderScheduleItem(s) {
     const diff = Math.round((d - TODAY) / (1000 * 60 * 60 * 24));
     return diff <= 3 && diff >= 0 ? 'urgent' : '';
   })();
+  
+  // colorId가 있으면 새 색상 시스템, 없으면 카테고리 태그 (구버전 호환)
+  const color = getColorById(s.colorId);
+  const labelHtml = color
+    ? `<span class="post-tag" style="background: ${color.color}22; color: ${color.color};">${escapeHtml(color.name)}</span>`
+    : `<span class="post-tag ${tagClass(s.category)}">${escapeHtml(s.category || '기타')}</span>`;
+  
   return `
     <div class="schedule-item">
       <div class="schedule-date-box ${today ? 'today' : ''}">
@@ -1882,7 +1931,7 @@ function renderScheduleItem(s) {
         <div class="schedule-num">${new Date(s.date).getDate()}</div>
       </div>
       <div class="schedule-content">
-        <span class="post-tag ${tagClass(s.category)}">${escapeHtml(s.category || '기타')}</span>
+        ${labelHtml}
         <span class="schedule-text">${escapeHtml(s.title)}</span>
       </div>
       <span class="schedule-dday ${ddayClass}">${dday}</span>
@@ -1953,8 +2002,37 @@ function toggleDetailBookmark(id, btn) {
 // 캘린더
 // ============================================================
 async function loadSchedule() {
-  state.cal.schedule = await window.api.call('getSchedule') || [];
+  const [schedule, colors] = await Promise.all([
+    window.api.call('getSchedule'),
+    window.api.call('getScheduleColors')
+  ]);
+  state.cal.schedule = schedule || [];
+  state.cal.colors = colors || [];
+  renderCalendarLegend();
   renderCalendar();
+}
+
+function renderCalendarLegend() {
+  const colors = state.cal.colors || [];
+  if (colors.length === 0) {
+    document.getElementById('cal-legend').innerHTML = '';
+    return;
+  }
+  document.getElementById('cal-legend').innerHTML = `
+    <div class="cal-legend">
+      ${colors.map(c => `
+        <div class="cal-legend-item">
+          <span class="cal-legend-dot" style="background: ${escapeHtml(c.color)}"></span>
+          <span>${escapeHtml(c.name)}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function getColorById(id) {
+  if (!id) return null;
+  return (state.cal.colors || []).find(c => c.id === id);
 }
 
 function calPrev() {
@@ -2039,15 +2117,17 @@ function renderCalendar() {
     if (dayOfWeek === 0) classes.push('sun');
     if (dayOfWeek === 6) classes.push('sat');
     
-    // 일정 표시 (최대 3개 색상 바)
-    const eventBars = events.slice(0, 3).map(e => 
-      `<div class="cal-event-bar ${e.category || '기타'}"></div>`
-    ).join('');
+    // 일정 표시 (최대 4개 색상 동그라미)
+    const eventDots = events.slice(0, 4).map(e => {
+      const color = getColorById(e.colorId);
+      const bg = color ? color.color : (e.category ? getCategoryFallbackColor(e.category) : '#64748b');
+      return `<span class="cal-event-dot" style="background: ${bg}"></span>`;
+    }).join('');
     
     return `
       <div class="${classes.join(' ')}" onclick="calSelectDate('${dateStr}')">
         <div class="cal-day-num">${date.getDate()}</div>
-        <div class="cal-events">${eventBars}</div>
+        <div class="cal-events">${eventDots}</div>
       </div>
     `;
   }).join('');
@@ -2079,15 +2159,21 @@ function renderSelectedDayEvents() {
   }
   
   document.getElementById('cal-selected-events').innerHTML = `
-    <div class="schedule-list">${events.map(e => `
-      <div class="schedule-item">
-        <div class="schedule-content">
-          <span class="post-tag ${tagClass(e.category)}">${escapeHtml(e.category || '기타')}</span>
-          <span class="schedule-text">${escapeHtml(e.title)}</span>
+    <div class="schedule-list">${events.map(e => {
+      const color = getColorById(e.colorId);
+      const labelHtml = color
+        ? `<span class="post-tag" style="background: ${color.color}22; color: ${color.color};">${escapeHtml(color.name)}</span>`
+        : `<span class="post-tag ${tagClass(e.category)}">${escapeHtml(e.category || '기타')}</span>`;
+      return `
+        <div class="schedule-item">
+          <div class="schedule-content">
+            ${labelHtml}
+            <span class="schedule-text">${escapeHtml(e.title)}</span>
+          </div>
+          ${e.description ? `<span style="font-size: 12px; color: var(--text-faint); margin-left: auto;">${escapeHtml(e.description)}</span>` : ''}
         </div>
-        ${e.description ? `<span style="font-size: 12px; color: var(--text-faint); margin-left: auto;">${escapeHtml(e.description)}</span>` : ''}
-      </div>
-    `).join('')}</div>
+      `;
+    }).join('')}</div>
   `;
 }
 
