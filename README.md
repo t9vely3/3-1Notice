@@ -1,6 +1,6 @@
 # SBS 아카데미 수강생 안내 페이지
 
-GitHub Pages + Firebase Firestore로 동작하는 학원 안내 사이트.
+GitHub Pages + Firebase Firestore + Firebase Storage로 동작하는 학원 안내 사이트.
 
 ## 파일 구조
 
@@ -17,11 +17,9 @@ academy-info/
 ## 동작 구조
 
 ```
-[수강생 폰] ──→ [GitHub Pages] ──→ [Firebase Firestore]
-[관리자 PC] ──→ [admin.html]   ──→ [Firebase Firestore]
+[수강생 폰] ──→ [GitHub Pages] ──→ [Firestore (데이터)]
+[관리자 PC] ──→ [admin.html]   ──→ [Firestore + Storage (이미지)]
 ```
-
-GAS 사용 안 함. Firebase SDK가 브라우저에서 직접 Firestore 호출.
 
 ---
 
@@ -34,95 +32,126 @@ GAS 사용 안 함. Firebase SDK가 브라우저에서 직접 Firestore 호출.
 | `curriculum` | 커리큘럼 | name, startDate, endDate, description, classroom |
 | `classrooms` | 강의장 | name, programs, description |
 | `rules` | 학칙 | section, content, order |
-| `settings` | 학원 정보 | (단일 문서 `default`: academyName, contact, phone, address, hours) |
+| `settings` | 학원 정보 | (단일 문서 `default`) |
+| `materialCategories` | 수업자료 카테고리 | name, parentId, color, icon, order, hidden |
+| `materials` | 수업자료 콘텐츠 | categoryId, title, description, steps[], order, hidden |
 | `_admin` | 관리자 비밀번호 | (단일 문서 `password`: value) |
 
-## 카테고리
-
-학사 / 세미나 / 특강 / 시설 / 평가 / 이벤트 / 취업 / 기타
+### materials.steps 구조 (단계별 가이드)
+```js
+steps: [
+  {
+    title: "1단계 제목",
+    content: "본문 텍스트 (줄바꿈 그대로)",
+    imageUrl: "https://...",   // Firebase Storage URL
+    imagePath: "materials/..." // 삭제용 경로
+  },
+  ...
+]
+```
 
 ---
 
 ## Firebase 콘솔 셋업 (1회)
 
-1. https://console.firebase.google.com 에서 프로젝트 생성
-2. 웹 앱 등록 → firebaseConfig 받기
-3. `config.js`의 `firebaseConfig`를 본인 값으로 교체
-4. Firestore 활성화 (테스트 모드)
-5. `_admin/password` 문서 생성 (관리자 비밀번호)
-6. 보안 규칙 설정
+### 1. Firestore 활성화
+- Firestore Database → 데이터베이스 만들기 → 위치 asia-northeast3 → 테스트 모드
 
----
+### 2. Firebase Storage 활성화 (이미지용)
+- 좌측 메뉴 **빌드 → Storage**
+- **시작하기** → 위치 asia-northeast3 → 테스트 모드
 
-## GitHub Pages 배포
-
-1. https://github.com/new 에서 새 저장소 생성 (Public)
-2. 파일 7개 업로드 (index.html, admin.html, config.js, manifest.json, README.md, .gitignore + 아이콘)
-3. Settings → Pages → main 브랜치 / root 선택 → Save
-4. 1-2분 후 `https://{username}.github.io/{repo}/` 에서 접근
-
----
-
-## 첫 데이터 입력
-
-배포 후 처음에는 데이터가 비어있으니 관리자 페이지(`/admin.html`)로 접속해서 비밀번호 입력 → 공지/일정 추가.
-
-학원 정보(전화/이메일/주소 등)는 일단 Firebase 콘솔에서 직접 추가:
-- `settings` 컬렉션 → 문서 ID `default`
-- 필드: `academyName`, `contact`, `phone`, `address`, `hours`
-
-(2차에서 admin.html에 설정 페이지 추가 예정)
-
----
-
-## 보안 규칙 (Firestore Rules)
-
+### 3. Firestore 보안 규칙
 ```
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /{collection}/{docId} {
       allow read: if true;
-      allow write: if true;  // 임시. 운영 시작 시 강화 필요.
+      allow write: if true;
     }
     match /_admin/password {
-      allow read: if true;   // 클라이언트 검증용
+      allow read: if true;
       allow write: if false;
     }
   }
 }
 ```
 
-**⚠️ 보안 강화 추천 (운영 시작 시)**
+### 4. Storage 보안 규칙
+Storage → 규칙 탭:
+```
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read: if true;
+      allow write: if true;  // 임시. 운영 시 강화
+    }
+  }
+}
+```
 
-현재는 누구나 쓰기 가능. 더 안전하게 하려면:
-1. Firebase Authentication 활성화
-2. 운영자 계정 생성
-3. 규칙: `allow write: if request.auth != null;`
-4. admin.html에서 Firebase Auth로 로그인하게 수정
-
-이건 2차 작업으로 넘기고, 일단 비밀번호 검증 + 비공개 운영자 페이지로 시작.
+### 5. 관리자 비밀번호 등록
+- Firestore → `_admin` 컬렉션 시작
+- 문서 ID: `password`
+- 필드: `value` (string), 값: 원하는 비밀번호
 
 ---
 
-## 1차 기능 (현재)
+## 수업자료 사용법
 
-**수강생 페이지 (`index.html`)**
-- 홈: 인사 카드 + 최신 공지 + 다가오는 일정 + 6개 메뉴
-- 공지사항: 카테고리 필터 + 상세
-- 학사일정: 월별 그룹핑 + D-day
-- 커리큘럼/강의장/학칙/세미나/문의
+### 카테고리 구조
+- 1단계: 최상위 카테고리 (예: 준비물, 자격증, 따즈아)
+- 2단계: 하위 분류 (자격증 안에 컴퓨터그래픽스, GTQ 등)
 
-**관리자 페이지 (`admin.html`)**
-- 비밀번호 로그인
-- 공지사항 CRUD
-- 학사일정 CRUD
+부모 카테고리는 콘텐츠를 직접 갖지 않고, leaf(하위가 없는) 카테고리에만 콘텐츠를 추가할 수 있습니다.
 
-## 2차 (예정)
+### 단계별 가이드 작성
+관리자 페이지 → 수업자료 → 카테고리 선택 → "새 자료 작성"
 
-- 관리자: 커리큘럼/강의장/학칙/설정 CRUD 추가
-- 관리자: 공지 미리보기 (수강생 화면처럼)
-- 보안: Firebase Auth 도입
-- 첨부파일 (Firebase Storage)
-- 검색
-- 푸시 알림
+각 자료는 여러 단계(step)로 구성:
+- 단계 제목
+- 본문 (줄바꿈 그대로 표시됨)
+- 이미지 첨부 (선택, 최대 5MB)
+
+단계 순서 위/아래 이동 가능, 추가/삭제 가능.
+
+### 숨김 기능
+- 카테고리 숨김: 해당 카테고리와 그 안의 모든 자료가 수강생에게 안 보임
+- 자료 숨김: 해당 자료만 수강생에게 안 보임
+
+운영자(관리자 페이지)에는 항상 보이며 "[숨김]" 표시.
+
+---
+
+## GitHub Pages 배포
+
+1. https://github.com/new → 새 저장소 (Public)
+2. 파일 6개 업로드
+3. Settings → Pages → main 브랜치 / root → Save
+4. 1-2분 후 `https://{username}.github.io/{repo}/` 접근
+
+---
+
+## 카테고리 색상
+
+학원 메뉴(상단)에서 사용하는 6가지 색상 (`m-1` ~ `m-6`):
+- 1: 보라
+- 2: 초록
+- 3: 주황
+- 4: 파랑
+- 5: 핑크
+- 6: 회색
+
+수업자료 카테고리도 이 6가지 중 선택.
+
+---
+
+## 향후 확장
+
+- 자료 검색 (현재는 공지/일정/커리큘럼만 검색됨)
+- 카테고리 순서 드래그 변경
+- 단계 안에 여러 이미지 첨부
+- 동영상 첨부 (YouTube 임베드)
+- Firebase Auth 도입으로 보안 강화

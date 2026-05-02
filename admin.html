@@ -542,6 +542,425 @@ input, textarea, select { font-family: inherit; }
   font-weight: 500;
 }
 
+/* ===== 수업자료 - 카테고리 트리 ===== */
+.mat-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 18px;
+  align-items: flex-start;
+}
+.mat-tree {
+  background: var(--bg-elevated);
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: var(--shadow-xs);
+  position: sticky;
+  top: 18px;
+  max-height: calc(100vh - 36px);
+  overflow-y: auto;
+}
+.mat-tree-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px 10px;
+  border-bottom: 0.5px solid var(--border);
+  margin-bottom: 8px;
+}
+.mat-tree-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.mat-tree-add {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  width: 24px; height: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.mat-tree-add:hover { background: var(--accent-deep); }
+
+.mat-tree-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.12s;
+  font-size: 13px;
+  color: var(--text-mid);
+  font-weight: 500;
+}
+.mat-tree-item:hover { background: var(--bg-soft); }
+.mat-tree-item.active { 
+  background: var(--accent-soft); 
+  color: var(--accent);
+  font-weight: 600;
+}
+.mat-tree-item.hidden-cat {
+  opacity: 0.55;
+}
+.mat-tree-item-icon {
+  width: 16px; height: 16px;
+  flex-shrink: 0;
+}
+.mat-tree-item-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mat-tree-item-badge {
+  font-size: 10.5px;
+  color: var(--text-faint);
+  font-weight: 500;
+  flex-shrink: 0;
+  padding: 1px 6px;
+  background: var(--bg-soft);
+  border-radius: 4px;
+}
+.mat-tree-item.active .mat-tree-item-badge {
+  background: rgba(30, 58, 95, 0.1);
+}
+.mat-tree-item-actions {
+  display: none;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.mat-tree-item:hover .mat-tree-item-actions { display: flex; }
+.mat-tree-item-act {
+  width: 22px; height: 22px;
+  border-radius: 5px;
+  border: none;
+  background: none;
+  color: var(--text-faint);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mat-tree-item-act:hover { background: var(--bg-elevated); color: var(--text); }
+.mat-tree-item-act.danger:hover { background: var(--danger-bg); color: var(--danger); }
+
+.mat-tree-children {
+  margin-left: 22px;
+  padding-left: 4px;
+  border-left: 1.5px solid var(--border-mid);
+  margin-top: 2px;
+  margin-bottom: 4px;
+}
+
+.mat-tree-empty {
+  text-align: center;
+  padding: 24px 12px;
+  font-size: 12.5px;
+  color: var(--text-faint);
+}
+
+/* 콘텐츠 영역 */
+.mat-content {
+  min-height: 400px;
+}
+.mat-content-empty {
+  background: var(--bg-elevated);
+  border: 0.5px dashed var(--border-mid);
+  border-radius: 12px;
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--text-faint);
+  font-size: 13.5px;
+}
+.mat-content-empty-icon {
+  width: 48px; height: 48px;
+  background: var(--bg-soft);
+  border-radius: 50%;
+  margin: 0 auto 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-faint);
+}
+
+.mat-content-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+  gap: 12px;
+}
+.mat-content-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+.mat-content-meta {
+  font-size: 12px;
+  color: var(--text-soft);
+  margin-top: 4px;
+}
+.mat-content-meta-hidden {
+  display: inline-block;
+  font-size: 10.5px;
+  background: var(--warning-bg);
+  color: var(--warning);
+  padding: 2px 7px;
+  border-radius: 4px;
+  margin-left: 6px;
+  font-weight: 600;
+}
+
+/* 콘텐츠 카드 (관리자) */
+.mat-item-card {
+  background: var(--bg-elevated);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  padding: 13px 15px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: var(--shadow-xs);
+}
+.mat-item-card.hidden-mat { opacity: 0.55; }
+.mat-item-num {
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.mat-item-content {
+  flex: 1;
+  min-width: 0;
+}
+.mat-item-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+}
+.mat-item-meta {
+  font-size: 11.5px;
+  color: var(--text-soft);
+  margin-top: 2px;
+}
+.mat-item-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* ===== 모달 - 단계 편집 ===== */
+.modal.large { max-width: 720px; }
+.modal.xlarge { max-width: 860px; max-height: 95vh; }
+
+.steps-section {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 0.5px solid var(--border);
+}
+.steps-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.steps-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+.step-card {
+  background: var(--bg);
+  border: 0.5px solid var(--border-mid);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 10px;
+  position: relative;
+}
+.step-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 8px;
+}
+.step-card-num {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.step-card-actions {
+  display: flex;
+  gap: 4px;
+}
+.step-image-uploader {
+  margin-top: 10px;
+  border: 1px dashed var(--border-strong);
+  border-radius: 8px;
+  padding: 14px;
+  text-align: center;
+  cursor: pointer;
+  background: var(--bg-elevated);
+  color: var(--text-soft);
+  font-size: 12.5px;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+.step-image-uploader:hover { background: var(--bg-soft); }
+.step-image-preview {
+  margin-top: 10px;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.step-image-preview img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 200px;
+  object-fit: cover;
+}
+.step-image-remove {
+  position: absolute;
+  top: 6px; right: 6px;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.step-uploading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-soft);
+  padding: 12px;
+}
+.spinner {
+  width: 14px; height: 14px;
+  border: 2px solid var(--bg-soft);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 색상/아이콘 선택 */
+.color-picker {
+  display: flex;
+  gap: 8px;
+}
+.color-swatch {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.15s;
+}
+.color-swatch.selected { border-color: var(--text); }
+.color-swatch[data-color="1"] { background: var(--m-1-bg); border-color: var(--m-1-bg); }
+.color-swatch[data-color="1"].selected { border-color: var(--m-1); }
+.color-swatch[data-color="2"] { background: var(--m-2-bg); border-color: var(--m-2-bg); }
+.color-swatch[data-color="2"].selected { border-color: var(--m-2); }
+.color-swatch[data-color="3"] { background: var(--m-3-bg); border-color: var(--m-3-bg); }
+.color-swatch[data-color="3"].selected { border-color: var(--m-3); }
+.color-swatch[data-color="4"] { background: var(--m-4-bg); border-color: var(--m-4-bg); }
+.color-swatch[data-color="4"].selected { border-color: var(--m-4); }
+.color-swatch[data-color="5"] { background: var(--m-5-bg); border-color: var(--m-5-bg); }
+.color-swatch[data-color="5"].selected { border-color: var(--m-5); }
+.color-swatch[data-color="6"] { background: var(--m-6-bg); border-color: var(--m-6-bg); }
+.color-swatch[data-color="6"].selected { border-color: var(--m-6); }
+
+.icon-picker {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+.icon-swatch {
+  aspect-ratio: 1;
+  border: 1px solid var(--border-mid);
+  border-radius: 8px;
+  background: var(--bg-elevated);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-mid);
+  transition: all 0.15s;
+}
+.icon-swatch:hover { background: var(--bg-soft); }
+.icon-swatch.selected { 
+  border-color: var(--accent); 
+  background: var(--accent-soft); 
+  color: var(--accent);
+}
+
+/* 토글 */
+.form-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg);
+  border-radius: 8px;
+  border: 1px solid var(--border-mid);
+  cursor: pointer;
+}
+.form-toggle input { 
+  width: 18px; height: 18px; 
+  cursor: pointer;
+}
+.form-toggle-text {
+  flex: 1;
+}
+.form-toggle-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+.form-toggle-help {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  margin-top: 2px;
+}
+
+@media (max-width: 900px) {
+  .mat-layout { grid-template-columns: 1fr; }
+  .mat-tree { position: static; max-height: none; }
+}
+
 /* 모바일 대응 */
 @media (max-width: 768px) {
   .app.active { flex-direction: column; }
@@ -615,6 +1034,10 @@ input, textarea, select { font-family: inherit; }
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       학사일정
     </button>
+    <button class="nav-item" data-view="materials" onclick="switchView('materials')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      수업자료
+    </button>
 
     <div class="sidebar-footer">
       <a href="index.html" class="sidebar-footer-link">← 수강생 페이지</a>
@@ -674,7 +1097,167 @@ input, textarea, select { font-family: inherit; }
         <div id="schedule-list"></div>
       </div>
     </section>
+
+    <!-- 수업자료 뷰 -->
+    <section id="view-materials" class="view" style="display: none;">
+      <div class="main-header">
+        <div>
+          <h1 class="main-title">수업자료</h1>
+          <div class="main-subtitle">카테고리와 단계별 가이드 관리</div>
+        </div>
+      </div>
+
+      <div class="mat-layout">
+        <!-- 좌측: 카테고리 트리 -->
+        <div class="mat-tree">
+          <div class="mat-tree-head">
+            <div class="mat-tree-title">카테고리</div>
+            <button class="mat-tree-add" onclick="openCatModal()" title="카테고리 추가">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+          </div>
+          <div id="mat-tree-list"></div>
+        </div>
+
+        <!-- 우측: 콘텐츠 영역 -->
+        <div class="mat-content" id="mat-content"></div>
+      </div>
+    </section>
   </main>
+</div>
+
+<!-- 카테고리 추가/편집 모달 -->
+<div class="modal-backdrop" id="cat-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="cat-modal-title">카테고리 추가</div>
+      <button class="modal-close" onclick="closeModal('cat-modal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="cat-id">
+      <div class="form-row">
+        <label class="form-label">카테고리 이름</label>
+        <input type="text" class="form-input" id="cat-name" placeholder="예: 준비물, 자격증, 따즈아">
+      </div>
+      <div class="form-row">
+        <label class="form-label">상위 카테고리 (선택)</label>
+        <select class="form-select" id="cat-parent">
+          <option value="">없음 (최상위)</option>
+        </select>
+        <div class="form-help">자격증의 하위 자격증 종류 등을 만들 때 선택하세요.</div>
+      </div>
+      <div class="form-row split">
+        <div>
+          <label class="form-label">색상</label>
+          <div class="color-picker" id="cat-color-picker">
+            <div class="color-swatch" data-color="1" onclick="selectCatColor('1')"></div>
+            <div class="color-swatch" data-color="2" onclick="selectCatColor('2')"></div>
+            <div class="color-swatch" data-color="3" onclick="selectCatColor('3')"></div>
+            <div class="color-swatch" data-color="4" onclick="selectCatColor('4')"></div>
+            <div class="color-swatch" data-color="5" onclick="selectCatColor('5')"></div>
+            <div class="color-swatch" data-color="6" onclick="selectCatColor('6')"></div>
+          </div>
+          <input type="hidden" id="cat-color" value="6">
+        </div>
+        <div>
+          <label class="form-label">아이콘</label>
+          <div class="icon-picker" id="cat-icon-picker">
+            <div class="icon-swatch" data-icon="package" onclick="selectCatIcon('package')" title="준비물">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/></svg>
+            </div>
+            <div class="icon-swatch" data-icon="monitor" onclick="selectCatIcon('monitor')" title="프로그램">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <div class="icon-swatch" data-icon="award" onclick="selectCatIcon('award')" title="자격증">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+            </div>
+            <div class="icon-swatch" data-icon="video" onclick="selectCatIcon('video')" title="비대면">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+            </div>
+            <div class="icon-swatch" data-icon="tag" onclick="selectCatIcon('tag')" title="태그">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+            </div>
+            <div class="icon-swatch" data-icon="book" onclick="selectCatIcon('book')" title="책">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </div>
+            <div class="icon-swatch" data-icon="help" onclick="selectCatIcon('help')" title="도움">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="icon-swatch" data-icon="lightbulb" onclick="selectCatIcon('lightbulb')" title="팁">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>
+            </div>
+            <div class="icon-swatch" data-icon="file" onclick="selectCatIcon('file')" title="문서">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+          </div>
+          <input type="hidden" id="cat-icon" value="file">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-toggle">
+          <input type="checkbox" id="cat-hidden">
+          <div class="form-toggle-text">
+            <div class="form-toggle-label">숨김 처리</div>
+            <div class="form-toggle-help">수강생에게 보이지 않습니다 (운영자만 관리 가능)</div>
+          </div>
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('cat-modal')">취소</button>
+      <button class="btn btn-primary" onclick="saveCatModal()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 콘텐츠(자료) 작성/편집 모달 -->
+<div class="modal-backdrop" id="mat-modal">
+  <div class="modal xlarge">
+    <div class="modal-header">
+      <div class="modal-title" id="mat-modal-title">새 자료 작성</div>
+      <button class="modal-close" onclick="closeModal('mat-modal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="mat-id">
+      <input type="hidden" id="mat-categoryId">
+      <div class="form-row">
+        <label class="form-label">제목</label>
+        <input type="text" class="form-input" id="mat-title" placeholder="예: Photoshop 설치 방법">
+      </div>
+      <div class="form-row">
+        <label class="form-label">설명 (선택)</label>
+        <input type="text" class="form-input" id="mat-description" placeholder="간단한 한 줄 요약">
+      </div>
+      <div class="form-row">
+        <label class="form-toggle">
+          <input type="checkbox" id="mat-hidden">
+          <div class="form-toggle-text">
+            <div class="form-toggle-label">숨김 처리</div>
+            <div class="form-toggle-help">수강생에게 보이지 않습니다</div>
+          </div>
+        </label>
+      </div>
+      
+      <div class="steps-section">
+        <div class="steps-head">
+          <div class="steps-title">단계별 가이드</div>
+          <button class="btn" onclick="addStep()">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            단계 추가
+          </button>
+        </div>
+        <div id="steps-list"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('mat-modal')">취소</button>
+      <button class="btn btn-primary" onclick="saveMatModal()">저장</button>
+    </div>
+  </div>
 </div>
 
 <!-- 공지 작성/편집 모달 -->
@@ -790,6 +1373,7 @@ input, textarea, select { font-family: inherit; }
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 <script src="config.js"></script>
 <script>
 const ADMIN_TOKEN_KEY = 'admin_token';
@@ -857,6 +1441,7 @@ function switchView(view) {
 async function loadView() {
   if (currentView === 'posts') await loadPosts();
   else if (currentView === 'schedule') await loadSchedule();
+  else if (currentView === 'materials') await loadMaterialsAdmin();
 }
 
 // ============================================================
@@ -1148,6 +1733,479 @@ function formatScheduleDate(dateStr) {
 // ============================================================
 // 시작
 // ============================================================
+// ============================================================
+// 수업자료 관리
+// ============================================================
+let matState = {
+  categories: [],
+  selectedCategoryId: null,
+  materials: [],
+  editingSteps: [],
+  uploadingStepIdx: null
+};
+
+async function loadMaterialsAdmin() {
+  matState.categories = await window.api.call('getMaterialCategories', { includeHidden: true });
+  renderMatTree();
+  renderMatContent();
+}
+
+function renderMatTree() {
+  const cats = matState.categories;
+  const tops = cats.filter(c => !c.parentId);
+  
+  if (tops.length === 0) {
+    document.getElementById('mat-tree-list').innerHTML = `
+      <div class="mat-tree-empty">
+        카테고리가 없습니다.<br>+ 버튼으로 추가하세요.
+      </div>
+    `;
+    return;
+  }
+  
+  const renderItem = (cat, depth = 0) => {
+    const children = cats.filter(c => c.parentId === cat.id);
+    const matCount = matState.materials && matState.selectedCategoryId === cat.id ? matState.materials.length : 0;
+    const isActive = matState.selectedCategoryId === cat.id;
+    const hidden = cat.hidden ? 'hidden-cat' : '';
+    
+    let html = `
+      <div class="mat-tree-item ${isActive ? 'active' : ''} ${hidden}" onclick="selectCategory('${cat.id}')">
+        <svg class="mat-tree-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${getCatIconSvgAdmin(cat.icon)}</svg>
+        <span class="mat-tree-item-name">${escapeHtml(cat.name)}</span>
+        ${cat.hidden ? '<span class="mat-tree-item-badge">숨김</span>' : ''}
+        <div class="mat-tree-item-actions" onclick="event.stopPropagation()">
+          <button class="mat-tree-item-act" onclick="editCategory('${cat.id}')" title="편집">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button class="mat-tree-item-act danger" onclick="confirmDeleteCategory('${cat.id}', '${escapeHtml(cat.name).replace(/'/g, "\\'")}')" title="삭제">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          </button>
+        </div>
+      </div>
+    `;
+    
+    if (children.length > 0) {
+      html += `<div class="mat-tree-children">${children.map(c => renderItem(c, depth + 1)).join('')}</div>`;
+    }
+    return html;
+  };
+  
+  document.getElementById('mat-tree-list').innerHTML = tops.map(t => renderItem(t)).join('');
+}
+
+const ADMIN_CAT_ICONS = {
+  'package': '<path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/>',
+  'monitor': '<rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>',
+  'award': '<circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>',
+  'video': '<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/>',
+  'tag': '<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>',
+  'book': '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+  'help': '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+  'lightbulb': '<path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/>',
+  'file': '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>'
+};
+function getCatIconSvgAdmin(iconName) {
+  return ADMIN_CAT_ICONS[iconName] || ADMIN_CAT_ICONS['file'];
+}
+
+async function selectCategory(id) {
+  const cat = matState.categories.find(c => c.id === id);
+  if (!cat) return;
+  matState.selectedCategoryId = id;
+  
+  // 하위 카테고리가 있으면 콘텐츠 영역에 안내 표시 (콘텐츠는 leaf 카테고리에만)
+  const hasChildren = matState.categories.some(c => c.parentId === id);
+  if (hasChildren) {
+    matState.materials = [];
+  } else {
+    matState.materials = await window.api.call('getMaterials', { categoryId: id, includeHidden: true });
+  }
+  
+  renderMatTree();
+  renderMatContent();
+}
+
+function renderMatContent() {
+  const id = matState.selectedCategoryId;
+  if (!id) {
+    document.getElementById('mat-content').innerHTML = `
+      <div class="mat-content-empty">
+        <div class="mat-content-empty-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+        </div>
+        좌측에서 카테고리를 선택하세요
+      </div>
+    `;
+    return;
+  }
+  
+  const cat = matState.categories.find(c => c.id === id);
+  if (!cat) return;
+  
+  const hasChildren = matState.categories.some(c => c.parentId === id);
+  
+  if (hasChildren) {
+    document.getElementById('mat-content').innerHTML = `
+      <div class="mat-content-head">
+        <div>
+          <div class="mat-content-title">${escapeHtml(cat.name)}</div>
+          <div class="mat-content-meta">
+            상위 카테고리 · 하위 분류가 있습니다
+            ${cat.hidden ? '<span class="mat-content-meta-hidden">숨김</span>' : ''}
+          </div>
+        </div>
+      </div>
+      <div class="mat-content-empty">
+        이 카테고리는 하위 분류를 가지고 있습니다.<br>
+        실제 자료는 좌측 트리의 하위 분류를 선택해 추가하세요.
+      </div>
+    `;
+    return;
+  }
+  
+  document.getElementById('mat-content').innerHTML = `
+    <div class="mat-content-head">
+      <div>
+        <div class="mat-content-title">${escapeHtml(cat.name)}</div>
+        <div class="mat-content-meta">
+          전체 ${matState.materials.length}건
+          ${cat.hidden ? '<span class="mat-content-meta-hidden">카테고리 숨김</span>' : ''}
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="openMatModal()">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        새 자료 작성
+      </button>
+    </div>
+    ${matState.materials.length === 0
+      ? `<div class="mat-content-empty">아직 등록된 자료가 없습니다.<br>"새 자료 작성"으로 단계별 가이드를 작성해보세요.</div>`
+      : matState.materials.map((m, i) => `
+        <div class="mat-item-card ${m.hidden ? 'hidden-mat' : ''}">
+          <div class="mat-item-num">${i + 1}</div>
+          <div class="mat-item-content">
+            <div class="mat-item-title">${escapeHtml(m.title)}${m.hidden ? ' <span style="color: var(--warning); font-size: 11px; font-weight: 600; margin-left: 6px;">[숨김]</span>' : ''}</div>
+            <div class="mat-item-meta">${(m.steps || []).length}단계${m.description ? ' · ' + escapeHtml(m.description) : ''}</div>
+          </div>
+          <div class="mat-item-actions">
+            <button class="icon-btn" onclick="editMaterial('${m.id}')" title="편집">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="icon-btn danger" onclick="confirmDeleteMaterial('${m.id}', '${escapeHtml(m.title).replace(/'/g, "\\'")}')" title="삭제">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+            </button>
+          </div>
+        </div>
+      `).join('')
+    }
+  `;
+}
+
+// ===== 카테고리 모달 =====
+function openCatModal() {
+  document.getElementById('cat-modal-title').textContent = '카테고리 추가';
+  document.getElementById('cat-id').value = '';
+  document.getElementById('cat-name').value = '';
+  document.getElementById('cat-hidden').checked = false;
+  selectCatColor('6');
+  selectCatIcon('file');
+  populateCatParents();
+  openModal('cat-modal');
+  setTimeout(() => document.getElementById('cat-name').focus(), 100);
+}
+
+function editCategory(id) {
+  const cat = matState.categories.find(c => c.id === id);
+  if (!cat) return;
+  document.getElementById('cat-modal-title').textContent = '카테고리 편집';
+  document.getElementById('cat-id').value = cat.id;
+  document.getElementById('cat-name').value = cat.name;
+  document.getElementById('cat-hidden').checked = !!cat.hidden;
+  selectCatColor(cat.color || '6');
+  selectCatIcon(cat.icon || 'file');
+  populateCatParents(cat.id);
+  document.getElementById('cat-parent').value = cat.parentId || '';
+  openModal('cat-modal');
+}
+
+function populateCatParents(excludeId) {
+  // 자기 자신과 자기 자식들을 제외한 카테고리 목록 (최상위만 부모로 가능)
+  const tops = matState.categories.filter(c => !c.parentId && c.id !== excludeId);
+  const select = document.getElementById('cat-parent');
+  select.innerHTML = '<option value="">없음 (최상위)</option>' + 
+    tops.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
+}
+
+function selectCatColor(color) {
+  document.getElementById('cat-color').value = color;
+  document.querySelectorAll('#cat-color-picker .color-swatch').forEach(s => {
+    s.classList.toggle('selected', s.dataset.color === color);
+  });
+}
+
+function selectCatIcon(icon) {
+  document.getElementById('cat-icon').value = icon;
+  document.querySelectorAll('#cat-icon-picker .icon-swatch').forEach(s => {
+    s.classList.toggle('selected', s.dataset.icon === icon);
+  });
+}
+
+async function saveCatModal() {
+  const id = document.getElementById('cat-id').value || undefined;
+  const name = document.getElementById('cat-name').value.trim();
+  const parentId = document.getElementById('cat-parent').value || null;
+  const color = document.getElementById('cat-color').value;
+  const icon = document.getElementById('cat-icon').value;
+  const hidden = document.getElementById('cat-hidden').checked;
+  
+  if (!name) {
+    toast('이름을 입력해주세요', 'error');
+    return;
+  }
+  
+  // 새 카테고리는 마지막 순서로
+  let order;
+  if (id) {
+    const existing = matState.categories.find(c => c.id === id);
+    order = existing ? existing.order : 0;
+  } else {
+    const siblings = matState.categories.filter(c => (c.parentId || null) === parentId);
+    order = siblings.length;
+  }
+  
+  try {
+    await window.api.call('saveMaterialCategory', { id, name, parentId, color, icon, hidden, order }, getAuth());
+    closeModal('cat-modal');
+    toast(id ? '카테고리가 수정되었습니다' : '카테고리가 추가되었습니다');
+    await loadMaterialsAdmin();
+  } catch (e) {
+    toast('저장 실패: ' + e.message, 'error');
+  }
+}
+
+function confirmDeleteCategory(id, name) {
+  const cat = matState.categories.find(c => c.id === id);
+  const hasChildren = matState.categories.some(c => c.parentId === id);
+  
+  document.getElementById('confirm-title').textContent = '카테고리 삭제';
+  document.getElementById('confirm-text').innerHTML = hasChildren 
+    ? `"${name}"과 그 안의 <strong>모든 하위 분류 및 자료</strong>가 삭제됩니다. 되돌릴 수 없습니다.`
+    : `"${name}"과 그 안의 모든 자료가 삭제됩니다. 되돌릴 수 없습니다.`;
+  
+  pendingAction = async () => {
+    try {
+      await window.api.call('deleteMaterialCategory', { id }, getAuth());
+      if (matState.selectedCategoryId === id) matState.selectedCategoryId = null;
+      toast('삭제되었습니다');
+      await loadMaterialsAdmin();
+    } catch (e) {
+      toast('삭제 실패: ' + e.message, 'error');
+    }
+  };
+  openModal('confirm-modal');
+}
+
+// ===== 자료(콘텐츠) 모달 =====
+function openMatModal() {
+  if (!matState.selectedCategoryId) return;
+  document.getElementById('mat-modal-title').textContent = '새 자료 작성';
+  document.getElementById('mat-id').value = '';
+  document.getElementById('mat-categoryId').value = matState.selectedCategoryId;
+  document.getElementById('mat-title').value = '';
+  document.getElementById('mat-description').value = '';
+  document.getElementById('mat-hidden').checked = false;
+  matState.editingSteps = [{ title: '', content: '', imageUrl: '', imagePath: '' }];
+  renderSteps();
+  openModal('mat-modal');
+  setTimeout(() => document.getElementById('mat-title').focus(), 100);
+}
+
+async function editMaterial(id) {
+  const m = matState.materials.find(x => x.id === id);
+  if (!m) return;
+  document.getElementById('mat-modal-title').textContent = '자료 편집';
+  document.getElementById('mat-id').value = m.id;
+  document.getElementById('mat-categoryId').value = m.categoryId;
+  document.getElementById('mat-title').value = m.title;
+  document.getElementById('mat-description').value = m.description || '';
+  document.getElementById('mat-hidden').checked = !!m.hidden;
+  matState.editingSteps = (m.steps || []).map(s => ({ ...s }));
+  if (matState.editingSteps.length === 0) matState.editingSteps.push({ title: '', content: '', imageUrl: '', imagePath: '' });
+  renderSteps();
+  openModal('mat-modal');
+}
+
+function renderSteps() {
+  const html = matState.editingSteps.map((step, i) => `
+    <div class="step-card">
+      <div class="step-card-head">
+        <div class="step-card-num">${i + 1}</div>
+        <div style="font-size: 12px; color: var(--text-soft); flex: 1;">${i + 1}단계</div>
+        <div class="step-card-actions">
+          ${i > 0 ? `<button class="icon-btn" onclick="moveStep(${i}, -1)" title="위로">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+          </button>` : ''}
+          ${i < matState.editingSteps.length - 1 ? `<button class="icon-btn" onclick="moveStep(${i}, 1)" title="아래로">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>` : ''}
+          ${matState.editingSteps.length > 1 ? `<button class="icon-btn danger" onclick="removeStep(${i})" title="삭제">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          </button>` : ''}
+        </div>
+      </div>
+      <div class="form-row">
+        <input type="text" class="form-input" placeholder="단계 제목" value="${escapeHtml(step.title || '')}" oninput="updateStepField(${i}, 'title', this.value)">
+      </div>
+      <div class="form-row" style="margin-bottom: 0;">
+        <textarea class="form-textarea" placeholder="이 단계의 내용을 입력하세요" oninput="updateStepField(${i}, 'content', this.value)" style="min-height: 100px;">${escapeHtml(step.content || '')}</textarea>
+      </div>
+      ${step.imageUrl ? `
+        <div class="step-image-preview">
+          <img src="${escapeHtml(step.imageUrl)}" alt="">
+          <button class="step-image-remove" onclick="removeStepImage(${i})" title="이미지 제거">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      ` : matState.uploadingStepIdx === i ? `
+        <div class="step-uploading">
+          <div class="spinner"></div>
+          이미지 업로드 중...
+        </div>
+      ` : `
+        <label class="step-image-uploader">
+          <input type="file" accept="image/*" style="display: none;" onchange="uploadStepImage(${i}, this.files[0])">
+          📷 이미지 첨부 (선택)
+        </label>
+      `}
+    </div>
+  `).join('');
+  document.getElementById('steps-list').innerHTML = html;
+}
+
+function updateStepField(idx, field, value) {
+  if (matState.editingSteps[idx]) {
+    matState.editingSteps[idx][field] = value;
+  }
+}
+
+function addStep() {
+  matState.editingSteps.push({ title: '', content: '', imageUrl: '', imagePath: '' });
+  renderSteps();
+}
+
+function removeStep(idx) {
+  // 이미지가 있으면 Storage에서도 삭제 시도
+  const step = matState.editingSteps[idx];
+  if (step && step.imagePath) {
+    window.api.deleteImage(step.imagePath).catch(() => {});
+  }
+  matState.editingSteps.splice(idx, 1);
+  renderSteps();
+}
+
+function moveStep(idx, direction) {
+  const newIdx = idx + direction;
+  if (newIdx < 0 || newIdx >= matState.editingSteps.length) return;
+  const tmp = matState.editingSteps[idx];
+  matState.editingSteps[idx] = matState.editingSteps[newIdx];
+  matState.editingSteps[newIdx] = tmp;
+  renderSteps();
+}
+
+async function uploadStepImage(idx, file) {
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    toast('이미지는 5MB 이하만 가능합니다', 'error');
+    return;
+  }
+  matState.uploadingStepIdx = idx;
+  renderSteps();
+  
+  try {
+    const result = await window.api.uploadImage(file, 'materials');
+    matState.editingSteps[idx].imageUrl = result.url;
+    matState.editingSteps[idx].imagePath = result.path;
+    matState.uploadingStepIdx = null;
+    renderSteps();
+    toast('이미지가 업로드되었습니다');
+  } catch (e) {
+    matState.uploadingStepIdx = null;
+    renderSteps();
+    toast('업로드 실패: ' + e.message, 'error');
+  }
+}
+
+async function removeStepImage(idx) {
+  const step = matState.editingSteps[idx];
+  if (step && step.imagePath) {
+    await window.api.deleteImage(step.imagePath).catch(() => {});
+  }
+  matState.editingSteps[idx].imageUrl = '';
+  matState.editingSteps[idx].imagePath = '';
+  renderSteps();
+}
+
+async function saveMatModal() {
+  const id = document.getElementById('mat-id').value || undefined;
+  const categoryId = document.getElementById('mat-categoryId').value;
+  const title = document.getElementById('mat-title').value.trim();
+  const description = document.getElementById('mat-description').value.trim();
+  const hidden = document.getElementById('mat-hidden').checked;
+  const steps = matState.editingSteps.filter(s => (s.title || '').trim() || (s.content || '').trim() || s.imageUrl);
+  
+  if (!title) {
+    toast('제목을 입력해주세요', 'error');
+    return;
+  }
+  if (steps.length === 0) {
+    toast('최소 한 단계는 작성해주세요', 'error');
+    return;
+  }
+  
+  let order;
+  if (id) {
+    const existing = matState.materials.find(m => m.id === id);
+    order = existing ? existing.order : matState.materials.length;
+  } else {
+    order = matState.materials.length;
+  }
+  
+  try {
+    await window.api.call('saveMaterial', { 
+      id, categoryId, title, description, hidden, steps, order 
+    }, getAuth());
+    closeModal('mat-modal');
+    toast(id ? '자료가 수정되었습니다' : '자료가 등록되었습니다');
+    await selectCategory(categoryId);
+  } catch (e) {
+    toast('저장 실패: ' + e.message, 'error');
+  }
+}
+
+function confirmDeleteMaterial(id, title) {
+  document.getElementById('confirm-title').textContent = '자료 삭제';
+  document.getElementById('confirm-text').textContent = `"${title}" 자료를 삭제하시겠습니까? 첨부된 이미지도 함께 삭제됩니다.`;
+  pendingAction = async () => {
+    try {
+      // 이미지 먼저 정리
+      const m = matState.materials.find(x => x.id === id);
+      if (m && m.steps) {
+        for (const step of m.steps) {
+          if (step.imagePath) {
+            await window.api.deleteImage(step.imagePath).catch(() => {});
+          }
+        }
+      }
+      await window.api.call('deleteMaterial', { id }, getAuth());
+      toast('삭제되었습니다');
+      await selectCategory(matState.selectedCategoryId);
+    } catch (e) {
+      toast('삭제 실패: ' + e.message, 'error');
+    }
+  };
+  openModal('confirm-modal');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   if (isLoggedIn()) {
     showApp();

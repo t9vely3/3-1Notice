@@ -10,19 +10,19 @@ const firebaseConfig = {
   appId: "1:39136833631:web:e85baeeee4dd80f03bebea"
 };
 
-// Firebase 초기화 (CDN으로 로드된 SDK 사용)
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+const storage = firebase.storage();
 
 window.CONFIG = {
   USE_FIREBASE: true
 };
 
 // ============================================================
-// API 헬퍼 - Firestore CRUD
+// API 헬퍼
 // ============================================================
 window.api = {
-  // 인증 검증
+  // 인증
   async verifyAuth(password) {
     try {
       const doc = await db.collection('_admin').doc('password').get();
@@ -34,9 +34,8 @@ window.api = {
     }
   },
 
-  // 통합 호출 (admin.html 호환용)
   async call(action, data = {}, auth = null) {
-    // 읽기 액션
+    // ===== 읽기 =====
     if (action === 'getHome')        return await this._getHome();
     if (action === 'getPosts')       return await this._getPosts(data.category);
     if (action === 'getPost')        return await this._getPost(data.id);
@@ -45,8 +44,13 @@ window.api = {
     if (action === 'getClassrooms')  return await this._getList('classrooms');
     if (action === 'getRules')       return await this._getList('rules', 'order', 'asc');
     if (action === 'getSettings')    return await this._getSettings();
+    
+    // 수업자료
+    if (action === 'getMaterialCategories') return await this._getMaterialCategories(data.includeHidden);
+    if (action === 'getMaterials')   return await this._getMaterials(data.categoryId, data.includeHidden);
+    if (action === 'getMaterial')    return await this._getMaterial(data.id);
 
-    // 쓰기 액션 - 인증 체크
+    // ===== 쓰기 (인증 필요) =====
     if (auth) {
       const ok = await this.verifyAuth(auth);
       if (!ok) throw new Error('인증 실패');
@@ -63,6 +67,12 @@ window.api = {
     if (action === 'saveRule')       return await this._save('rules', data);
     if (action === 'deleteRule')     return await this._delete('rules', data.id);
     if (action === 'saveSettings')   return await this._saveSettings(data);
+    
+    // 수업자료
+    if (action === 'saveMaterialCategory') return await this._save('materialCategories', data);
+    if (action === 'deleteMaterialCategory') return await this._deleteMaterialCategory(data.id);
+    if (action === 'saveMaterial')   return await this._save('materials', data);
+    if (action === 'deleteMaterial') return await this._delete('materials', data.id);
 
     throw new Error('Unknown action: ' + action);
   },
@@ -81,14 +91,9 @@ window.api = {
     futureDate.setDate(futureDate.getDate() + 21);
     const futureStr = futureDate.toISOString().split('T')[0];
 
-    // 최신 공지 5개
-    const postsSnap = await db.collection('posts')
-      .orderBy('date', 'desc')
-      .limit(5)
-      .get();
+    const postsSnap = await db.collection('posts').orderBy('date', 'desc').limit(5).get();
     const posts = postsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
-    // 다가오는 일정 (오늘부터 3주)
     const scheduleSnap = await db.collection('schedule')
       .where('date', '>=', todayStr)
       .where('date', '<=', futureStr)
@@ -98,14 +103,15 @@ window.api = {
     const schedule = scheduleSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
     const settings = await this._getSettings();
-
     return { posts, schedule, settings };
   },
 
   async _getPosts(category) {
-    let query = db.collection('posts').orderBy('date', 'desc');
+    let query;
     if (category && category !== 'all' && category !== '전체') {
       query = db.collection('posts').where('category', '==', category).orderBy('date', 'desc');
+    } else {
+      query = db.collection('posts').orderBy('date', 'desc');
     }
     const snap = await query.get();
     return snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -128,14 +134,39 @@ window.api = {
     return doc.data();
   },
 
+  // 수업자료 - 카테고리
+  async _getMaterialCategories(includeHidden = false) {
+    const snap = await db.collection('materialCategories').orderBy('order', 'asc').get();
+    let cats = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (!includeHidden) {
+      cats = cats.filter(c => !c.hidden);
+    }
+    return cats;
+  },
+
+  // 수업자료 - 콘텐츠
+  async _getMaterials(categoryId, includeHidden = false) {
+    let query = db.collection('materials').where('categoryId', '==', categoryId).orderBy('order', 'asc');
+    const snap = await query.get();
+    let materials = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (!includeHidden) {
+      materials = materials.filter(m => !m.hidden);
+    }
+    return materials;
+  },
+
+  async _getMaterial(id) {
+    const doc = await db.collection('materials').doc(id).get();
+    if (!doc.exists) throw new Error('Material not found');
+    return { id: doc.id, ...doc.data() };
+  },
+
   async _save(collection, data) {
     const { id, ...rest } = data;
     if (id) {
-      // 업데이트
       await db.collection(collection).doc(id).set(rest, { merge: true });
       return { id, ...rest };
     } else {
-      // 추가 (Firestore가 ID 자동 생성)
       const ref = await db.collection(collection).add({
         ...rest,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -149,8 +180,53 @@ window.api = {
     return { deleted: id };
   },
 
+  // 카테고리 삭제 시 - 하위 카테고리 + 소속 콘텐츠도 삭제
+  async _deleteMaterialCategory(id) {
+    // 하위 카테고리 찾기
+    const childSnap = await db.collection('materialCategories').where('parentId', '==', id).get();
+    
+    // 하위 카테고리 ID 수집 (자기 자신 포함)
+    const allIds = [id, ...childSnap.docs.map(d => d.id)];
+    
+    // 모든 카테고리에 속한 콘텐츠 삭제
+    for (const catId of allIds) {
+      const matSnap = await db.collection('materials').where('categoryId', '==', catId).get();
+      for (const mDoc of matSnap.docs) {
+        await mDoc.ref.delete();
+      }
+    }
+    
+    // 카테고리들 삭제
+    for (const catId of allIds) {
+      await db.collection('materialCategories').doc(catId).delete();
+    }
+    
+    return { deleted: id };
+  },
+
   async _saveSettings(data) {
     await db.collection('settings').doc('default').set(data, { merge: true });
     return data;
+  },
+
+  // ===== Storage (이미지 업로드) =====
+  async uploadImage(file, path = 'materials') {
+    const timestamp = Date.now();
+    const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const fullPath = `${path}/${timestamp}_${safeName}`;
+    const ref = storage.ref(fullPath);
+    const snap = await ref.put(file);
+    const url = await snap.ref.getDownloadURL();
+    return { url, path: fullPath };
+  },
+
+  async deleteImage(path) {
+    if (!path) return;
+    try {
+      const ref = storage.ref(path);
+      await ref.delete();
+    } catch (e) {
+      console.warn('이미지 삭제 실패:', e);
+    }
   }
 };
