@@ -17,11 +17,12 @@ const storage = firebase.storage();
 window.CONFIG = { USE_FIREBASE: true };
 
 // 기본 색상 (운영자가 색상 컬렉션을 안 만들었을 때 fallback)
+// type: 'class' (수업일) | 'cancel' (휴강일) | 'other' (기타)
 window.DEFAULT_SCHEDULE_COLORS = [
-  { id: '_d_green', name: '정상 일정', color: '#10b981', order: 1 },
-  { id: '_d_red',   name: '휴강/공강', color: '#dc2626', order: 2 },
-  { id: '_d_blue',  name: '월수금 수업', color: '#2563eb', order: 3 },
-  { id: '_d_yellow', name: '화목금 수업', color: '#ca8a04', order: 4 }
+  { id: '_d_green',  name: '정상 수업',   color: '#10b981', type: 'class',  order: 1 },
+  { id: '_d_red',    name: '휴강/공강',   color: '#dc2626', type: 'cancel', order: 2 },
+  { id: '_d_blue',   name: '월수금 수업', color: '#2563eb', type: 'class',  order: 3 },
+  { id: '_d_yellow', name: '화목금 수업', color: '#ca8a04', type: 'class',  order: 4 }
 ];
 
 // ============================================================
@@ -306,4 +307,70 @@ window.expandDateRange = function(startDate, endDate, weekdays) {
     cur.setDate(cur.getDate() + 1);
   }
   return result;
+};
+
+// ============================================================
+// 유틸: 월별 회차 진행률 계산
+// ============================================================
+// schedule: 해당 월의 모든 일정
+// colors: 색상 정의 (type 필드 포함)
+// targetMonth: 'YYYY-MM' (예: '2026-05')
+// 결과: { totalSessions, completedSessions, totalDays, cancelDays, startDate, endDate, percent, dDay }
+window.computeMonthProgress = function(schedule, colors, targetMonth) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  // 해당 월 일정만 필터
+  const monthEvents = (schedule || []).filter(s => 
+    s.date && s.date.startsWith(targetMonth)
+  );
+  
+  if (monthEvents.length === 0) return null;
+  
+  // 색상별 type 매핑
+  const typeMap = {};
+  (colors || []).forEach(c => { typeMap[c.id] = c.type || 'other'; });
+  
+  // 수업일/휴강일 분리
+  const classDays = monthEvents.filter(s => typeMap[s.colorId] === 'class');
+  const cancelDays = monthEvents.filter(s => typeMap[s.colorId] === 'cancel');
+  
+  if (classDays.length === 0) return null;
+  
+  // 정렬
+  classDays.sort((a, b) => a.date.localeCompare(b.date));
+  
+  // 휴강일과 겹치지 않는 수업일만 카운트
+  const cancelDates = new Set(cancelDays.map(c => c.date));
+  const realClasses = classDays.filter(c => !cancelDates.has(c.date));
+  
+  if (realClasses.length === 0) return null;
+  
+  // 오늘 이전(또는 오늘 포함)에 진행된 회차 수
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  const completedSessions = realClasses.filter(c => c.date <= todayStr).length;
+  
+  // 첫 수업일 / 마지막 수업일
+  const startDate = realClasses[0].date;
+  const endDate = realClasses[realClasses.length - 1].date;
+  
+  // 종강 D-day
+  const endDateObj = new Date(endDate);
+  endDateObj.setHours(0, 0, 0, 0);
+  const dDayNum = Math.round((endDateObj - today) / (1000 * 60 * 60 * 24));
+  let dDay;
+  if (dDayNum > 0) dDay = `D-${dDayNum}`;
+  else if (dDayNum === 0) dDay = 'D-DAY';
+  else dDay = `D+${Math.abs(dDayNum)}`;
+  
+  return {
+    totalSessions: realClasses.length,
+    completedSessions,
+    totalDays: classDays.length,
+    cancelDays: cancelDays.length,
+    startDate,
+    endDate,
+    percent: Math.round((completedSessions / realClasses.length) * 100),
+    dDay
+  };
 };

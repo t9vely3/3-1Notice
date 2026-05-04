@@ -311,7 +311,7 @@ input, textarea, select { font-family: inherit; }
 .curriculum-table .table-row { grid-template-columns: 1fr 130px 110px 100px 80px; }
 .classrooms-table .table-row { grid-template-columns: 130px 1fr 80px; }
 .rules-table .table-row { grid-template-columns: 50px 1fr 80px; }
-.colors-table .table-row { grid-template-columns: 50px 1fr 60px 80px; }
+.colors-table .table-row { grid-template-columns: 50px 1fr 110px 130px 80px; }
 
 .cell-tag { display: flex; }
 .cell-color {
@@ -1278,6 +1278,7 @@ input, textarea, select { font-family: inherit; }
         <div class="table-row header">
           <div>순서</div>
           <div>이름</div>
+          <div>분류</div>
           <div>색상</div>
           <div></div>
         </div>
@@ -1290,10 +1291,19 @@ input, textarea, select { font-family: inherit; }
       <div class="main-header">
         <div>
           <h1 class="main-title">학원 정보</h1>
-          <div class="main-subtitle">수강생 페이지 문의 메뉴에 표시되는 정보</div>
+          <div class="main-subtitle">홈 화면 안내사항 + 학원 연락처 정보</div>
         </div>
       </div>
       <div style="background: var(--bg-elevated); border: 0.5px solid var(--border); border-radius: 12px; padding: 24px; max-width: 600px; box-shadow: var(--shadow-xs);">
+        <div class="form-row">
+          <label class="form-label" style="display: flex; align-items: center; gap: 6px;">
+            <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #f0b35a;"></span>
+            홈 화면 안내사항
+          </label>
+          <textarea class="form-textarea" id="set-notice" placeholder="멘토 카톡 상담은 평일 10:00 ~ 19:00&#10;주말·야간엔 이메일로 부탁드려요" style="min-height: 100px;"></textarea>
+          <div class="form-help">홈 화면 상단 노란색 안내 영역에 표시됩니다. 줄바꿈 그대로 반영됩니다. 비워두면 안내 영역이 표시되지 않습니다.</div>
+        </div>
+        <hr style="border: none; border-top: 0.5px solid var(--border); margin: 22px 0;">
         <div class="form-row">
           <label class="form-label">학원명</label>
           <input type="text" class="form-input" id="set-academyName" placeholder="SBS 아카데미 컴퓨터아트학원">
@@ -1458,7 +1468,16 @@ input, textarea, select { font-family: inherit; }
       <input type="hidden" id="color-id">
       <div class="form-row">
         <label class="form-label">이름</label>
-        <input type="text" class="form-input" id="color-name" placeholder="예: 정상 일정, 휴강, 월수금 수업">
+        <input type="text" class="form-input" id="color-name" placeholder="예: 정상 수업, 휴강, 월수금 수업">
+      </div>
+      <div class="form-row">
+        <label class="form-label">분류</label>
+        <select class="form-select" id="color-type">
+          <option value="class">수업일 (회차 카운트에 포함)</option>
+          <option value="cancel">휴강/공강 (회차에서 제외)</option>
+          <option value="other">기타 (특강·이벤트 등)</option>
+        </select>
+        <div class="form-help">홈 화면 진행률 게이지가 이 분류에 따라 자동 계산됩니다.<br>"수업일"로 분류된 일정만 회차로 카운트되고, "휴강/공강"은 휴강일수에 잡힙니다.</div>
       </div>
       <div class="form-row">
         <label class="form-label">색상</label>
@@ -2177,10 +2196,18 @@ async function loadColors() {
   }
   
   if (colors.length > 0) {
-    document.getElementById('colors-list').innerHTML = colors.map((c, i) => `
+    const typeLabels = {
+      'class': { label: '수업일', bg: '#d1fae5', color: '#047857' },
+      'cancel': { label: '휴강/공강', bg: '#fce8e9', color: '#8a1c23' },
+      'other': { label: '기타', bg: '#ebe9e3', color: '#3d3d38' }
+    };
+    document.getElementById('colors-list').innerHTML = colors.map((c, i) => {
+      const t = typeLabels[c.type || 'class'] || typeLabels['class'];
+      return `
       <div class="table-row" ${isDefault(c) ? 'style="opacity: 0.65;"' : ''}>
         <div class="cell-num">${i + 1}</div>
         <div class="cell-title">${escapeHtml(c.name)}${isDefault(c) ? ' <span style="font-size: 10.5px; color: var(--text-faint); font-weight: 500; margin-left: 6px;">(기본값)</span>' : ''}</div>
+        <div><span style="display: inline-block; font-size: 10.5px; padding: 3px 9px; border-radius: 5px; font-weight: 600; background: ${t.bg}; color: ${t.color};">${t.label}</span></div>
         <div class="cell-color"><span class="color-preview" style="background: ${c.color}"></span><span style="font-size: 11px; color: var(--text-soft); font-variant-numeric: tabular-nums;">${c.color}</span></div>
         <div class="cell-actions">
           ${isDefault(c) ? '' : `
@@ -2189,7 +2216,8 @@ async function loadColors() {
           `}
         </div>
       </div>
-    `).join('');
+    `;
+    }).join('');
   }
 }
 
@@ -2202,6 +2230,7 @@ function openColorModal() {
   document.getElementById('color-modal-title').textContent = '색상 추가';
   document.getElementById('color-id').value = '';
   document.getElementById('color-name').value = '';
+  document.getElementById('color-type').value = 'class';
   setColor('#10b981');
   openModal('color-modal');
   setTimeout(() => document.getElementById('color-name').focus(), 100);
@@ -2213,6 +2242,7 @@ function editColor(id) {
   document.getElementById('color-modal-title').textContent = '색상 편집';
   document.getElementById('color-id').value = c.id;
   document.getElementById('color-name').value = c.name;
+  document.getElementById('color-type').value = c.type || 'class';
   setColor(c.color);
   openModal('color-modal');
 }
@@ -2221,6 +2251,7 @@ async function saveColor() {
   const id = document.getElementById('color-id').value || undefined;
   const name = document.getElementById('color-name').value.trim();
   const color = document.getElementById('color-hex').value.trim();
+  const type = document.getElementById('color-type').value || 'class';
   
   if (!name) { toast('이름을 입력해주세요', 'error'); return; }
   if (!/^#[0-9a-fA-F]{6}$/.test(color)) { toast('올바른 색상 코드(#RRGGBB)를 입력해주세요', 'error'); return; }
@@ -2235,7 +2266,7 @@ async function saveColor() {
   }
   
   try {
-    await window.api.call('saveScheduleColor', { id, name, color, order }, getAuth());
+    await window.api.call('saveScheduleColor', { id, name, color, type, order }, getAuth());
     closeModal('color-modal');
     toast(id ? '색상이 수정되었습니다' : '색상이 추가되었습니다');
     await loadColors();
@@ -2509,6 +2540,7 @@ function confirmDeleteRule(id, name) {
 // ============================================================
 async function loadSettings() {
   const s = await window.api.call('getSettings');
+  document.getElementById('set-notice').value = s.notice || '';
   document.getElementById('set-academyName').value = s.academyName || '';
   document.getElementById('set-phone').value = s.phone || '';
   document.getElementById('set-contact').value = s.contact || '';
@@ -2518,6 +2550,7 @@ async function loadSettings() {
 
 async function saveSettings() {
   const data = {
+    notice: document.getElementById('set-notice').value.trim(),
     academyName: document.getElementById('set-academyName').value.trim(),
     phone: document.getElementById('set-phone').value.trim(),
     contact: document.getElementById('set-contact').value.trim(),

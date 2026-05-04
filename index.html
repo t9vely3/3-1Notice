@@ -7,6 +7,7 @@
 <title>SBS 아카데미 수강생 안내</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
 :root {
   --bg: #fafaf7;
@@ -14,7 +15,6 @@
   --bg-soft: #efeee8;
   --bg-section: #f4f3ed;
   
-  /* 가독성 강화 - 색상 대비 ↑ */
   --text: #111111;
   --text-mid: #2d2d2d;
   --text-soft: #4a4a4a;
@@ -32,17 +32,19 @@
   --danger-bg: #fce8e9;
   --warning: #b45309;
   --warning-bg: #fef3e0;
+  --notice: #fdf6e3;
+  --notice-text: #4a3416;
+  --notice-strong: #2a1d0c;
+  --notice-label: #92400e;
   
   --m-1: #5b21b6; --m-1-bg: #ede9fe;
   --m-2: #047857; --m-2-bg: #d1fae5;
   --m-3: #b45309; --m-3-bg: #fef3c7;
   --m-4: #1d4ed8; --m-4-bg: #dbeafe;
   --m-5: #be185d; --m-5-bg: #fce7f3;
-  --m-6: #475569; --m-6-bg: #e2e8f0;
   
   --shadow-xs: 0 1px 1px rgba(0,0,0,0.03);
   --shadow-sm: 0 1px 2px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.04);
-  --shadow-md: 0 2px 4px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.06);
 
   --safe-top: env(safe-area-inset-top, 0);
   --safe-bottom: env(safe-area-inset-bottom, 0);
@@ -51,631 +53,266 @@
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 html, body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard', 'Noto Sans KR', sans-serif;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
   background: var(--bg);
   color: var(--text);
-  /* 가독성 강화 - 본문 폰트 14 → 15 */
-  font-size: 15px;
+  font-size: 12px;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
-  letter-spacing: -0.011em;
+  letter-spacing: -0.014em;
 }
 
 body {
   max-width: 480px;
   margin: 0 auto;
   min-height: 100vh;
-  padding-bottom: calc(72px + var(--safe-bottom));
+  padding-bottom: calc(64px + var(--safe-bottom));
   background: var(--bg);
 }
+
+button { font-family: inherit; cursor: pointer; }
 
 /* ===== 헤더 ===== */
 .header {
   position: sticky;
   top: 0;
-  background: rgba(250, 250, 247, 0.92);
+  background: rgba(250, 250, 247, 0.94);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
-  padding: calc(12px + var(--safe-top)) 18px 12px;
+  padding: calc(12px + var(--safe-top)) 16px 11px;
   border-bottom: 0.5px solid var(--border);
   z-index: 10;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-
-.header-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+.header-brand { display: flex; align-items: center; gap: 9px; }
 .header-logo {
-  width: 38px; height: 38px;
+  width: 32px; height: 32px;
   background: var(--accent);
-  border-radius: 9px;
+  border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
   color: #fff;
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  box-shadow: 0 1px 2px rgba(30, 58, 95, 0.2);
+  font-size: 10px;
+  font-weight: 600;
 }
-.header-text { line-height: 1.25; }
-.header-title { 
-  font-size: 11.5px; color: var(--text-soft);
-  letter-spacing: -0.005em;
+.header-text { line-height: 1.2; }
+.header-title {
+  font-size: 9px;
+  color: var(--text-soft);
   font-weight: 500;
 }
-.header-page { 
-  font-size: 19px; font-weight: 700; color: var(--text);
+.header-page {
+  font-size: 13px;
+  font-weight: 600;
   letter-spacing: -0.025em;
   margin-top: 1px;
 }
-
-.header-actions {
-  display: flex;
-  gap: 6px;
-}
+.header-actions { display: flex; gap: 4px; }
 .header-btn {
   position: relative;
-  width: 38px; height: 38px;
+  width: 28px; height: 28px;
   border-radius: 50%;
   background: var(--bg-elevated);
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer; border: 0.5px solid var(--border-mid);
-  box-shadow: var(--shadow-xs);
-  transition: transform 0.1s;
+  border: 0.5px solid var(--border-mid);
+  color: var(--text-soft);
 }
 .header-btn:active { transform: scale(0.95); }
 .header-btn-dot {
-  position: absolute; top: 5px; right: 5px;
-  width: 9px; height: 9px; border-radius: 50%;
-  background: var(--danger); 
-  border: 2px solid var(--bg);
+  position: absolute;
+  width: 6px; height: 6px;
+  background: var(--danger);
+  border: 1.5px solid var(--bg);
+  border-radius: 50%;
+  top: 4px; right: 4px;
 }
 
 /* ===== 페이지 ===== */
-.page { padding: 14px 16px 24px; }
+.page { padding: 0; }
 .page.hidden { display: none; }
+.page-content { padding: 12px 14px 18px; }
 
-/* ===== 인사 카드 ===== */
-.greeting-card {
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
-  border-radius: 18px;
-  padding: 20px 22px;
-  margin-bottom: 22px;
-  color: #fff;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(30, 58, 95, 0.18);
+/* ===== 안내사항 라인 ===== */
+.notice-bar {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 10px 14px;
+  background: var(--notice);
+  border-bottom: 0.5px solid #f0e6c8;
 }
-.greeting-card::after {
-  content: '';
-  position: absolute;
-  top: -50px; right: -50px;
-  width: 160px; height: 160px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.05);
+.notice-icon {
+  width: 13px; height: 13px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--notice-label);
 }
-.greeting-card::before {
-  content: '';
-  position: absolute;
-  bottom: -30px; right: 50px;
-  width: 80px; height: 80px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.04);
+.notice-content { flex: 1; min-width: 0; }
+.notice-label {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--notice-label);
+  letter-spacing: 0.04em;
+  margin-bottom: 3px;
 }
-.greeting-date {
-  font-size: 12px;
-  opacity: 0.82;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  margin-bottom: 4px;
-  position: relative;
-  z-index: 1;
+.notice-text {
+  font-size: 10.5px;
+  color: var(--notice-text);
+  line-height: 1.6;
+  letter-spacing: -0.012em;
+  word-break: keep-all;
+  white-space: pre-wrap;
 }
-.greeting-text {
+.notice-text b { font-weight: 600; color: var(--notice-strong); }
+
+/* ===== 요약 영역 ===== */
+.summary {
+  padding: 12px 14px;
+  border-bottom: 0.5px solid var(--border);
+}
+.day-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 11px;
+}
+.day-num {
   font-size: 19px;
-  font-weight: 700;
-  letter-spacing: -0.025em;
-  line-height: 1.4;
-  position: relative;
-  z-index: 1;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1;
 }
-.greeting-sub {
-  font-size: 13px;
-  opacity: 0.9;
-  margin-top: 8px;
-  position: relative;
-  z-index: 1;
-  line-height: 1.5;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-.greeting-sub-dot {
-  width: 4px; height: 4px;
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 50%;
+.day-label {
+  font-size: 10px;
+  color: var(--text-soft);
+  font-weight: 500;
 }
 
-/* 진행률 바 (홈) */
-.progress-block {
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  position: relative;
-  z-index: 1;
+.gauge-card {
+  background: var(--bg-elevated);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 11px;
+  margin-bottom: 6px;
+  box-shadow: var(--shadow-xs);
 }
-.progress-label {
+.gauge-row {
   display: flex;
+  align-items: baseline;
   justify-content: space-between;
-  font-size: 12px;
-  opacity: 0.85;
   margin-bottom: 6px;
 }
-.progress-label-name { font-weight: 600; }
-.progress-label-percent { 
-  font-variant-numeric: tabular-nums; 
-  font-weight: 700; 
+.gauge-name {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: -0.012em;
 }
-.progress-bar {
+.gauge-pct {
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.gauge-pct.danger { color: var(--danger); }
+.gauge-bar {
   height: 5px;
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(0,0,0,0.06);
   border-radius: 3px;
   overflow: hidden;
 }
-.progress-bar-fill {
+.gauge-fill {
   height: 100%;
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--accent);
   border-radius: 3px;
   transition: width 0.5s ease;
 }
-.progress-meta {
-  font-size: 11px;
-  opacity: 0.7;
+.gauge-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: var(--text-faint);
   margin-top: 5px;
-  display: flex;
-  justify-content: space-between;
-  font-variant-numeric: tabular-nums;
-}
-
-/* ===== 섹션 ===== */
-.section-head {
-  display: flex; justify-content: space-between; align-items: center;
-  margin: 4px 4px 12px;
-}
-.section-title { 
-  font-size: 14.5px; font-weight: 700; color: var(--text);
-  letter-spacing: -0.02em;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-.section-title-dot {
-  width: 4px; height: 4px;
-  background: var(--accent);
-  border-radius: 50%;
-  display: inline-block;
-}
-.section-link {
-  font-size: 13px; color: var(--text-soft);
-  background: none; border: none; cursor: pointer; padding: 4px 6px;
-  font-family: inherit;
-  font-weight: 500;
-  border-radius: 6px;
-  transition: background 0.15s;
-}
-.section-link:active { background: var(--bg-soft); }
-
-.section-block { margin-bottom: 24px; }
-
-/* ===== 공지 카드 ===== */
-.post-card {
-  border: 0.5px solid var(--border);
-  border-radius: 14px;
-  padding: 14px 16px;
-  margin-bottom: 8px;
-  background: var(--bg-elevated);
-  cursor: pointer;
-  transition: transform 0.12s, box-shadow 0.15s, opacity 0.15s;
-  box-shadow: var(--shadow-xs);
-  position: relative;
-}
-.post-card:active { 
-  transform: scale(0.985);
-  box-shadow: var(--shadow-sm);
-}
-
-/* 읽은 공지는 살짝 흐리게 */
-.post-card.read { opacity: 0.62; }
-.post-card.read .post-title { color: var(--text-mid); font-weight: 500; }
-
-/* 북마크 */
-.post-bookmark {
-  position: absolute;
-  top: 14px; right: 14px;
-  width: 28px; height: 28px;
-  border-radius: 6px;
-  background: none;
-  border: none;
-  color: var(--text-faint);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: color 0.15s, transform 0.1s;
-}
-.post-bookmark:active { transform: scale(0.9); }
-.post-bookmark.active { color: #d97706; }
-.post-bookmark.active svg { fill: #d97706; }
-
-.post-meta {
-  display: flex; align-items: center; gap: 6px;
-  margin-bottom: 7px;
-  padding-right: 32px;
-}
-.post-tag {
-  font-size: 11px; padding: 3px 9px; border-radius: 6px;
-  font-weight: 600;
-  letter-spacing: -0.005em;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-.post-tag::before {
-  content: '';
-  width: 4px; height: 4px;
-  border-radius: 50%;
-  background: currentColor;
-  opacity: 0.7;
-}
-.post-tag-new {
-  font-size: 9.5px; padding: 2px 6px; border-radius: 4px;
-  background: var(--danger); color: #fff;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-}
-.post-date { 
-  font-size: 11.5px; color: var(--text-faint); margin-left: auto;
   font-variant-numeric: tabular-nums;
   font-weight: 500;
 }
-.post-title { 
-  font-size: 15px; font-weight: 600; margin: 0; color: var(--text);
-  line-height: 1.4;
-  letter-spacing: -0.018em;
-  padding-right: 32px;
-}
-.post-summary {
-  font-size: 13px; color: var(--text-soft);
-  margin: 5px 0 0; line-height: 1.55;
-  display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical;
-  overflow: hidden;
-  padding-right: 32px;
-}
 
-.tag-학사 { background: #fce8e9; color: #8a1c23; }
-.tag-세미나 { background: #ebe9fc; color: #3a2e8a; }
-.tag-특강 { background: #ebe9fc; color: #3a2e8a; }
-.tag-시설 { background: #ddf3eb; color: #084d3a; }
-.tag-평가 { background: #fbecd5; color: #683800; }
-.tag-이벤트 { background: #fce8e9; color: #8a1c23; }
-.tag-취업 { background: #dfeefa; color: #154d92; }
-.tag-기타 { background: #ebe9e3; color: #3d3d38; }
-
-/* ===== 일정 (홈에 노출되는 작은 리스트) ===== */
-.schedule-list {
-  border-radius: 14px;
-  overflow: hidden;
-  background: var(--bg-elevated);
-  border: 0.5px solid var(--border);
-  box-shadow: var(--shadow-xs);
-}
-.schedule-item {
-  display: flex; align-items: center;
-  padding: 13px 15px;
-  border-bottom: 0.5px solid var(--border);
-  cursor: pointer;
-  transition: background 0.15s;
-  gap: 12px;
-}
-.schedule-item:active { background: var(--bg-soft); }
-.schedule-item:last-child { border-bottom: none; }
-
-.schedule-date-box {
-  width: 44px;
-  flex-shrink: 0;
-  text-align: center;
-  border-radius: 8px;
-  padding: 5px 0 4px;
-  background: var(--bg-section);
-}
-.schedule-date-box.today {
-  background: var(--accent);
-  color: #fff;
-}
-.schedule-day { 
-  font-size: 10.5px; color: var(--text-soft);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
-.schedule-date-box.today .schedule-day { color: rgba(255, 255, 255, 0.85); }
-.schedule-num { 
-  font-size: 16px; font-weight: 700; color: var(--text);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.025em;
-  line-height: 1.1;
-  margin-top: 1px;
-}
-.schedule-date-box.today .schedule-num { color: #fff; }
-
-.schedule-content {
-  flex: 1; display: flex; align-items: center; gap: 8px;
-  min-width: 0;
-}
-.schedule-text {
-  font-size: 14px; color: var(--text);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  font-weight: 500;
-}
-.schedule-dday {
-  font-size: 11px;
-  color: var(--text-faint);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  margin-left: auto;
-  flex-shrink: 0;
-  padding: 2px 6px;
-  background: var(--bg-section);
-  border-radius: 5px;
-}
-.schedule-dday.urgent {
-  color: var(--danger);
-  background: var(--danger-bg);
-}
-
-/* ============ 캘린더 뷰 ============ */
-.cal-header {
+.stat-row {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 14px;
-  padding: 0 2px;
-}
-.cal-month {
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: -0.025em;
-  color: var(--text);
-}
-.cal-nav {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-}
-.cal-nav-btn {
-  width: 32px; height: 32px;
-  border-radius: 8px;
-  background: var(--bg-elevated);
-  border: 0.5px solid var(--border-mid);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: var(--text-mid);
-  transition: background 0.15s;
-}
-.cal-nav-btn:active { background: var(--bg-soft); }
-.cal-today-btn {
-  padding: 0 12px;
-  height: 32px;
-  border-radius: 8px;
-  background: var(--bg-elevated);
-  border: 0.5px solid var(--border-mid);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-mid);
-  cursor: pointer;
-  font-family: inherit;
-}
-.cal-today-btn:active { background: var(--bg-soft); }
-
-.cal-grid {
-  background: var(--bg-elevated);
-  border: 0.5px solid var(--border);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: var(--shadow-xs);
-}
-
-.cal-week-header {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  background: var(--bg-section);
-  border-bottom: 0.5px solid var(--border);
-}
-.cal-week-day {
-  padding: 8px 0;
-  text-align: center;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-soft);
-  letter-spacing: 0.02em;
-}
-.cal-week-day.sun { color: var(--danger); }
-.cal-week-day.sat { color: #1d4ed8; }
-
-.cal-days {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-}
-.cal-day {
-  aspect-ratio: 1;
-  border-right: 0.5px solid var(--border);
-  border-bottom: 0.5px solid var(--border);
-  padding: 4px 4px 2px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  position: relative;
-  transition: background 0.15s;
-  min-height: 48px;
-}
-.cal-day:nth-child(7n) { border-right: none; }
-.cal-day:active { background: var(--bg-section); }
-.cal-day.other-month { 
-  color: var(--text-faint);
-  background: rgba(0, 0, 0, 0.015);
-}
-.cal-day.selected { 
-  background: var(--accent-soft); 
-}
-.cal-day.today .cal-day-num { 
-  background: var(--danger);
-  color: #fff;
-  border-radius: 50%;
-  width: 22px; height: 22px;
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto;
-}
-
-.cal-day-num {
-  font-size: 13px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--text);
-}
-.cal-day.other-month .cal-day-num { color: var(--text-faint); }
-.cal-day.sun .cal-day-num { color: var(--danger); }
-.cal-day.sat .cal-day-num { color: #1d4ed8; }
-.cal-day.other-month.sun .cal-day-num,
-.cal-day.other-month.sat .cal-day-num { opacity: 0.5; }
-
-.cal-events {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  margin-top: 4px;
-  width: 100%;
-  flex-wrap: wrap;
-}
-.cal-event-dot {
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.cal-event-bar {
-  width: 100%;
-  height: 3px;
-  border-radius: 2px;
-  margin-top: 1px;
-}
-
-/* 캘린더 범례 */
-.cal-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 14px;
-  padding: 12px 14px;
-  background: var(--bg-elevated);
-  border: 0.5px solid var(--border);
-  border-radius: 12px;
-  margin-bottom: 14px;
-  box-shadow: var(--shadow-xs);
-}
-.cal-legend-item {
-  display: flex;
-  align-items: center;
   gap: 6px;
-  font-size: 11.5px;
-  color: var(--text-mid);
+}
+.stat {
+  flex: 1;
+  background: var(--bg-elevated);
+  border-radius: 8px;
+  padding: 8px 10px;
+  border: 0.5px solid var(--border);
+  box-shadow: var(--shadow-xs);
+}
+.stat-num {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.022em;
+  color: var(--accent);
+  line-height: 1.1;
+}
+.stat-num small {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--text-faint);
+  margin-left: 2px;
+}
+.stat-label {
+  font-size: 9px;
+  color: var(--text-soft);
+  margin-top: 3px;
   font-weight: 500;
 }
-.cal-legend-dot {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
 
-/* 선택된 날짜 일정 */
-.cal-selected-day {
-  margin-top: 18px;
-}
-.cal-selected-title {
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  margin-bottom: 10px;
-  padding: 0 4px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.cal-selected-title-date {
-  font-size: 18px;
-  font-weight: 800;
-  color: var(--text);
-}
-.cal-selected-title-day {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-soft);
-}
-.cal-selected-title-today {
-  font-size: 10.5px;
-  background: var(--danger);
-  color: #fff;
-  padding: 2px 7px;
-  border-radius: 4px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-}
-
-/* ===== 메뉴 ===== */
-.menu-grid {
+/* ===== 메뉴 (5칸 한 줄) ===== */
+.menu5 {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  padding: 13px 10px 5px;
 }
 .menu-item {
   background: var(--bg-elevated);
   border: 0.5px solid var(--border);
-  border-radius: 16px;
-  padding: 18px 8px 14px;
+  border-radius: 11px;
+  padding: 10px 2px 9px;
   text-align: center;
+  min-width: 0;
   cursor: pointer;
   transition: transform 0.12s, box-shadow 0.15s;
-  font-family: inherit;
   box-shadow: var(--shadow-xs);
+  font-family: inherit;
 }
-.menu-item:active { 
+.menu-item:active {
   transform: scale(0.94);
   box-shadow: var(--shadow-sm);
 }
 .menu-icon-wrap {
-  width: 46px; height: 46px;
-  border-radius: 13px;
-  margin: 0 auto 10px;
+  width: 30px; height: 30px;
+  border-radius: 9px;
+  margin: 0 auto 6px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.menu-icon { 
-  width: 22px; height: 22px;
-  display: block;
-  stroke-width: 2;
-}
-.menu-label { 
-  font-size: 13px; color: var(--text);
+.menu-icon { width: 15px; height: 15px; stroke-width: 2; }
+.menu-label {
+  font-size: 9px;
   font-weight: 600;
-  letter-spacing: -0.015em;
+  color: var(--text);
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+  min-height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
-
 .menu-item[data-color="1"] .menu-icon-wrap { background: var(--m-1-bg); }
 .menu-item[data-color="1"] .menu-icon { color: var(--m-1); }
 .menu-item[data-color="2"] .menu-icon-wrap { background: var(--m-2-bg); }
@@ -686,76 +323,204 @@ body {
 .menu-item[data-color="4"] .menu-icon { color: var(--m-4); }
 .menu-item[data-color="5"] .menu-icon-wrap { background: var(--m-5-bg); }
 .menu-item[data-color="5"] .menu-icon { color: var(--m-5); }
-.menu-item[data-color="6"] .menu-icon-wrap { background: var(--m-6-bg); }
-.menu-item[data-color="6"] .menu-icon { color: var(--m-6); }
+
+/* ===== 섹션 ===== */
+.section {
+  padding: 13px 14px 4px;
+}
+.section-h {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 7px;
+  gap: 8px;
+}
+.section-t {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: -0.018em;
+}
+.section-meta {
+  font-size: 9px;
+  color: var(--text-faint);
+  font-weight: 500;
+}
+.section-link {
+  margin-left: auto;
+  font-size: 9px;
+  color: var(--accent);
+  font-weight: 600;
+  background: none;
+  border: none;
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-family: inherit;
+}
+.section-link:active { background: var(--bg-soft); }
+
+/* ===== 일정 행 ===== */
+.event {
+  display: flex;
+  align-items: center;
+  padding: 7px 0;
+  gap: 9px;
+  border-bottom: 0.5px solid rgba(0,0,0,0.05);
+  cursor: pointer;
+}
+.event:last-child { border-bottom: none; }
+.event-date {
+  font-size: 9.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  min-width: 32px;
+}
+.event-day {
+  font-size: 9px;
+  color: var(--text-faint);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.event-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.event-title {
+  font-size: 10px;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
+.event-dday {
+  font-size: 9px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  color: var(--text-faint);
+}
+.event-dday.urgent { color: var(--danger); }
+
+/* ===== 공지 행 ===== */
+.post {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 8px 0;
+  border-bottom: 0.5px solid rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.post:last-child { border-bottom: none; }
+.post.read { opacity: 0.55; }
+.post-tag {
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.post-body { flex: 1; min-width: 0; }
+.post-title {
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: -0.012em;
+  line-height: 1.4;
+}
+.post-meta {
+  font-size: 9px;
+  color: var(--text-faint);
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.post-new {
+  font-size: 8.5px;
+  background: var(--danger);
+  color: #fff;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.tag-학사 { background: #fce8e9; color: #8a1c23; }
+.tag-세미나 { background: #ebe9fc; color: #3a2e8a; }
+.tag-특강 { background: #ebe9fc; color: #3a2e8a; }
+.tag-시설 { background: #ddf3eb; color: #084d3a; }
+.tag-평가 { background: #fbecd5; color: #683800; }
+.tag-이벤트 { background: #fce8e9; color: #8a1c23; }
+.tag-취업 { background: #dfeefa; color: #154d92; }
+.tag-기타 { background: #ebe9e3; color: #3d3d38; }
 
 /* ===== 빈 상태 ===== */
 .empty {
   text-align: center;
-  padding: 48px 20px;
+  padding: 38px 16px;
   color: var(--text-faint);
-  font-size: 13.5px;
-  background: var(--bg-elevated);
-  border-radius: 14px;
-  border: 0.5px solid var(--border);
+  font-size: 10.5px;
 }
 .empty-icon {
-  width: 38px; height: 38px;
-  margin: 0 auto 10px;
-  background: var(--bg-section);
+  width: 32px; height: 32px;
+  margin: 0 auto 8px;
+  background: var(--bg-soft);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-faint);
 }
 
 /* ===== 상세 페이지 ===== */
 .detail-back {
   background: none; border: none;
-  font-size: 14.5px; color: var(--text-mid);
+  font-size: 11px;
+  color: var(--text-mid);
   padding: 6px 8px 6px 0;
-  margin-bottom: 8px;
-  cursor: pointer; display: flex; align-items: center; gap: 3px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
   font-family: inherit;
   font-weight: 500;
-  border-radius: 6px;
-  transition: color 0.15s;
 }
-.detail-back:active { color: var(--text); }
-.detail-title { 
-  font-size: 23px; font-weight: 700; margin: 6px 0 12px; color: var(--text);
+.detail-title {
+  font-size: 18px;
+  font-weight: 700;
   letter-spacing: -0.025em;
   line-height: 1.3;
-  padding-right: 40px;
+  margin: 4px 0 10px;
+  padding-right: 32px;
 }
-.detail-title-wrap {
-  position: relative;
-}
+.detail-title-wrap { position: relative; }
 .detail-bookmark {
   position: absolute;
-  top: 4px; right: 0;
-  width: 36px; height: 36px;
-  border-radius: 8px;
+  top: 0; right: 0;
+  width: 30px; height: 30px;
+  border-radius: 6px;
   background: none;
   border: none;
   color: var(--text-faint);
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .detail-bookmark.active { color: #d97706; }
 .detail-bookmark.active svg { fill: #d97706; }
-
 .detail-meta {
-  display: flex; align-items: center; gap: 8px;
-  margin-bottom: 20px;
-  padding-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
   border-bottom: 0.5px solid var(--border);
 }
 .detail-content {
-  font-size: 15px; line-height: 1.85;
+  font-size: 11.5px;
+  line-height: 1.85;
   white-space: pre-wrap;
   word-break: keep-all;
   color: var(--text-mid);
@@ -763,194 +528,28 @@ body {
 .detail-content a {
   color: var(--accent);
   text-decoration: underline;
-  text-underline-offset: 2px;
 }
-
-/* ===== 리스트 카드 ===== */
-.list-card {
-  border: 0.5px solid var(--border);
-  border-radius: 14px;
-  padding: 16px 17px;
-  margin-bottom: 10px;
-  background: var(--bg-elevated);
-  box-shadow: var(--shadow-xs);
-}
-.list-card-title {
-  font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--text);
-  letter-spacing: -0.018em;
-}
-.list-card-meta {
-  font-size: 12.5px; color: var(--text-soft);
-  margin-bottom: 8px;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.list-card-meta-divider {
-  width: 3px; height: 3px;
-  background: var(--text-faint);
-  border-radius: 50%;
-  display: inline-block;
-}
-.list-card-desc {
-  font-size: 13.5px; color: var(--text-soft); line-height: 1.6;
-}
-
-.program-chips {
-  display: flex; flex-wrap: wrap; gap: 5px;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 0.5px dashed var(--border-mid);
-}
-.program-chip {
-  font-size: 11.5px;
-  padding: 4px 10px;
-  background: var(--accent-soft);
-  color: var(--accent);
-  border-radius: 7px;
-  font-weight: 600;
-  letter-spacing: -0.005em;
-}
-
-/* 커리큘럼 진행률 바 (커리큘럼 페이지) */
-.curriculum-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11.5px;
-  font-weight: 600;
-  padding: 3px 9px;
-  border-radius: 6px;
-  margin-bottom: 8px;
-}
-.status-진행중 {
-  background: #d1fae5; color: #065f46;
-}
-.status-진행중::before {
-  content: '';
-  width: 5px; height: 5px;
-  background: #10b981;
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-.status-예정 { background: var(--bg-section); color: var(--text-soft); }
-.status-종료 { background: var(--bg-section); color: var(--text-faint); }
-
-.list-progress {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 0.5px dashed var(--border-mid);
-}
-.list-progress-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 11.5px;
-  font-weight: 600;
-  margin-bottom: 6px;
-  color: var(--text-soft);
-}
-.list-progress-percent {
-  color: var(--accent);
-  font-variant-numeric: tabular-nums;
-}
-.list-progress-bar {
-  height: 5px;
-  background: var(--bg-section);
-  border-radius: 3px;
-  overflow: hidden;
-}
-.list-progress-fill {
-  height: 100%;
-  background: var(--accent);
-  border-radius: 3px;
-  transition: width 0.5s;
-}
-
-/* ===== 학칙 ===== */
-.accordion {
-  border: 0.5px solid var(--border);
-  border-radius: 14px;
-  margin-bottom: 8px;
-  overflow: hidden;
-  background: var(--bg-elevated);
-  box-shadow: var(--shadow-xs);
-  transition: box-shadow 0.15s;
-}
-.accordion.open { box-shadow: var(--shadow-sm); }
-.accordion-head {
-  width: 100%;
-  padding: 16px;
-  background: var(--bg-elevated);
-  border: none;
-  text-align: left;
-  font-size: 14.5px; font-weight: 600; color: var(--text);
-  cursor: pointer;
-  display: flex; justify-content: space-between; align-items: center;
-  font-family: inherit;
-  letter-spacing: -0.015em;
-}
-.accordion-head:active { background: var(--bg-soft); }
-.accordion-num {
-  display: inline-block;
-  width: 22px; height: 22px;
-  background: var(--bg-section);
-  border-radius: 6px;
-  font-size: 11.5px;
-  font-weight: 700;
-  color: var(--text-mid);
-  text-align: center;
-  line-height: 22px;
-  margin-right: 10px;
-  font-variant-numeric: tabular-nums;
-  transition: all 0.2s;
-}
-.accordion.open .accordion-num {
-  background: var(--accent);
-  color: #fff;
-}
-.accordion-icon {
-  transition: transform 0.2s, color 0.2s;
-  color: var(--text-soft);
-}
-.accordion.open .accordion-icon { transform: rotate(180deg); color: var(--accent); }
-.accordion-body {
-  display: none;
-  padding: 14px 16px 18px;
-  font-size: 14px; color: var(--text-mid);
-  line-height: 1.75;
-  white-space: pre-wrap;
-  word-break: keep-all;
-  border-top: 0.5px solid var(--border);
-}
-.accordion.open .accordion-body { display: block; }
 
 /* ===== 카테고리 필터 ===== */
 .filter-bar {
-  display: flex; gap: 6px;
+  display: flex; gap: 5px;
   overflow-x: auto;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   padding-bottom: 4px;
   -webkit-overflow-scrolling: touch;
 }
 .filter-bar::-webkit-scrollbar { display: none; }
 .filter-chip {
   flex-shrink: 0;
-  padding: 7px 14px;
+  padding: 6px 12px;
   border: 0.5px solid var(--border-mid);
-  border-radius: 18px;
+  border-radius: 16px;
   background: var(--bg-elevated);
-  font-size: 13px;
+  font-size: 10.5px;
   cursor: pointer;
   font-family: inherit;
   color: var(--text-mid);
   font-weight: 500;
-  transition: all 0.15s;
 }
 .filter-chip:active { background: var(--bg-soft); }
 .filter-chip.active {
@@ -966,41 +565,32 @@ body {
   align-items: center;
   background: var(--bg-elevated);
   border: 0.5px solid var(--border-mid);
-  border-radius: 12px;
-  padding: 0 14px;
+  border-radius: 10px;
+  padding: 0 12px;
   margin-bottom: 12px;
   box-shadow: var(--shadow-xs);
-  transition: border-color 0.15s;
 }
 .search-bar:focus-within { border-color: var(--accent); }
-.search-icon {
-  color: var(--text-faint);
-  flex-shrink: 0;
-}
 .search-input {
   flex: 1;
-  padding: 11px 10px;
+  padding: 9px 8px;
   border: none;
   background: none;
-  font-size: 14px;
+  font-size: 11.5px;
   font-family: inherit;
   outline: none;
   color: var(--text);
 }
-.search-input::placeholder { color: var(--text-faint); }
 .search-clear {
   background: none;
   border: none;
-  width: 22px; height: 22px;
+  width: 20px; height: 20px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-faint);
-  cursor: pointer;
 }
-.search-clear:active { background: var(--bg-soft); }
-
 .search-highlight {
   background: #fef3c7;
   color: #78350f;
@@ -1009,19 +599,452 @@ body {
   font-weight: 600;
 }
 
-/* ===== 문의 ===== */
+/* ===== 캘린더 ===== */
+.cal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 0 2px;
+}
+.cal-month {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+.cal-nav { display: flex; gap: 4px; align-items: center; }
+.cal-nav-btn {
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  background: var(--bg-elevated);
+  border: 0.5px solid var(--border-mid);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-mid);
+}
+.cal-today-btn {
+  padding: 0 10px;
+  height: 28px;
+  border-radius: 7px;
+  background: var(--bg-elevated);
+  border: 0.5px solid var(--border-mid);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-mid);
+  font-family: inherit;
+}
+.cal-grid {
+  background: var(--bg-elevated);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.cal-week-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: var(--bg-section);
+  border-bottom: 0.5px solid var(--border);
+}
+.cal-week-day {
+  padding: 6px 0;
+  text-align: center;
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-soft);
+}
+.cal-week-day.sun { color: var(--danger); }
+.cal-week-day.sat { color: #1d4ed8; }
+.cal-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+.cal-day {
+  aspect-ratio: 1;
+  border-right: 0.5px solid var(--border);
+  border-bottom: 0.5px solid var(--border);
+  padding: 4px 3px 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  min-height: 44px;
+}
+.cal-day:nth-child(7n) { border-right: none; }
+.cal-day:active { background: var(--bg-section); }
+.cal-day.other-month { color: var(--text-faint); background: rgba(0, 0, 0, 0.015); }
+.cal-day.selected { background: var(--accent-soft); }
+.cal-day.today .cal-day-num {
+  background: var(--danger);
+  color: #fff;
+  border-radius: 50%;
+  width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto;
+}
+.cal-day-num {
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.cal-day.other-month .cal-day-num { color: var(--text-faint); }
+.cal-day.sun .cal-day-num { color: var(--danger); }
+.cal-day.sat .cal-day-num { color: #1d4ed8; }
+.cal-day.other-month.sun .cal-day-num,
+.cal-day.other-month.sat .cal-day-num { opacity: 0.5; }
+.cal-events {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  margin-top: 3px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+.cal-event-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.cal-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  padding: 10px 12px;
+  background: var(--bg-elevated);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+.cal-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9.5px;
+  color: var(--text-mid);
+  font-weight: 500;
+}
+.cal-legend-dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.cal-selected-day { margin-top: 14px; }
+.cal-selected-title {
+  font-size: 10.5px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cal-selected-title-date {
+  font-size: 14px;
+  font-weight: 700;
+}
+.cal-selected-title-day {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-soft);
+}
+.cal-selected-title-today {
+  font-size: 9px;
+  background: var(--danger);
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 700;
+}
+
+/* ===== 리스트 카드 ===== */
+.list-card {
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 8px;
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow-xs);
+}
+.list-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  letter-spacing: -0.018em;
+}
+.list-card-meta {
+  font-size: 10px;
+  color: var(--text-soft);
+  margin-bottom: 6px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.list-card-desc {
+  font-size: 11px;
+  color: var(--text-soft);
+  line-height: 1.55;
+}
+.program-chips {
+  display: flex; flex-wrap: wrap; gap: 4px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 0.5px dashed var(--border-mid);
+}
+.program-chip {
+  font-size: 9.5px;
+  padding: 3px 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+/* ===== 학칙 (이용안내) ===== */
+.accordion {
+  border: 0.5px solid var(--border);
+  border-radius: 11px;
+  margin-bottom: 6px;
+  overflow: hidden;
+  background: var(--bg-elevated);
+}
+.accordion-head {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--bg-elevated);
+  border: none;
+  text-align: left;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: inherit;
+}
+.accordion-num {
+  display: inline-block;
+  width: 18px; height: 18px;
+  background: var(--bg-section);
+  border-radius: 5px;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-mid);
+  text-align: center;
+  line-height: 18px;
+  margin-right: 8px;
+}
+.accordion.open .accordion-num {
+  background: var(--accent);
+  color: #fff;
+}
+.accordion-icon {
+  transition: transform 0.2s;
+  color: var(--text-faint);
+}
+.accordion.open .accordion-icon { transform: rotate(180deg); color: var(--accent); }
+.accordion-body {
+  display: none;
+  padding: 10px 14px 14px;
+  font-size: 11px;
+  color: var(--text-mid);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: keep-all;
+  border-top: 0.5px solid var(--border);
+}
+.accordion.open .accordion-body { display: block; }
+
+/* ===== 수업안내 (수업자료) ===== */
+.material-cat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.material-cat-card {
+  background: var(--bg-elevated);
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 12px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  box-shadow: var(--shadow-xs);
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  min-height: 90px;
+}
+.material-cat-card:active { transform: scale(0.97); }
+.material-cat-icon-wrap {
+  width: 36px; height: 36px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.material-cat-icon { width: 18px; height: 18px; stroke-width: 2; }
+.material-cat-name {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.material-cat-meta {
+  font-size: 9.5px;
+  color: var(--text-faint);
+  font-weight: 500;
+  margin-top: -6px;
+}
+.material-cat-card[data-color="1"] .material-cat-icon-wrap { background: var(--m-1-bg); }
+.material-cat-card[data-color="1"] .material-cat-icon { color: var(--m-1); }
+.material-cat-card[data-color="2"] .material-cat-icon-wrap { background: var(--m-2-bg); }
+.material-cat-card[data-color="2"] .material-cat-icon { color: var(--m-2); }
+.material-cat-card[data-color="3"] .material-cat-icon-wrap { background: var(--m-3-bg); }
+.material-cat-card[data-color="3"] .material-cat-icon { color: var(--m-3); }
+.material-cat-card[data-color="4"] .material-cat-icon-wrap { background: var(--m-4-bg); }
+.material-cat-card[data-color="4"] .material-cat-icon { color: var(--m-4); }
+.material-cat-card[data-color="5"] .material-cat-icon-wrap { background: var(--m-5-bg); }
+.material-cat-card[data-color="5"] .material-cat-icon { color: var(--m-5); }
+.material-cat-card[data-color="6"] .material-cat-icon-wrap { background: #e2e8f0; }
+.material-cat-card[data-color="6"] .material-cat-icon { color: #475569; }
+
+.material-card {
+  background: var(--bg-elevated);
+  border: 0.5px solid var(--border);
+  border-radius: 11px;
+  padding: 12px 13px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.material-card-num {
+  width: 24px; height: 24px;
+  border-radius: 6px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.material-card-content { flex: 1; min-width: 0; }
+.material-card-title {
+  font-size: 11.5px;
+  font-weight: 600;
+}
+.material-card-desc {
+  font-size: 10px;
+  color: var(--text-soft);
+  margin-top: 2px;
+}
+.material-card-meta {
+  font-size: 9px;
+  color: var(--text-faint);
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+/* 수업안내 - 단계별 가이드 */
+.material-detail-header {
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 0.5px solid var(--border);
+}
+.material-detail-breadcrumb {
+  font-size: 10px;
+  color: var(--text-faint);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.material-detail-title {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.3;
+  margin-bottom: 6px;
+}
+.material-detail-desc {
+  font-size: 11.5px;
+  color: var(--text-soft);
+  line-height: 1.55;
+}
+.material-step {
+  margin-bottom: 22px;
+  position: relative;
+}
+.material-step-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 10px;
+}
+.material-step-num {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.material-step-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.022em;
+  line-height: 1.35;
+}
+.material-step-content {
+  font-size: 11.5px;
+  line-height: 1.75;
+  color: var(--text-mid);
+  white-space: pre-wrap;
+  word-break: keep-all;
+  padding-left: 31px;
+}
+.material-step-image {
+  margin-top: 10px;
+  margin-left: 31px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 0.5px solid var(--border);
+}
+.material-step-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.material-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 10px; top: 28px; bottom: -14px;
+  width: 1.5px;
+  background: var(--bg-section);
+}
+
+/* ===== 강의장 / 비대면 ===== */
 .contact-row {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 14px 0;
+  gap: 12px;
+  padding: 12px 0;
   border-bottom: 0.5px solid var(--border);
 }
-.contact-row:last-child { border-bottom: none; padding-bottom: 0; }
-.contact-row:first-of-type { padding-top: 4px; }
+.contact-row:last-child { border-bottom: none; }
 .contact-icon {
-  width: 38px; height: 38px;
-  border-radius: 11px;
+  width: 32px; height: 32px;
+  border-radius: 9px;
   background: var(--accent-soft);
   display: flex;
   align-items: center;
@@ -1030,18 +1053,35 @@ body {
   flex-shrink: 0;
 }
 .contact-content { flex: 1; min-width: 0; }
-.contact-label { 
-  font-size: 11.5px; 
-  color: var(--text-faint); 
+.contact-label {
+  font-size: 9.5px;
+  color: var(--text-faint);
   font-weight: 500;
-  letter-spacing: 0.02em;
 }
-.contact-value { 
-  font-size: 14.5px; 
-  color: var(--text); 
+.contact-value {
+  font-size: 11.5px;
   font-weight: 500;
-  margin-top: 2px;
+  margin-top: 1px;
   word-break: break-all;
+}
+
+/* 월별 헤더 (일정 페이지) */
+.month-header {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 18px 4px 10px;
+}
+.month-header:first-child { margin-top: 4px; }
+.month-header-text {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.month-header-line {
+  flex: 1;
+  height: 0.5px;
+  background: var(--border);
 }
 
 /* ===== 탭바 ===== */
@@ -1054,40 +1094,36 @@ body {
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   border-top: 0.5px solid var(--border);
   display: flex;
-  padding: 8px 0 calc(10px + var(--safe-bottom));
+  padding: 6px 0 calc(8px + var(--safe-bottom));
   z-index: 10;
 }
 .tab {
   flex: 1;
   background: none; border: none;
-  padding: 6px 0;
-  cursor: pointer;
+  padding: 5px 0;
   text-align: center;
   position: relative;
   font-family: inherit;
 }
 .tab-icon {
-  width: 22px; height: 22px;
-  margin: 0 auto 3px;
+  width: 18px; height: 18px;
+  margin: 0 auto 2px;
   color: var(--text-faint);
   display: block;
-  transition: color 0.15s;
   stroke-width: 2;
 }
 .tab-label {
-  font-size: 11px;
+  font-size: 9px;
   color: var(--text-faint);
   font-weight: 500;
-  transition: color 0.15s;
-  letter-spacing: -0.01em;
 }
 .tab.active .tab-icon { color: var(--accent); stroke-width: 2.4; }
 .tab.active .tab-label { color: var(--accent); font-weight: 700; }
 .tab-badge {
   position: absolute;
-  top: 5px;
+  top: 4px;
   left: 50%; margin-left: 5px;
-  width: 7px; height: 7px;
+  width: 6px; height: 6px;
   border-radius: 50%;
   background: var(--danger);
   border: 1.5px solid var(--bg);
@@ -1096,242 +1132,12 @@ body {
 .admin-link {
   display: block;
   text-align: center;
-  margin-top: 32px;
-  padding: 12px;
-  font-size: 11.5px;
+  margin-top: 24px;
+  padding: 10px;
+  font-size: 9.5px;
   color: var(--text-faint);
   text-decoration: none;
   font-weight: 500;
-  letter-spacing: 0.02em;
-}
-.admin-link:active { color: var(--accent); }
-
-/* ===== 수업자료 - 카테고리 그리드 ===== */
-.material-category-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-}
-.material-cat-card {
-  background: var(--bg-elevated);
-  border: 0.5px solid var(--border);
-  border-radius: 14px;
-  padding: 18px 16px;
-  cursor: pointer;
-  transition: transform 0.12s, box-shadow 0.15s;
-  font-family: inherit;
-  text-align: left;
-  box-shadow: var(--shadow-xs);
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-height: 110px;
-}
-.material-cat-card:active {
-  transform: scale(0.97);
-  box-shadow: var(--shadow-sm);
-}
-.material-cat-icon-wrap {
-  width: 42px; height: 42px;
-  border-radius: 11px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.material-cat-icon {
-  width: 22px; height: 22px;
-  stroke-width: 2;
-}
-.material-cat-name {
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--text);
-  line-height: 1.3;
-}
-.material-cat-meta {
-  font-size: 11.5px;
-  color: var(--text-faint);
-  font-weight: 500;
-  margin-top: -8px;
-}
-.material-cat-arrow {
-  position: absolute;
-  bottom: 14px; right: 14px;
-  color: var(--text-faint);
-}
-
-/* 카테고리 색상 매핑 (관리자가 선택한 color 1-6) */
-.material-cat-card[data-color="1"] .material-cat-icon-wrap { background: var(--m-1-bg); }
-.material-cat-card[data-color="1"] .material-cat-icon { color: var(--m-1); }
-.material-cat-card[data-color="2"] .material-cat-icon-wrap { background: var(--m-2-bg); }
-.material-cat-card[data-color="2"] .material-cat-icon { color: var(--m-2); }
-.material-cat-card[data-color="3"] .material-cat-icon-wrap { background: var(--m-3-bg); }
-.material-cat-card[data-color="3"] .material-cat-icon { color: var(--m-3); }
-.material-cat-card[data-color="4"] .material-cat-icon-wrap { background: var(--m-4-bg); }
-.material-cat-card[data-color="4"] .material-cat-icon { color: var(--m-4); }
-.material-cat-card[data-color="5"] .material-cat-icon-wrap { background: var(--m-5-bg); }
-.material-cat-card[data-color="5"] .material-cat-icon { color: var(--m-5); }
-.material-cat-card[data-color="6"] .material-cat-icon-wrap { background: var(--m-6-bg); }
-.material-cat-card[data-color="6"] .material-cat-icon { color: var(--m-6); }
-
-/* ===== 수업자료 - 콘텐츠 카드 목록 ===== */
-.material-card {
-  background: var(--bg-elevated);
-  border: 0.5px solid var(--border);
-  border-radius: 14px;
-  padding: 14px 16px;
-  margin-bottom: 8px;
-  cursor: pointer;
-  transition: transform 0.12s, box-shadow 0.15s;
-  box-shadow: var(--shadow-xs);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.material-card:active {
-  transform: scale(0.985);
-  box-shadow: var(--shadow-sm);
-}
-.material-card-num {
-  width: 30px; height: 30px;
-  border-radius: 8px;
-  background: var(--accent-soft);
-  color: var(--accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 700;
-  flex-shrink: 0;
-  font-variant-numeric: tabular-nums;
-}
-.material-card-content {
-  flex: 1;
-  min-width: 0;
-}
-.material-card-title {
-  font-size: 14.5px;
-  font-weight: 600;
-  color: var(--text);
-  line-height: 1.4;
-  letter-spacing: -0.018em;
-}
-.material-card-desc {
-  font-size: 12.5px;
-  color: var(--text-soft);
-  margin-top: 3px;
-  line-height: 1.45;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.material-card-meta {
-  font-size: 11px;
-  color: var(--text-faint);
-  margin-top: 4px;
-}
-.material-card-arrow {
-  color: var(--text-faint);
-  flex-shrink: 0;
-}
-
-/* ===== 수업자료 - 단계별 풀페이지 상세 ===== */
-.material-detail-header {
-  margin-bottom: 22px;
-  padding-bottom: 18px;
-  border-bottom: 0.5px solid var(--border);
-}
-.material-detail-breadcrumb {
-  font-size: 12px;
-  color: var(--text-faint);
-  margin-bottom: 8px;
-  font-weight: 500;
-}
-.material-detail-breadcrumb-sep {
-  margin: 0 6px;
-  opacity: 0.5;
-}
-.material-detail-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.025em;
-  line-height: 1.3;
-  margin-bottom: 8px;
-}
-.material-detail-desc {
-  font-size: 14px;
-  color: var(--text-soft);
-  line-height: 1.6;
-}
-
-.material-step {
-  margin-bottom: 28px;
-  position: relative;
-}
-.material-step-head {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-.material-step-num {
-  width: 26px; height: 26px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 700;
-  flex-shrink: 0;
-  font-variant-numeric: tabular-nums;
-}
-.material-step-title {
-  font-size: 16.5px;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.022em;
-  line-height: 1.35;
-  flex: 1;
-}
-.material-step-content {
-  font-size: 14.5px;
-  line-height: 1.78;
-  color: var(--text-mid);
-  white-space: pre-wrap;
-  word-break: keep-all;
-  padding-left: 36px;
-}
-.material-step-image {
-  margin-top: 12px;
-  margin-left: 36px;
-  border-radius: 10px;
-  overflow: hidden;
-  border: 0.5px solid var(--border);
-  background: var(--bg-section);
-}
-.material-step-image img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-/* 단계 사이 연결선 */
-.material-step:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  left: 12px; top: 32px; bottom: -16px;
-  width: 2px;
-  background: var(--bg-section);
-}
-
-@media (max-width: 380px) {
-  .material-category-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -1342,213 +1148,234 @@ body {
     <div class="header-logo">SBS</div>
     <div class="header-text">
       <div class="header-title">컴퓨터아트학원</div>
-      <div class="header-page" id="page-name">수강생 안내</div>
+      <div class="header-page" id="page-name">홈</div>
     </div>
   </div>
   <div class="header-actions">
     <button class="header-btn" onclick="navigate('search')" title="검색">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-soft);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </button>
     <button class="header-btn" onclick="navigate('posts')" title="공지">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-soft);"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
       <span class="header-btn-dot" id="bell-dot" style="display: none;"></span>
     </button>
   </div>
 </header>
 
+<!-- ===== 홈 ===== -->
 <main id="page-home" class="page">
-  <div class="greeting-card">
-    <div class="greeting-date" id="greeting-date"></div>
-    <div class="greeting-text" id="greeting-text"></div>
-    <div class="greeting-sub" id="greeting-sub"></div>
-    <div class="progress-block" id="progress-block" style="display: none;">
-      <div class="progress-label">
-        <span class="progress-label-name" id="progress-name"></span>
-        <span class="progress-label-percent" id="progress-percent"></span>
+  <!-- 안내사항 (운영자 작성) -->
+  <div class="notice-bar" id="notice-bar" style="display: none;">
+    <svg class="notice-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    <div class="notice-content">
+      <div class="notice-label">안내사항</div>
+      <div class="notice-text" id="notice-text"></div>
+    </div>
+  </div>
+
+  <!-- 요약: 날짜 + 진행률 게이지 + 통계 -->
+  <div class="summary">
+    <div class="day-row">
+      <div class="day-num" id="day-num">5월 4일</div>
+      <div class="day-label" id="day-label">월요일</div>
+    </div>
+    <div id="gauge-area"></div>
+    <div class="stat-row" id="stat-row" style="display: none;">
+      <div class="stat">
+        <div class="stat-num" id="stat-cancel"><span id="stat-cancel-num">0</span><small>일</small></div>
+        <div class="stat-label" id="stat-cancel-label">이번 달 휴강</div>
       </div>
-      <div class="progress-bar">
-        <div class="progress-bar-fill" id="progress-fill"></div>
-      </div>
-      <div class="progress-meta">
-        <span id="progress-start"></span>
-        <span id="progress-end"></span>
+      <div class="stat">
+        <div class="stat-num" id="stat-new"><span id="stat-new-num">0</span><small>건</small></div>
+        <div class="stat-label">새 공지</div>
       </div>
     </div>
   </div>
 
-  <div class="section-block">
-    <div class="section-head">
-      <span class="section-title"><span class="section-title-dot"></span>최신 소식</span>
-      <button class="section-link" onclick="navigate('posts')">전체보기 ›</button>
-    </div>
-    <div id="home-posts"></div>
+  <!-- 메뉴 -->
+  <div class="menu5">
+    <button class="menu-item" data-color="1" onclick="navigate('schedule')">
+      <div class="menu-icon-wrap">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </div>
+      <span class="menu-label"><span>수업일정</span></span>
+    </button>
+    <button class="menu-item" data-color="2" onclick="navigate('materials')">
+      <div class="menu-icon-wrap">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      </div>
+      <span class="menu-label"><span>수업안내</span></span>
+    </button>
+    <button class="menu-item" data-color="3" onclick="navigate('classrooms')">
+      <div class="menu-icon-wrap">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+      </div>
+      <span class="menu-label"><span>비대면</span></span>
+    </button>
+    <button class="menu-item" data-color="4" onclick="navigate('rules')">
+      <div class="menu-icon-wrap">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      </div>
+      <span class="menu-label"><span>이용안내</span></span>
+    </button>
+    <button class="menu-item" data-color="5" onclick="navigate('seminars')">
+      <div class="menu-icon-wrap">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <span class="menu-label"><span>특강</span><span>세미나</span></span>
+    </button>
   </div>
 
-  <div class="section-block">
-    <div class="section-head">
-      <span class="section-title"><span class="section-title-dot"></span>다가오는 일정</span>
+  <!-- 다가오는 일정 -->
+  <div class="section">
+    <div class="section-h">
+      <span class="section-t">다가오는 일정</span>
+      <span class="section-meta" id="upcoming-count"></span>
       <button class="section-link" onclick="navigate('schedule')">캘린더 ›</button>
     </div>
     <div id="home-schedule"></div>
   </div>
 
-  <div class="section-block">
-    <div class="section-head">
-      <span class="section-title"><span class="section-title-dot"></span>메뉴</span>
+  <!-- 최신 공지 -->
+  <div class="section">
+    <div class="section-h">
+      <span class="section-t">최신 공지</span>
+      <button class="section-link" onclick="navigate('posts')">전체 ›</button>
     </div>
-    <div class="menu-grid">
-      <button class="menu-item" data-color="1" onclick="navigate('curriculum')">
-        <div class="menu-icon-wrap">
-          <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-        </div>
-        <span class="menu-label">커리큘럼</span>
-      </button>
-      <button class="menu-item" data-color="2" onclick="navigate('materials')">
-        <div class="menu-icon-wrap">
-          <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-        </div>
-        <span class="menu-label">수업자료</span>
-      </button>
-      <button class="menu-item" data-color="3" onclick="navigate('classrooms')">
-        <div class="menu-icon-wrap">
-          <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-        </div>
-        <span class="menu-label">강의장</span>
-      </button>
-      <button class="menu-item" data-color="4" onclick="navigate('rules')">
-        <div class="menu-icon-wrap">
-          <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        </div>
-        <span class="menu-label">학칙</span>
-      </button>
-      <button class="menu-item" data-color="1" onclick="navigate('schedule')">
-        <div class="menu-icon-wrap">
-          <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        </div>
-        <span class="menu-label">학사일정</span>
-      </button>
-      <button class="menu-item" data-color="5" onclick="navigate('seminars')">
-        <div class="menu-icon-wrap">
-          <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        </div>
-        <span class="menu-label">세미나</span>
-      </button>
-      <button class="menu-item" data-color="6" onclick="navigate('contact')">
-        <div class="menu-icon-wrap">
-          <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        </div>
-        <span class="menu-label">문의</span>
-      </button>
-    </div>
+    <div id="home-posts"></div>
   </div>
 
   <a href="admin.html" class="admin-link">관리자 페이지</a>
 </main>
 
+<!-- 공지 목록 -->
 <main id="page-posts" class="page hidden">
-  <div class="filter-bar" id="post-filters"></div>
-  <div id="posts-list"></div>
-</main>
-
-<main id="page-search" class="page hidden">
-  <div class="search-bar">
-    <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <input type="text" class="search-input" id="search-input" placeholder="공지 / 일정 / 커리큘럼 검색" autocomplete="off">
-    <button class="search-clear" id="search-clear" style="display: none;" onclick="clearSearch()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
+  <div class="page-content">
+    <div class="filter-bar" id="post-filters"></div>
+    <div id="posts-list"></div>
   </div>
-  <div id="search-results"></div>
 </main>
 
+<!-- 공지 상세 -->
 <main id="page-post-detail" class="page hidden">
-  <button class="detail-back" onclick="goBack()">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-    뒤로
-  </button>
-  <div id="post-detail-content"></div>
+  <div class="page-content">
+    <button class="detail-back" onclick="goBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      뒤로
+    </button>
+    <div id="post-detail-content"></div>
+  </div>
 </main>
 
+<!-- 검색 -->
+<main id="page-search" class="page hidden">
+  <div class="page-content">
+    <div class="search-bar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-faint);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" class="search-input" id="search-input" placeholder="공지 / 일정 / 수업안내 검색" autocomplete="off">
+      <button class="search-clear" id="search-clear" style="display: none;" onclick="clearSearch()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div id="search-results"></div>
+  </div>
+</main>
+
+<!-- 수업일정 (캘린더) -->
 <main id="page-schedule" class="page hidden">
-  <div class="cal-header">
-    <div class="cal-month" id="cal-month-label"></div>
-    <div class="cal-nav">
-      <button class="cal-today-btn" onclick="calGoToday()">오늘</button>
-      <button class="cal-nav-btn" onclick="calPrev()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <button class="cal-nav-btn" onclick="calNext()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
+  <div class="page-content">
+    <div class="cal-header">
+      <div class="cal-month" id="cal-month-label"></div>
+      <div class="cal-nav">
+        <button class="cal-today-btn" onclick="calGoToday()">오늘</button>
+        <button class="cal-nav-btn" onclick="calPrev()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="cal-nav-btn" onclick="calNext()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="cal-legend"></div>
+    <div class="cal-grid">
+      <div class="cal-week-header">
+        <div class="cal-week-day sun">일</div>
+        <div class="cal-week-day">월</div>
+        <div class="cal-week-day">화</div>
+        <div class="cal-week-day">수</div>
+        <div class="cal-week-day">목</div>
+        <div class="cal-week-day">금</div>
+        <div class="cal-week-day sat">토</div>
+      </div>
+      <div class="cal-days" id="cal-days"></div>
+    </div>
+    <div class="cal-selected-day">
+      <div class="cal-selected-title" id="cal-selected-title"></div>
+      <div id="cal-selected-events"></div>
     </div>
   </div>
-  <div id="cal-legend"></div>
-  <div class="cal-grid">
-    <div class="cal-week-header">
-      <div class="cal-week-day sun">일</div>
-      <div class="cal-week-day">월</div>
-      <div class="cal-week-day">화</div>
-      <div class="cal-week-day">수</div>
-      <div class="cal-week-day">목</div>
-      <div class="cal-week-day">금</div>
-      <div class="cal-week-day sat">토</div>
-    </div>
-    <div class="cal-days" id="cal-days"></div>
-  </div>
-  <div class="cal-selected-day">
-    <div class="cal-selected-title" id="cal-selected-title"></div>
-    <div id="cal-selected-events"></div>
-  </div>
 </main>
 
-<main id="page-curriculum" class="page hidden">
-  <div id="curriculum-list"></div>
-</main>
-
-<main id="page-classrooms" class="page hidden">
-  <div id="classrooms-list"></div>
-</main>
-
-<main id="page-rules" class="page hidden">
-  <div id="rules-list"></div>
-</main>
-
-<main id="page-seminars" class="page hidden">
-  <div id="seminars-list"></div>
-</main>
-
-<main id="page-contact" class="page hidden">
-  <div id="contact-content"></div>
-</main>
-
+<!-- 수업안내 (수업자료) -->
 <main id="page-materials" class="page hidden">
-  <div id="materials-categories"></div>
+  <div class="page-content">
+    <div id="materials-categories"></div>
+  </div>
 </main>
-
 <main id="page-materials-sub" class="page hidden">
-  <button class="detail-back" onclick="goBack()">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-    뒤로
-  </button>
-  <div id="materials-sub-content"></div>
+  <div class="page-content">
+    <button class="detail-back" onclick="goBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      뒤로
+    </button>
+    <div id="materials-sub-content"></div>
+  </div>
 </main>
-
 <main id="page-materials-list" class="page hidden">
-  <button class="detail-back" onclick="goBack()">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-    뒤로
-  </button>
-  <div id="materials-list-content"></div>
+  <div class="page-content">
+    <button class="detail-back" onclick="goBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      뒤로
+    </button>
+    <div id="materials-list-content"></div>
+  </div>
 </main>
-
 <main id="page-materials-detail" class="page hidden">
-  <button class="detail-back" onclick="goBack()">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-    뒤로
-  </button>
-  <div id="materials-detail-content"></div>
+  <div class="page-content">
+    <button class="detail-back" onclick="goBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      뒤로
+    </button>
+    <div id="materials-detail-content"></div>
+  </div>
 </main>
 
+<!-- 비대면 (강의장) -->
+<main id="page-classrooms" class="page hidden">
+  <div class="page-content">
+    <div id="classrooms-list"></div>
+  </div>
+</main>
+
+<!-- 이용안내 (학칙) -->
+<main id="page-rules" class="page hidden">
+  <div class="page-content">
+    <div id="rules-list"></div>
+  </div>
+</main>
+
+<!-- 특강·세미나 -->
+<main id="page-seminars" class="page hidden">
+  <div class="page-content">
+    <div id="seminars-list"></div>
+  </div>
+</main>
+
+<!-- 탭바 -->
 <nav class="tabbar">
   <button class="tab active" data-page="home" onclick="navigate('home')">
     <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
@@ -1581,32 +1408,34 @@ TODAY.setHours(0, 0, 0, 0);
 const state = {
   currentPage: 'home',
   pageTitles: {
-    home: '수강생 안내',
+    home: '홈',
     posts: '공지사항',
     search: '검색',
     'post-detail': '공지 상세',
-    schedule: '학사일정',
-    curriculum: '커리큘럼',
-    classrooms: '강의장 안내',
-    rules: '학칙',
-    seminars: '세미나/특강',
-    contact: '문의',
-    materials: '수업자료',
-    'materials-sub': '수업자료',
-    'materials-list': '수업자료',
-    'materials-detail': '수업자료'
+    schedule: '수업일정',
+    classrooms: '비대면 안내',
+    rules: '이용안내',
+    seminars: '특강·세미나',
+    materials: '수업안내',
+    'materials-sub': '수업안내',
+    'materials-list': '수업안내',
+    'materials-detail': '수업안내'
   },
   history: ['home'],
   cal: {
     year: TODAY.getFullYear(),
     month: TODAY.getMonth(),
     selectedDate: TODAY.toISOString().split('T')[0],
-    schedule: []
-  }
+    schedule: [],
+    colors: []
+  },
+  matCatsCache: null,
+  searchData: null,
+  allPosts: null
 };
 
 // ============================================================
-// 읽음 / 북마크 (localStorage)
+// 읽음/북마크
 // ============================================================
 function getReadIds() {
   try { return JSON.parse(localStorage.getItem('read_posts') || '[]'); }
@@ -1617,9 +1446,7 @@ function markRead(id) {
   ids.add(id);
   localStorage.setItem('read_posts', JSON.stringify([...ids]));
 }
-function isRead(id) {
-  return getReadIds().includes(id);
-}
+function isRead(id) { return getReadIds().includes(id); }
 
 function getBookmarks() {
   try { return JSON.parse(localStorage.getItem('bookmarks') || '[]'); }
@@ -1633,9 +1460,7 @@ function toggleBookmark(id) {
   localStorage.setItem('bookmarks', JSON.stringify(list));
   return list.includes(id);
 }
-function isBookmarked(id) {
-  return getBookmarks().includes(id);
-}
+function isBookmarked(id) { return getBookmarks().includes(id); }
 
 // ============================================================
 // 라우팅
@@ -1655,11 +1480,9 @@ function navigate(page, params = {}) {
   else if (page === 'posts') loadPosts();
   else if (page === 'post-detail') loadPostDetail(params.id);
   else if (page === 'schedule') loadSchedule();
-  else if (page === 'curriculum') loadCurriculum();
   else if (page === 'classrooms') loadClassrooms();
   else if (page === 'rules') loadRules();
   else if (page === 'seminars') loadSeminars();
-  else if (page === 'contact') loadContact();
   else if (page === 'search') initSearch();
   else if (page === 'materials') loadMaterials();
   else if (page === 'materials-sub') loadMaterialsSub(params.parentId);
@@ -1684,24 +1507,25 @@ function formatDate(dateStr) {
   if (isNaN(d)) return dateStr;
   return `${d.getMonth() + 1}월 ${d.getDate()}일`;
 }
-
+function formatDateShort(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  return `${d.getMonth() + 1}/${d.getDate()}`;
+}
 function formatFullDate(d) {
   const days = ['일','월','화','수','목','금','토'];
   return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일 ${days[d.getDay()]}요일`;
 }
-
 function formatDayShort(dateStr) {
   const d = new Date(dateStr);
   const days = ['일','월','화','수','목','금','토'];
   return days[d.getDay()];
 }
-
 function isNew(dateStr, days = 3) {
   const d = new Date(dateStr);
   const diff = (TODAY - d) / (1000 * 60 * 60 * 24);
   return diff <= days && diff >= -1;
 }
-
 function getDday(dateStr) {
   const d = new Date(dateStr);
   d.setHours(0, 0, 0, 0);
@@ -1710,233 +1534,158 @@ function getDday(dateStr) {
   if (diff > 0) return `D-${diff}`;
   return `D+${Math.abs(diff)}`;
 }
-
 function isToday(dateStr) {
   const d = new Date(dateStr);
   return d.toDateString() === TODAY.toDateString();
 }
-
-function getCourseStatus(start, end) {
-  const s = new Date(start);
-  const e = new Date(end);
-  if (TODAY >= s && TODAY <= e) return '진행중';
-  if (TODAY < s) return '예정';
-  return '종료';
-}
-
-function getCourseProgress(start, end) {
-  const s = new Date(start);
-  const e = new Date(end);
-  if (TODAY < s) return { percent: 0, daysTotal: Math.ceil((e-s)/86400000), daysPassed: 0, daysLeft: Math.ceil((e-s)/86400000) };
-  if (TODAY > e) return { percent: 100, daysTotal: Math.ceil((e-s)/86400000), daysPassed: Math.ceil((e-s)/86400000), daysLeft: 0 };
-  const total = e - s;
-  const passed = TODAY - s;
-  return {
-    percent: Math.round((passed / total) * 100),
-    daysTotal: Math.ceil(total / 86400000),
-    daysPassed: Math.ceil(passed / 86400000),
-    daysLeft: Math.ceil((e - TODAY) / 86400000)
-  };
-}
-
 function escapeHtml(s) {
   if (s == null) return '';
   return String(s)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
 }
-
-// 본문에 URL 자동 링크화 (전화번호 제외)
 function linkifyContent(s) {
   if (s == null) return '';
   let escaped = escapeHtml(s);
-  // URL 링크화
   escaped = escaped.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
   return escaped;
 }
-
 function tagClass(category) {
   const known = ['학사','세미나','특강','시설','평가','이벤트','취업'];
   return known.includes(category) ? `tag-${category}` : 'tag-기타';
 }
-
-// 구버전 호환: category 기반 색상
-function getCategoryFallbackColor(category) {
-  const map = {
-    '학사': '#c8323a', '세미나': '#5b21b6', '특강': '#5b21b6',
-    '시설': '#047857', '평가': '#b45309', '이벤트': '#c8323a',
-    '취업': '#1d4ed8', '기타': '#64748b'
-  };
-  return map[category] || '#64748b';
+function getColorById(id) {
+  if (!id) return null;
+  return (state.cal.colors || []).find(c => c.id === id);
 }
-
-function getGreeting() {
-  const h = new Date().getHours();
-  if (h < 6) return '새벽이네요';
-  if (h < 12) return '좋은 아침이에요';
-  if (h < 18) return '안녕하세요';
-  if (h < 22) return '편안한 저녁 되세요';
-  return '늦은 시간이네요';
-}
+function escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
 // ============================================================
 // 홈
 // ============================================================
 async function loadHome() {
-  let data;
+  let data, schedule, colors, settings;
+  
   try {
-    data = await window.api.call('getHome');
+    [data, schedule, colors, settings] = await Promise.all([
+      window.api.call('getHome'),
+      window.api.call('getSchedule'),
+      window.api.call('getScheduleColors'),
+      window.api.call('getSettings')
+    ]);
   } catch (e) {
     data = { posts: [], schedule: [], settings: {} };
+    schedule = []; colors = []; settings = {};
   }
   
-  // 색상 정보 캐시 (홈에서도 일정 카드 색상 표시용)
-  if (!state.cal.colors) {
-    try {
-      state.cal.colors = await window.api.call('getScheduleColors');
-    } catch (e) {
-      state.cal.colors = window.DEFAULT_SCHEDULE_COLORS || [];
-    }
-  }
+  state.cal.colors = colors || [];
 
-  // 인사 카드
-  document.getElementById('greeting-date').textContent = formatFullDate(TODAY);
-  document.getElementById('greeting-text').textContent = `${getGreeting()} 👋`;
-  
-  const upcomingCount = (data.schedule || []).length;
-  const newPostCount = (data.posts || []).filter(p => isNew(p.date) && !isRead(p.id)).length;
-  
-  let subHtml = '';
-  if (newPostCount > 0 || upcomingCount > 0) {
-    const parts = [];
-    if (newPostCount > 0) parts.push(`<span>안 읽은 새 공지 ${newPostCount}건</span>`);
-    if (upcomingCount > 0) parts.push(`<span>다가오는 일정 ${upcomingCount}건</span>`);
-    subHtml = parts.join('<span class="greeting-sub-dot"></span>');
+  // 안내사항
+  const notice = (settings && settings.notice) ? settings.notice.trim() : '';
+  if (notice) {
+    document.getElementById('notice-bar').style.display = 'flex';
+    // \n을 <br>로, 그리고 글자 변환
+    const html = escapeHtml(notice).replace(/\n/g, '<br>');
+    document.getElementById('notice-text').innerHTML = html;
   } else {
-    subHtml = '<span>오늘도 좋은 하루 보내세요</span>';
+    document.getElementById('notice-bar').style.display = 'none';
   }
-  document.getElementById('greeting-sub').innerHTML = subHtml;
 
-  // 진행률 바 - 진행 중인 커리큘럼 가장 가까운 종강일 기준
-  await loadHomeProgress();
+  // 오늘 날짜
+  document.getElementById('day-num').textContent = `${TODAY.getMonth() + 1}월 ${TODAY.getDate()}일`;
+  const days = ['일','월','화','수','목','금','토'];
+  document.getElementById('day-label').textContent = `${days[TODAY.getDay()]}요일`;
 
-  // 공지
+  // 진행률 게이지 (이번 달 기준)
+  const targetMonth = `${TODAY.getFullYear()}-${String(TODAY.getMonth() + 1).padStart(2, '0')}`;
+  const progress = window.computeMonthProgress(schedule || [], colors || [], targetMonth);
+  
+  if (progress) {
+    const dDayClass = progress.dDay.startsWith('D-') && progress.dDay !== 'D-DAY' && parseInt(progress.dDay.replace('D-', '')) > 7 ? '' : 'danger';
+    document.getElementById('gauge-area').innerHTML = `
+      <div class="gauge-card">
+        <div class="gauge-row">
+          <span class="gauge-name">${TODAY.getMonth() + 1}월 수업 · ${progress.totalSessions}회 중 ${progress.completedSessions}회차</span>
+          <span class="gauge-pct ${dDayClass}">${progress.dDay}</span>
+        </div>
+        <div class="gauge-bar"><div class="gauge-fill" style="width: ${progress.percent}%;"></div></div>
+        <div class="gauge-meta">
+          <span>${formatDate(progress.startDate)} 시작</span>
+          <span>${formatDate(progress.endDate)} 종강</span>
+        </div>
+      </div>
+    `;
+    
+    // 통계 (휴강일 + 새 공지)
+    const newPostCount = (data.posts || []).filter(p => isNew(p.date) && !isRead(p.id)).length;
+    document.getElementById('stat-row').style.display = 'flex';
+    document.getElementById('stat-cancel-num').textContent = progress.cancelDays;
+    document.getElementById('stat-cancel-label').textContent = `${TODAY.getMonth() + 1}월 휴강일`;
+    document.getElementById('stat-new-num').textContent = newPostCount;
+  } else {
+    document.getElementById('gauge-area').innerHTML = '';
+    document.getElementById('stat-row').style.display = 'none';
+  }
+
+  // 다가오는 일정
+  const upcoming = (data.schedule || []).slice(0, 3);
+  document.getElementById('upcoming-count').textContent = upcoming.length > 0 ? `${upcoming.length}건` : '';
+  document.getElementById('home-schedule').innerHTML = upcoming.length === 0
+    ? `<div class="empty">다가오는 일정이 없습니다</div>`
+    : upcoming.map(renderEventRow).join('');
+
+  // 최신 공지
   const posts = (data.posts || []).slice(0, 3);
   document.getElementById('home-posts').innerHTML = posts.length === 0
-    ? `<div class="empty">
-        <div class="empty-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/></svg>
-        </div>
-        아직 공지가 없습니다
-      </div>`
-    : posts.map(renderPostCard).join('');
-
-  // 일정
-  const schedule = data.schedule || [];
-  document.getElementById('home-schedule').innerHTML = schedule.length === 0
-    ? `<div class="empty">
-        <div class="empty-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
-        </div>
-        다가오는 일정이 없습니다
-      </div>`
-    : `<div class="schedule-list">${schedule.map(renderScheduleItem).join('')}</div>`;
+    ? `<div class="empty">아직 공지가 없습니다</div>`
+    : posts.map(renderPostRow).join('');
 
   const hasUnread = posts.some(p => isNew(p.date) && !isRead(p.id));
   document.getElementById('bell-dot').style.display = hasUnread ? 'block' : 'none';
   document.getElementById('tab-badge').style.display = hasUnread ? 'block' : 'none';
 }
 
-async function loadHomeProgress() {
-  try {
-    const items = await window.api.call('getCurriculum');
-    const inProgress = items
-      .filter(c => getCourseStatus(c.startDate, c.endDate) === '진행중')
-      .sort((a, b) => new Date(a.endDate) - new Date(b.endDate));
-    
-    if (inProgress.length === 0) {
-      document.getElementById('progress-block').style.display = 'none';
-      return;
-    }
-    
-    const c = inProgress[0]; // 가장 빨리 끝나는 과정
-    const p = getCourseProgress(c.startDate, c.endDate);
-    
-    document.getElementById('progress-block').style.display = 'block';
-    document.getElementById('progress-name').textContent = c.name;
-    document.getElementById('progress-percent').textContent = `${p.percent}%`;
-    document.getElementById('progress-fill').style.width = `${p.percent}%`;
-    document.getElementById('progress-start').textContent = `${formatDate(c.startDate)} 개강`;
-    document.getElementById('progress-end').textContent = p.daysLeft > 0 
-      ? `종강 D-${p.daysLeft}` 
-      : '종강';
-  } catch (e) {
-    document.getElementById('progress-block').style.display = 'none';
-  }
-}
-
-function renderPostCard(p) {
-  const newBadge = isNew(p.date) ? '<span class="post-tag-new">NEW</span>' : '';
-  const summary = (p.content || '').replace(/\n/g, ' ').slice(0, 60);
-  const readClass = isRead(p.id) ? 'read' : '';
-  const bookmarked = isBookmarked(p.id);
+function renderEventRow(s) {
+  const dday = getDday(s.date);
+  const d = new Date(s.date);
+  d.setHours(0, 0, 0, 0);
+  const diff = Math.round((d - TODAY) / (1000 * 60 * 60 * 24));
+  const ddayClass = diff <= 3 && diff >= 0 ? 'urgent' : '';
+  
+  const color = getColorById(s.colorId);
+  const dotColor = color ? color.color : '#64748b';
+  
   return `
-    <div class="post-card ${readClass}" onclick="openPost('${p.id}')">
-      <button class="post-bookmark ${bookmarked ? 'active' : ''}" onclick="event.stopPropagation(); togglePostBookmark('${p.id}', this)" title="북마크">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="${bookmarked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-      </button>
-      <div class="post-meta">
-        <span class="post-tag ${tagClass(p.category)}">${escapeHtml(p.category || '기타')}</span>
-        ${newBadge}
-        <span class="post-date">${formatDate(p.date)}</span>
-      </div>
-      <p class="post-title">${escapeHtml(p.title)}</p>
-      ${summary ? `<p class="post-summary">${escapeHtml(summary)}</p>` : ''}
+    <div class="event">
+      <div class="event-date">${formatDateShort(s.date)}</div>
+      <div class="event-day">${formatDayShort(s.date)}</div>
+      <div class="event-dot" style="background: ${dotColor}"></div>
+      <div class="event-title">${escapeHtml(s.title)}</div>
+      <div class="event-dday ${ddayClass}">${dday}</div>
     </div>
   `;
 }
 
-function togglePostBookmark(id, btn) {
-  const active = toggleBookmark(id);
-  btn.classList.toggle('active', active);
-  const svg = btn.querySelector('svg');
-  if (svg) svg.setAttribute('fill', active ? 'currentColor' : 'none');
+function renderPostRow(p) {
+  const newBadge = isNew(p.date) ? '<span class="post-new">NEW</span>' : '';
+  const readClass = isRead(p.id) ? 'read' : '';
+  return `
+    <div class="post ${readClass}" onclick="openPost('${p.id}')">
+      <span class="post-tag ${tagClass(p.category)}">${escapeHtml(p.category || '기타')}</span>
+      <div class="post-body">
+        <div class="post-title">${escapeHtml(p.title)}</div>
+        <div class="post-meta">
+          <span>${formatDate(p.date)}</span>
+          ${newBadge}
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 function openPost(id) {
   markRead(id);
   navigate('post-detail', { id });
-}
-
-function renderScheduleItem(s) {
-  const today = isToday(s.date);
-  const dday = getDday(s.date);
-  const ddayClass = (() => {
-    const d = new Date(s.date);
-    d.setHours(0, 0, 0, 0);
-    const diff = Math.round((d - TODAY) / (1000 * 60 * 60 * 24));
-    return diff <= 3 && diff >= 0 ? 'urgent' : '';
-  })();
-  
-  // colorId가 있으면 새 색상 시스템, 없으면 카테고리 태그 (구버전 호환)
-  const color = getColorById(s.colorId);
-  const labelHtml = color
-    ? `<span class="post-tag" style="background: ${color.color}22; color: ${color.color};">${escapeHtml(color.name)}</span>`
-    : `<span class="post-tag ${tagClass(s.category)}">${escapeHtml(s.category || '기타')}</span>`;
-  
-  return `
-    <div class="schedule-item">
-      <div class="schedule-date-box ${today ? 'today' : ''}">
-        <div class="schedule-day">${formatDayShort(s.date)}</div>
-        <div class="schedule-num">${new Date(s.date).getDate()}</div>
-      </div>
-      <div class="schedule-content">
-        ${labelHtml}
-        <span class="schedule-text">${escapeHtml(s.title)}</span>
-      </div>
-      <span class="schedule-dday ${ddayClass}">${dday}</span>
-    </div>
-  `;
 }
 
 // ============================================================
@@ -1966,7 +1715,7 @@ function filterPosts(category) {
 function renderPostsList(posts) {
   document.getElementById('posts-list').innerHTML = posts.length === 0
     ? '<div class="empty">공지가 없습니다</div>'
-    : posts.map(renderPostCard).join('');
+    : posts.map(renderPostRow).join('');
 }
 
 async function loadPostDetail(id) {
@@ -1979,13 +1728,13 @@ async function loadPostDetail(id) {
   document.getElementById('post-detail-content').innerHTML = `
     <div class="detail-title-wrap">
       <h1 class="detail-title">${escapeHtml(post.title)}</h1>
-      <button class="detail-bookmark ${bookmarked ? 'active' : ''}" onclick="toggleDetailBookmark('${post.id}', this)" title="북마크">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="${bookmarked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      <button class="detail-bookmark ${bookmarked ? 'active' : ''}" onclick="toggleDetailBookmark('${post.id}', this)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="${bookmarked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
       </button>
     </div>
     <div class="detail-meta">
       <span class="post-tag ${tagClass(post.category)}">${escapeHtml(post.category || '기타')}</span>
-      <span class="post-date">${formatDate(post.date)}</span>
+      <span style="font-size: 9.5px; color: var(--text-faint); font-variant-numeric: tabular-nums;">${formatDate(post.date)}</span>
     </div>
     <div class="detail-content">${linkifyContent(post.content)}</div>
   `;
@@ -2030,30 +1779,22 @@ function renderCalendarLegend() {
   `;
 }
 
-function getColorById(id) {
-  if (!id) return null;
-  return (state.cal.colors || []).find(c => c.id === id);
-}
-
 function calPrev() {
   state.cal.month--;
   if (state.cal.month < 0) { state.cal.month = 11; state.cal.year--; }
   renderCalendar();
 }
-
 function calNext() {
   state.cal.month++;
   if (state.cal.month > 11) { state.cal.month = 0; state.cal.year++; }
   renderCalendar();
 }
-
 function calGoToday() {
   state.cal.year = TODAY.getFullYear();
   state.cal.month = TODAY.getMonth();
   state.cal.selectedDate = TODAY.toISOString().split('T')[0];
   renderCalendar();
 }
-
 function calSelectDate(dateStr) {
   state.cal.selectedDate = dateStr;
   renderCalendar();
@@ -2061,33 +1802,21 @@ function calSelectDate(dateStr) {
 
 function renderCalendar() {
   const { year, month, selectedDate, schedule } = state.cal;
-  
   document.getElementById('cal-month-label').textContent = `${year}년 ${month + 1}월`;
   
-  // 해당 월의 첫날과 마지막날
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
   const daysInMonth = lastDay.getDate();
-  const startDayOfWeek = firstDay.getDay(); // 0(일) ~ 6(토)
-  
-  // 이전 달 일부 (빈 칸 채우기용)
+  const startDayOfWeek = firstDay.getDay();
   const prevLastDay = new Date(year, month, 0).getDate();
   
   const days = [];
-  
-  // 이전 달 날짜
   for (let i = startDayOfWeek - 1; i >= 0; i--) {
-    const d = new Date(year, month - 1, prevLastDay - i);
-    days.push({ date: d, otherMonth: true });
+    days.push({ date: new Date(year, month - 1, prevLastDay - i), otherMonth: true });
   }
-  
-  // 이번 달 날짜
   for (let i = 1; i <= daysInMonth; i++) {
-    const d = new Date(year, month, i);
-    days.push({ date: d, otherMonth: false });
+    days.push({ date: new Date(year, month, i), otherMonth: false });
   }
-  
-  // 다음 달 날짜 (총 42칸 = 6주 채우기)
   while (days.length < 42) {
     const lastInArr = days[days.length - 1].date;
     const next = new Date(lastInArr);
@@ -2095,12 +1824,10 @@ function renderCalendar() {
     days.push({ date: next, otherMonth: true });
   }
   
-  // 일정 매핑
   const eventsByDate = {};
   schedule.forEach(s => {
-    const key = s.date;
-    if (!eventsByDate[key]) eventsByDate[key] = [];
-    eventsByDate[key].push(s);
+    if (!eventsByDate[s.date]) eventsByDate[s.date] = [];
+    eventsByDate[s.date].push(s);
   });
   
   const html = days.map(({ date, otherMonth }) => {
@@ -2117,10 +1844,9 @@ function renderCalendar() {
     if (dayOfWeek === 0) classes.push('sun');
     if (dayOfWeek === 6) classes.push('sat');
     
-    // 일정 표시 (최대 4개 색상 동그라미)
     const eventDots = events.slice(0, 4).map(e => {
       const color = getColorById(e.colorId);
-      const bg = color ? color.color : (e.category ? getCategoryFallbackColor(e.category) : '#64748b');
+      const bg = color ? color.color : '#64748b';
       return `<span class="cal-event-dot" style="background: ${bg}"></span>`;
     }).join('');
     
@@ -2133,8 +1859,6 @@ function renderCalendar() {
   }).join('');
   
   document.getElementById('cal-days').innerHTML = html;
-  
-  // 선택된 날짜 일정 렌더
   renderSelectedDayEvents();
 }
 
@@ -2152,29 +1876,22 @@ function renderSelectedDayEvents() {
   `;
   
   if (events.length === 0) {
-    document.getElementById('cal-selected-events').innerHTML = `
-      <div class="empty">선택한 날짜에 일정이 없습니다</div>
-    `;
+    document.getElementById('cal-selected-events').innerHTML = `<div class="empty">선택한 날짜에 일정이 없습니다</div>`;
     return;
   }
   
-  document.getElementById('cal-selected-events').innerHTML = `
-    <div class="schedule-list">${events.map(e => {
-      const color = getColorById(e.colorId);
-      const labelHtml = color
-        ? `<span class="post-tag" style="background: ${color.color}22; color: ${color.color};">${escapeHtml(color.name)}</span>`
-        : `<span class="post-tag ${tagClass(e.category)}">${escapeHtml(e.category || '기타')}</span>`;
-      return `
-        <div class="schedule-item">
-          <div class="schedule-content">
-            ${labelHtml}
-            <span class="schedule-text">${escapeHtml(e.title)}</span>
-          </div>
-          ${e.description ? `<span style="font-size: 12px; color: var(--text-faint); margin-left: auto;">${escapeHtml(e.description)}</span>` : ''}
-        </div>
-      `;
-    }).join('')}</div>
-  `;
+  document.getElementById('cal-selected-events').innerHTML = events.map(e => {
+    const color = getColorById(e.colorId);
+    const dotColor = color ? color.color : '#64748b';
+    const colorName = color ? color.name : (e.category || '기타');
+    return `
+      <div class="event">
+        <div class="event-dot" style="background: ${dotColor}"></div>
+        <div class="event-title">${escapeHtml(e.title)}</div>
+        <div class="event-day" style="color: ${dotColor}; font-weight: 600;">${escapeHtml(colorName)}</div>
+      </div>
+    `;
+  }).join('');
 }
 
 // ============================================================
@@ -2182,24 +1899,18 @@ function renderSelectedDayEvents() {
 // ============================================================
 async function initSearch() {
   if (!state.searchData) {
-    const [posts, schedule, curriculum] = await Promise.all([
+    const [posts, schedule] = await Promise.all([
       window.api.call('getPosts'),
-      window.api.call('getSchedule'),
-      window.api.call('getCurriculum')
+      window.api.call('getSchedule')
     ]);
-    state.searchData = { posts, schedule, curriculum };
+    state.searchData = { posts, schedule };
   }
   
   const input = document.getElementById('search-input');
   input.value = '';
   input.focus();
   document.getElementById('search-results').innerHTML = `
-    <div class="empty" style="margin-top: 30px;">
-      <div class="empty-icon">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      </div>
-      검색어를 입력하세요
-    </div>
+    <div class="empty">검색어를 입력하세요</div>
   `;
   
   input.oninput = (e) => {
@@ -2218,67 +1929,37 @@ function clearSearch() {
 
 function runSearch(q) {
   if (!q) {
-    document.getElementById('search-results').innerHTML = `
-      <div class="empty" style="margin-top: 30px;">
-        <div class="empty-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        </div>
-        검색어를 입력하세요
-      </div>
-    `;
+    document.getElementById('search-results').innerHTML = `<div class="empty">검색어를 입력하세요</div>`;
     return;
   }
-  
   const ql = q.toLowerCase();
-  const { posts, schedule, curriculum } = state.searchData;
+  const { posts, schedule } = state.searchData;
   
   const matchedPosts = posts.filter(p => 
     (p.title || '').toLowerCase().includes(ql) ||
     (p.content || '').toLowerCase().includes(ql) ||
     (p.category || '').toLowerCase().includes(ql)
   );
-  
   const matchedSchedule = schedule.filter(s =>
     (s.title || '').toLowerCase().includes(ql) ||
     (s.description || '').toLowerCase().includes(ql)
   );
   
-  const matchedCurriculum = curriculum.filter(c =>
-    (c.name || '').toLowerCase().includes(ql) ||
-    (c.description || '').toLowerCase().includes(ql)
-  );
-  
-  const totalCount = matchedPosts.length + matchedSchedule.length + matchedCurriculum.length;
-  
+  const totalCount = matchedPosts.length + matchedSchedule.length;
   if (totalCount === 0) {
-    document.getElementById('search-results').innerHTML = `
-      <div class="empty" style="margin-top: 30px;">
-        <div class="empty-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        </div>
-        "${escapeHtml(q)}"에 대한 검색 결과가 없습니다
-      </div>
-    `;
+    document.getElementById('search-results').innerHTML = `<div class="empty">"${escapeHtml(q)}"에 대한 검색 결과가 없습니다</div>`;
     return;
   }
   
-  let html = `<div style="font-size: 12px; color: var(--text-soft); margin: 4px 4px 12px;">총 ${totalCount}건의 결과</div>`;
-  
+  let html = `<div style="font-size: 9.5px; color: var(--text-soft); margin: 4px 4px 10px;">총 ${totalCount}건의 결과</div>`;
   if (matchedPosts.length > 0) {
-    html += `<div class="section-head"><span class="section-title"><span class="section-title-dot"></span>공지 ${matchedPosts.length}건</span></div>`;
-    html += matchedPosts.map(p => renderPostCardHighlight(p, q)).join('');
+    html += `<div class="section-h" style="padding: 0 4px;"><span class="section-t">공지 ${matchedPosts.length}건</span></div>`;
+    html += matchedPosts.map(p => renderPostRowHighlight(p, q)).join('');
   }
-  
   if (matchedSchedule.length > 0) {
-    html += `<div class="section-head" style="margin-top: 18px;"><span class="section-title"><span class="section-title-dot"></span>일정 ${matchedSchedule.length}건</span></div>`;
-    html += `<div class="schedule-list">${matchedSchedule.map(renderScheduleItem).join('')}</div>`;
+    html += `<div class="section-h" style="padding: 12px 4px 4px;"><span class="section-t">일정 ${matchedSchedule.length}건</span></div>`;
+    html += matchedSchedule.map(renderEventRow).join('');
   }
-  
-  if (matchedCurriculum.length > 0) {
-    html += `<div class="section-head" style="margin-top: 18px;"><span class="section-title"><span class="section-title-dot"></span>커리큘럼 ${matchedCurriculum.length}건</span></div>`;
-    html += matchedCurriculum.map(c => renderCurriculumCard(c)).join('');
-  }
-  
   document.getElementById('search-results').innerHTML = html;
 }
 
@@ -2289,72 +1970,32 @@ function highlightText(text, q) {
   return escaped.replace(regex, '<span class="search-highlight">$1</span>');
 }
 
-function escapeRegex(s) {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-function renderPostCardHighlight(p, q) {
-  const newBadge = isNew(p.date) ? '<span class="post-tag-new">NEW</span>' : '';
-  const summary = (p.content || '').replace(/\n/g, ' ').slice(0, 80);
+function renderPostRowHighlight(p, q) {
+  const newBadge = isNew(p.date) ? '<span class="post-new">NEW</span>' : '';
   const readClass = isRead(p.id) ? 'read' : '';
   return `
-    <div class="post-card ${readClass}" onclick="openPost('${p.id}')">
-      <div class="post-meta">
-        <span class="post-tag ${tagClass(p.category)}">${escapeHtml(p.category || '기타')}</span>
-        ${newBadge}
-        <span class="post-date">${formatDate(p.date)}</span>
+    <div class="post ${readClass}" onclick="openPost('${p.id}')">
+      <span class="post-tag ${tagClass(p.category)}">${escapeHtml(p.category || '기타')}</span>
+      <div class="post-body">
+        <div class="post-title">${highlightText(p.title, q)}</div>
+        <div class="post-meta">
+          <span>${formatDate(p.date)}</span>
+          ${newBadge}
+        </div>
       </div>
-      <p class="post-title">${highlightText(p.title, q)}</p>
-      ${summary ? `<p class="post-summary">${highlightText(summary, q)}</p>` : ''}
     </div>
   `;
 }
 
 // ============================================================
-// 커리큘럼 (진행률 바 추가)
+// 비대면 (강의장)
 // ============================================================
-async function loadCurriculum() {
-  const items = await window.api.call('getCurriculum');
-  document.getElementById('curriculum-list').innerHTML = items.map(renderCurriculumCard).join('');
-}
-
-function renderCurriculumCard(c) {
-  const status = getCourseStatus(c.startDate, c.endDate);
-  const statusClass = `status-${status}`;
-  const progress = getCourseProgress(c.startDate, c.endDate);
-  
-  let progressHtml = '';
-  if (status === '진행중') {
-    progressHtml = `
-      <div class="list-progress">
-        <div class="list-progress-row">
-          <span>진행률</span>
-          <span class="list-progress-percent">${progress.percent}% · D-${progress.daysLeft}</span>
-        </div>
-        <div class="list-progress-bar">
-          <div class="list-progress-fill" style="width: ${progress.percent}%"></div>
-        </div>
-      </div>
-    `;
-  }
-  
-  return `
-    <div class="list-card">
-      <div class="curriculum-status ${statusClass}">${status}</div>
-      <div class="list-card-title">${escapeHtml(c.name)}</div>
-      <div class="list-card-meta">
-        ${formatDate(c.startDate)} ~ ${formatDate(c.endDate)}
-        <span class="list-card-meta-divider"></span>
-        ${escapeHtml(c.classroom || '미정')}
-      </div>
-      <div class="list-card-desc">${escapeHtml(c.description || '')}</div>
-      ${progressHtml}
-    </div>
-  `;
-}
-
 async function loadClassrooms() {
   const items = await window.api.call('getClassrooms');
+  if (items.length === 0) {
+    document.getElementById('classrooms-list').innerHTML = '<div class="empty">등록된 정보가 없습니다</div>';
+    return;
+  }
   document.getElementById('classrooms-list').innerHTML = items.map(c => {
     const programs = (c.programs || '').split(',').map(p => p.trim()).filter(Boolean);
     const chips = programs.length > 0 && programs[0] !== '-'
@@ -2370,136 +2011,74 @@ async function loadClassrooms() {
   }).join('');
 }
 
+// ============================================================
+// 이용안내 (학칙)
+// ============================================================
 async function loadRules() {
   const rules = await window.api.call('getRules');
+  if (rules.length === 0) {
+    document.getElementById('rules-list').innerHTML = '<div class="empty">등록된 안내가 없습니다</div>';
+    return;
+  }
   document.getElementById('rules-list').innerHTML = rules.map((r, i) => `
     <div class="accordion">
       <button class="accordion-head" onclick="this.parentElement.classList.toggle('open')">
         <span><span class="accordion-num">${i + 1}</span>${escapeHtml(r.section)}</span>
-        <svg class="accordion-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
       <div class="accordion-body">${escapeHtml(r.content)}</div>
     </div>
   `).join('');
 }
 
+// ============================================================
+// 특강·세미나
+// ============================================================
 async function loadSeminars() {
   const posts = await window.api.call('getPosts');
   const filtered = posts.filter(p => p.category === '세미나' || p.category === '특강');
   document.getElementById('seminars-list').innerHTML = filtered.length === 0
-    ? '<div class="empty">예정된 세미나/특강이 없습니다</div>'
-    : filtered.map(renderPostCard).join('');
+    ? '<div class="empty">예정된 특강·세미나가 없습니다</div>'
+    : filtered.map(renderPostRow).join('');
 }
 
-async function loadContact() {
-  const settings = await window.api.call('getSettings');
-  document.getElementById('contact-content').innerHTML = `
-    <div class="list-card">
-      <div class="list-card-title" style="margin-bottom: 6px;">${escapeHtml(settings.academyName || '학원')}</div>
-      ${settings.phone ? `
-        <div class="contact-row">
-          <div class="contact-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          </div>
-          <div class="contact-content">
-            <div class="contact-label">전화</div>
-            <div class="contact-value">${escapeHtml(settings.phone)}</div>
-          </div>
-        </div>
-      ` : ''}
-      ${settings.contact ? `
-        <div class="contact-row">
-          <div class="contact-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          </div>
-          <div class="contact-content">
-            <div class="contact-label">이메일</div>
-            <div class="contact-value">${escapeHtml(settings.contact)}</div>
-          </div>
-        </div>
-      ` : ''}
-      ${settings.address ? `
-        <div class="contact-row">
-          <div class="contact-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          </div>
-          <div class="contact-content">
-            <div class="contact-label">주소</div>
-            <div class="contact-value">${escapeHtml(settings.address)}</div>
-          </div>
-        </div>
-      ` : ''}
-      ${settings.hours ? `
-        <div class="contact-row">
-          <div class="contact-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          </div>
-          <div class="contact-content">
-            <div class="contact-label">운영시간</div>
-            <div class="contact-value">${escapeHtml(settings.hours)}</div>
-          </div>
-        </div>
-      ` : ''}
-    </div>
-  `;
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  navigate('home');
-});
-
 // ============================================================
-// 수업자료
+// 수업안내 (수업자료)
 // ============================================================
-
-// 카테고리별 아이콘 SVG 매핑
 const CAT_ICONS = {
   'package': '<path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>',
-  'monitor': '<rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>',
+  'monitor': '<rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>',
   'award': '<circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>',
-  'video': '<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>',
+  'video': '<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/>',
   'tag': '<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>',
   'book': '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
   'help': '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
   'lightbulb': '<path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/>',
   'file': '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>'
 };
-
 function getCatIconSvg(iconName) {
   return CAT_ICONS[iconName] || CAT_ICONS['file'];
 }
-
-// 카테고리 트리 캐시
 async function loadAllCategoriesCache() {
   if (state.matCatsCache) return state.matCatsCache;
   const cats = await window.api.call('getMaterialCategories');
   state.matCatsCache = cats;
   return cats;
 }
-
 function findCategory(id) {
   if (!state.matCatsCache) return null;
   return state.matCatsCache.find(c => c.id === id);
 }
 
-// 1. 메인 카테고리 화면 (parentId 없는 것들)
 async function loadMaterials() {
   const cats = await loadAllCategoriesCache();
   const topCats = cats.filter(c => !c.parentId);
   
   if (topCats.length === 0) {
-    document.getElementById('materials-categories').innerHTML = `
-      <div class="empty">
-        <div class="empty-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-        </div>
-        등록된 수업자료가 없습니다
-      </div>
-    `;
+    document.getElementById('materials-categories').innerHTML = `<div class="empty">등록된 수업안내가 없습니다</div>`;
     return;
   }
   
-  // 각 카테고리의 콘텐츠 개수 (또는 하위 카테고리 개수) 카운트
   const items = await Promise.all(topCats.map(async (cat) => {
     const hasChildren = cats.some(c => c.parentId === cat.id);
     let count;
@@ -2513,7 +2092,7 @@ async function loadMaterials() {
   }));
   
   document.getElementById('materials-categories').innerHTML = `
-    <div class="material-category-grid">
+    <div class="material-cat-grid">
       ${items.map(c => `
         <button class="material-cat-card" data-color="${c.color || '6'}" onclick="${c.isParent ? `navigate('materials-sub', {parentId: '${c.id}'})` : `navigate('materials-list', {categoryId: '${c.id}'})`}">
           <div class="material-cat-icon-wrap">
@@ -2523,35 +2102,30 @@ async function loadMaterials() {
             <div class="material-cat-name">${escapeHtml(c.name)}</div>
             <div class="material-cat-meta" style="margin-top: 4px;">${c.isParent ? `${c.count}개 분류` : `${c.count}건`}</div>
           </div>
-          <svg class="material-cat-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
       `).join('')}
     </div>
   `;
 }
 
-// 2. 자격증 같은 부모 카테고리 → 하위 카테고리 목록
 async function loadMaterialsSub(parentId) {
   const cats = await loadAllCategoriesCache();
   const parent = findCategory(parentId);
   const subs = cats.filter(c => c.parentId === parentId);
-  
   if (!parent) {
     document.getElementById('materials-sub-content').innerHTML = '<div class="empty">카테고리를 찾을 수 없습니다</div>';
     return;
   }
-  
   const subsWithCount = await Promise.all(subs.map(async (sub) => {
     const mats = await window.api.call('getMaterials', { categoryId: sub.id });
     return { ...sub, count: mats.length };
   }));
-  
   document.getElementById('materials-sub-content').innerHTML = `
-    <h1 class="detail-title" style="margin-top: 4px; padding-right: 0;">${escapeHtml(parent.name)}</h1>
-    <div style="font-size: 13px; color: var(--text-soft); margin-bottom: 22px;">${subs.length}개 분류</div>
+    <h1 class="detail-title" style="padding-right: 0;">${escapeHtml(parent.name)}</h1>
+    <div style="font-size: 10.5px; color: var(--text-soft); margin-bottom: 18px;">${subs.length}개 분류</div>
     ${subs.length === 0 
       ? '<div class="empty">하위 분류가 없습니다</div>'
-      : `<div class="material-category-grid">
+      : `<div class="material-cat-grid">
           ${subsWithCount.map(c => `
             <button class="material-cat-card" data-color="${c.color || parent.color || '6'}" onclick="navigate('materials-list', {categoryId: '${c.id}'})">
               <div class="material-cat-icon-wrap">
@@ -2561,7 +2135,6 @@ async function loadMaterialsSub(parentId) {
                 <div class="material-cat-name">${escapeHtml(c.name)}</div>
                 <div class="material-cat-meta" style="margin-top: 4px;">${c.count}건</div>
               </div>
-              <svg class="material-cat-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
           `).join('')}
         </div>`
@@ -2569,7 +2142,6 @@ async function loadMaterialsSub(parentId) {
   `;
 }
 
-// 3. 콘텐츠 카드 목록
 async function loadMaterialsList(categoryId) {
   const cats = await loadAllCategoriesCache();
   const cat = findCategory(categoryId);
@@ -2577,18 +2149,14 @@ async function loadMaterialsList(categoryId) {
     document.getElementById('materials-list-content').innerHTML = '<div class="empty">카테고리를 찾을 수 없습니다</div>';
     return;
   }
-  
-  // 부모 카테고리 정보
   const parent = cat.parentId ? findCategory(cat.parentId) : null;
-  
   const materials = await window.api.call('getMaterials', { categoryId });
-  
-  const breadcrumb = parent ? `<div class="material-detail-breadcrumb">${escapeHtml(parent.name)}<span class="material-detail-breadcrumb-sep">›</span>${escapeHtml(cat.name)}</div>` : '';
+  const breadcrumb = parent ? `<div class="material-detail-breadcrumb">${escapeHtml(parent.name)} › ${escapeHtml(cat.name)}</div>` : '';
   
   document.getElementById('materials-list-content').innerHTML = `
     ${breadcrumb}
-    <h1 class="detail-title" style="margin-top: 4px; padding-right: 0;">${escapeHtml(cat.name)}</h1>
-    <div style="font-size: 13px; color: var(--text-soft); margin-bottom: 22px;">${materials.length}건의 자료</div>
+    <h1 class="detail-title" style="padding-right: 0;">${escapeHtml(cat.name)}</h1>
+    <div style="font-size: 10.5px; color: var(--text-soft); margin-bottom: 18px;">${materials.length}건의 자료</div>
     ${materials.length === 0 
       ? '<div class="empty">등록된 자료가 없습니다</div>'
       : materials.map((m, i) => `
@@ -2599,37 +2167,27 @@ async function loadMaterialsList(categoryId) {
             ${m.description ? `<div class="material-card-desc">${escapeHtml(m.description)}</div>` : ''}
             <div class="material-card-meta">${(m.steps || []).length}단계</div>
           </div>
-          <svg class="material-card-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
       `).join('')
     }
   `;
 }
 
-// 4. 콘텐츠 풀페이지
 async function loadMaterialsDetail(id) {
   const m = await window.api.call('getMaterial', { id });
   if (!m) {
     document.getElementById('materials-detail-content').innerHTML = '<div class="empty">자료를 찾을 수 없습니다</div>';
     return;
   }
-  
-  // 카테고리/부모 정보
   await loadAllCategoriesCache();
   const cat = findCategory(m.categoryId);
   const parent = cat && cat.parentId ? findCategory(cat.parentId) : null;
-  
   let breadcrumb = '';
   if (cat) {
-    if (parent) {
-      breadcrumb = `<div class="material-detail-breadcrumb">${escapeHtml(parent.name)}<span class="material-detail-breadcrumb-sep">›</span>${escapeHtml(cat.name)}</div>`;
-    } else {
-      breadcrumb = `<div class="material-detail-breadcrumb">${escapeHtml(cat.name)}</div>`;
-    }
+    if (parent) breadcrumb = `<div class="material-detail-breadcrumb">${escapeHtml(parent.name)} › ${escapeHtml(cat.name)}</div>`;
+    else breadcrumb = `<div class="material-detail-breadcrumb">${escapeHtml(cat.name)}</div>`;
   }
-  
   const steps = m.steps || [];
-  
   document.getElementById('materials-detail-content').innerHTML = `
     <div class="material-detail-header">
       ${breadcrumb}
@@ -2651,6 +2209,10 @@ async function loadMaterialsDetail(id) {
     }
   `;
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  navigate('home');
+});
 </script>
 
 </body>
