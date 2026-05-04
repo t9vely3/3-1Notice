@@ -87,10 +87,22 @@ window.api = {
 
   // ===== 내부 헬퍼 =====
   async _getList(collection, orderField = null, orderDir = 'desc') {
-    let query = db.collection(collection);
-    if (orderField) query = query.orderBy(orderField, orderDir);
-    const snap = await query.get();
-    return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    // 인덱스 회피: 단순 조회 후 클라이언트 정렬
+    const snap = await db.collection(collection).get();
+    let items = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    if (orderField) {
+      items.sort((a, b) => {
+        const av = a[orderField];
+        const bv = b[orderField];
+        if (av == null && bv == null) return 0;
+        if (av == null) return 1;
+        if (bv == null) return -1;
+        if (av < bv) return orderDir === 'asc' ? -1 : 1;
+        if (av > bv) return orderDir === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+    return items;
   },
 
   async _getHome() {
@@ -99,29 +111,34 @@ window.api = {
     futureDate.setDate(futureDate.getDate() + 21);
     const futureStr = futureDate.toISOString().split('T')[0];
 
-    const postsSnap = await db.collection('posts').orderBy('date', 'desc').limit(5).get();
-    const posts = postsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    // 공지: 전체 가져와서 클라이언트에서 정렬/제한
+    const postsSnap = await db.collection('posts').get();
+    const posts = postsSnap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => (b.date || '').localeCompare(a.date || ''))
+      .slice(0, 5);
 
-    const scheduleSnap = await db.collection('schedule')
-      .where('date', '>=', todayStr)
-      .where('date', '<=', futureStr)
-      .orderBy('date', 'asc')
-      .limit(4).get();
-    const schedule = scheduleSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    // 일정: 전체 가져와서 클라이언트에서 필터/정렬
+    const scheduleSnap = await db.collection('schedule').get();
+    const schedule = scheduleSnap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .filter(s => s.date >= todayStr && s.date <= futureStr)
+      .sort((a, b) => (a.date || '').localeCompare(b.date || ''))
+      .slice(0, 4);
 
     const settings = await this._getSettings();
     return { posts, schedule, settings };
   },
 
   async _getPosts(category) {
-    let query;
+    // 전체 가져와서 클라이언트에서 필터/정렬 (인덱스 회피)
+    const snap = await db.collection('posts').get();
+    let items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     if (category && category !== 'all' && category !== '전체') {
-      query = db.collection('posts').where('category', '==', category).orderBy('date', 'desc');
-    } else {
-      query = db.collection('posts').orderBy('date', 'desc');
+      items = items.filter(p => p.category === category);
     }
-    const snap = await query.get();
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    items.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    return items;
   },
 
   async _getPost(id) {
@@ -131,8 +148,10 @@ window.api = {
   },
 
   async _getSchedule() {
-    const snap = await db.collection('schedule').orderBy('date', 'asc').get();
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const snap = await db.collection('schedule').get();
+    return snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => (a.date || '').localeCompare(b.date || ''));
   },
 
   async _getSettings() {
@@ -142,23 +161,27 @@ window.api = {
   },
 
   async _getScheduleColors() {
-    const snap = await db.collection('scheduleColors').orderBy('order', 'asc').get();
-    const colors = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const snap = await db.collection('scheduleColors').get();
+    let colors = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    colors.sort((a, b) => (a.order || 0) - (b.order || 0));
     if (colors.length === 0) return window.DEFAULT_SCHEDULE_COLORS;
     return colors;
   },
 
   // 수업자료
   async _getMaterialCategories(includeHidden = false) {
-    const snap = await db.collection('materialCategories').orderBy('order', 'asc').get();
+    const snap = await db.collection('materialCategories').get();
     let cats = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    cats.sort((a, b) => (a.order || 0) - (b.order || 0));
     if (!includeHidden) cats = cats.filter(c => !c.hidden);
     return cats;
   },
 
   async _getMaterials(categoryId, includeHidden = false) {
-    const snap = await db.collection('materials').where('categoryId', '==', categoryId).orderBy('order', 'asc').get();
+    // where만 사용 (orderBy 분리하면 인덱스 불필요)
+    const snap = await db.collection('materials').where('categoryId', '==', categoryId).get();
     let materials = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    materials.sort((a, b) => (a.order || 0) - (b.order || 0));
     if (!includeHidden) materials = materials.filter(m => !m.hidden);
     return materials;
   },
