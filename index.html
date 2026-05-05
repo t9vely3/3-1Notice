@@ -1465,7 +1465,8 @@ function isBookmarked(id) { return getBookmarks().includes(id); }
 // ============================================================
 // 라우팅
 // ============================================================
-function navigate(page, params = {}) {
+// 내부 호출 (브라우저 뒤로가기에서 호출 시 isPopState=true)
+function navigate(page, params = {}, isPopState = false) {
   document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
   const target = document.getElementById('page-' + page);
   if (target) target.classList.remove('hidden');
@@ -1473,8 +1474,17 @@ function navigate(page, params = {}) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   const activeTab = document.querySelector(`.tab[data-page="${page}"]`);
   if (activeTab) activeTab.classList.add('active');
-  if (state.currentPage !== page) state.history.push(page);
+  
+  // 브라우저 history에 push (popstate가 아닌 정상 navigate일 때만)
+  if (!isPopState) {
+    if (state.currentPage !== page || JSON.stringify(state.currentParams || {}) !== JSON.stringify(params)) {
+      const url = page === 'home' ? '#' : `#${page}${params.id ? '/' + params.id : ''}${params.parentId ? '/' + params.parentId : ''}${params.categoryId ? '/' + params.categoryId : ''}`;
+      history.pushState({ page, params }, '', url);
+    }
+  }
+  
   state.currentPage = page;
+  state.currentParams = params;
 
   if (page === 'home') loadHome();
   else if (page === 'posts') loadPosts();
@@ -1493,10 +1503,23 @@ function navigate(page, params = {}) {
 }
 
 function goBack() {
-  state.history.pop();
-  const prev = state.history[state.history.length - 1] || 'home';
-  navigate(prev);
+  // 브라우저 history의 back을 호출 → popstate 핸들러가 navigate 처리
+  if (history.length > 1 && history.state) {
+    history.back();
+  } else {
+    navigate('home');
+  }
 }
+
+// 브라우저 뒤로가기 핸들러
+window.addEventListener('popstate', (e) => {
+  const s = e.state;
+  if (s && s.page) {
+    navigate(s.page, s.params || {}, true);
+  } else {
+    navigate('home', {}, true);
+  }
+});
 
 // ============================================================
 // 유틸
@@ -1564,18 +1587,19 @@ function escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 // 홈
 // ============================================================
 async function loadHome() {
-  let data, schedule, colors, settings;
+  let data, schedule, colors, settings, courses;
   
   try {
-    [data, schedule, colors, settings] = await Promise.all([
+    [data, schedule, colors, settings, courses] = await Promise.all([
       window.api.call('getHome'),
       window.api.call('getSchedule'),
       window.api.call('getScheduleColors'),
-      window.api.call('getSettings')
+      window.api.call('getSettings'),
+      window.api.call('getCourses').catch(() => [])
     ]);
   } catch (e) {
     data = { posts: [], schedule: [], settings: {} };
-    schedule = []; colors = []; settings = {};
+    schedule = []; colors = []; settings = {}; courses = [];
   }
   
   state.cal.colors = colors || [];
@@ -1584,7 +1608,6 @@ async function loadHome() {
   const notice = (settings && settings.notice) ? settings.notice.trim() : '';
   if (notice) {
     document.getElementById('notice-bar').style.display = 'flex';
-    // \n을 <br>로, 그리고 글자 변환
     const html = escapeHtml(notice).replace(/\n/g, '<br>');
     document.getElementById('notice-text').innerHTML = html;
   } else {
@@ -1596,22 +1619,48 @@ async function loadHome() {
   const days = ['일','월','화','수','목','금','토'];
   document.getElementById('day-label').textContent = `${days[TODAY.getDay()]}요일`;
 
-  // 진행률 게이지 (이번 달 기준)
-  const targetMonth = `${TODAY.getFullYear()}-${String(TODAY.getMonth() + 1).padStart(2, '0')}`;
-  const progress = window.computeMonthProgress(schedule || [], colors || [], targetMonth);
+  // 진행률 게이지 - 진행 중인 과정 기준
+  // active=true이고 오늘 기준 가장 가까운 종강일 (또는 진행 중) 1개를 선택
+  const todayStr = `${TODAY.getFullYear()}-${String(TODAY.getMonth() + 1).padStart(2, '0')}-${String(TODAY.getDate()).padStart(2, '0')}`;
+  const activeCourses = (courses || []).filter(c => c.active && c.startDate && c.endDate);
+  
+  // 우선순위: 1) 현재 진행 중 (start <= today <= end) 중 종강 가까운 순
+  //          2) 미래 시작 예정 중 시작일 가까운 순
+  //          3) 종강 지난 것 중 가장 최근
+  const inProgress = activeCourses.filter(c => c.startDate <= todayStr && c.endDate >= todayStr);
+  inProgress.sort((a, b) => a.endDate.localeCompare(b.endDate));
+  
+  const upcomingCourses = activeCourses.filter(c => c.startDate > todayStr);
+  upcomingCourses.sort((a, b) => a.startDate.localeCompare(b.startDate));
+  
+  const past = activeCourses.filter(c => c.endDate < todayStr);
+  past.sort((a, b) => b.endDate.localeCompare(a.endDate));
+  
+  const targetCourse = inProgress[0] || upcomingCourses[0] || past[0];
+  
+  const progress = targetCourse 
+    ? window.computeCourseProgress(targetCourse, schedule || [], colors || [])
+    : null;
   
   if (progress) {
-    const dDayClass = progress.dDay.startsWith('D-') && progress.dDay !== 'D-DAY' && parseInt(progress.dDay.replace('D-', '')) > 7 ? '' : 'danger';
+    const ddayNum = parseInt((progress.dDay.match(/-?\d+/) || ['0'])[0]);
+    const dDayClass = (progress.dDay.startsWith('D-') && progress.dDay !== 'D-DAY' && ddayNum > 7) ? '' : 'danger';
+    
+    let stateLabel = '';
+    if (targetCourse.startDate > todayStr) stateLabel = ' · 시작 예정';
+    else if (targetCourse.endDate < todayStr) stateLabel = ' · 종강';
+    
     document.getElementById('gauge-area').innerHTML = `
       <div class="gauge-card">
         <div class="gauge-row">
-          <span class="gauge-name">${TODAY.getMonth() + 1}월 수업 · ${progress.totalSessions}회 중 ${progress.completedSessions}회차</span>
+          <span class="gauge-name">${escapeHtml(targetCourse.name)}${stateLabel}</span>
           <span class="gauge-pct ${dDayClass}">${progress.dDay}</span>
         </div>
         <div class="gauge-bar"><div class="gauge-fill" style="width: ${progress.percent}%;"></div></div>
         <div class="gauge-meta">
-          <span>${formatDate(progress.startDate)} 시작</span>
-          <span>${formatDate(progress.endDate)} 종강</span>
+          <span>${formatDate(targetCourse.startDate)} 시작</span>
+          <span>${progress.totalSessions}회 중 ${progress.completedSessions}회차</span>
+          <span>${formatDate(targetCourse.endDate)} 종강</span>
         </div>
       </div>
     `;
@@ -1620,8 +1669,32 @@ async function loadHome() {
     const newPostCount = (data.posts || []).filter(p => isNew(p.date) && !isRead(p.id)).length;
     document.getElementById('stat-row').style.display = 'flex';
     document.getElementById('stat-cancel-num').textContent = progress.cancelDays;
-    document.getElementById('stat-cancel-label').textContent = `${TODAY.getMonth() + 1}월 휴강일`;
+    document.getElementById('stat-cancel-label').textContent = '과정 휴강일';
     document.getElementById('stat-new-num').textContent = newPostCount;
+  } else if (targetCourse) {
+    // 과정은 있는데 일정이 안 맞아서 진행률 계산 불가
+    const ddayObj = new Date(targetCourse.endDate);
+    ddayObj.setHours(0, 0, 0, 0);
+    const ddayNum = Math.round((ddayObj - TODAY) / (1000 * 60 * 60 * 24));
+    let dDay;
+    if (ddayNum > 0) dDay = `D-${ddayNum}`;
+    else if (ddayNum === 0) dDay = 'D-DAY';
+    else dDay = `D+${Math.abs(ddayNum)}`;
+    
+    document.getElementById('gauge-area').innerHTML = `
+      <div class="gauge-card">
+        <div class="gauge-row">
+          <span class="gauge-name">${escapeHtml(targetCourse.name)}</span>
+          <span class="gauge-pct">${dDay}</span>
+        </div>
+        <div class="gauge-bar"><div class="gauge-fill" style="width: 0%;"></div></div>
+        <div class="gauge-meta">
+          <span>${formatDate(targetCourse.startDate)} 시작</span>
+          <span>${formatDate(targetCourse.endDate)} 종강</span>
+        </div>
+      </div>
+    `;
+    document.getElementById('stat-row').style.display = 'none';
   } else {
     document.getElementById('gauge-area').innerHTML = '';
     document.getElementById('stat-row').style.display = 'none';
@@ -2211,7 +2284,9 @@ async function loadMaterialsDetail(id) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  navigate('home');
+  // 초기 진입: 현재 history entry를 home으로 등록 (replaceState)
+  history.replaceState({ page: 'home', params: {} }, '', '#');
+  navigate('home', {}, true);
 });
 </script>
 

@@ -51,6 +51,7 @@ window.api = {
     if (action === 'getRules')       return await this._getList('rules', 'order', 'asc');
     if (action === 'getSettings')    return await this._getSettings();
     if (action === 'getScheduleColors') return await this._getScheduleColors();
+    if (action === 'getCourses')     return await this._getList('courses', 'startDate', 'asc');
     
     // 수업자료
     if (action === 'getMaterialCategories') return await this._getMaterialCategories(data.includeHidden);
@@ -70,6 +71,8 @@ window.api = {
     if (action === 'saveScheduleBatch') return await this._saveScheduleBatch(data);
     if (action === 'saveCurriculum')   return await this._save('curriculum', data);
     if (action === 'deleteCurriculum') return await this._delete('curriculum', data.id);
+    if (action === 'saveCourse')       return await this._save('courses', data);
+    if (action === 'deleteCourse')     return await this._delete('courses', data.id);
     if (action === 'saveClassroom')    return await this._save('classrooms', data);
     if (action === 'deleteClassroom')  return await this._delete('classrooms', data.id);
     if (action === 'saveRule')         return await this._save('rules', data);
@@ -310,7 +313,74 @@ window.expandDateRange = function(startDate, endDate, weekdays) {
 };
 
 // ============================================================
-// 유틸: 월별 회차 진행률 계산
+// 유틸: 과정 기반 회차 진행률 계산
+// ============================================================
+// course: { startDate, endDate, name, ... }
+// schedule: 전체 일정 배열
+// colors: 색상 정의 (type 필드 포함)
+// 결과: { totalSessions, completedSessions, cancelDays, percent, dDay, course }
+window.computeCourseProgress = function(course, schedule, colors) {
+  if (!course || !course.startDate || !course.endDate) return null;
+  
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  // 색상 type 매핑
+  const typeMap = {};
+  (colors || []).forEach(c => { typeMap[c.id] = c.type || 'other'; });
+  
+  // 과정 기간 내 일정만 필터
+  const inRange = (schedule || []).filter(s => 
+    s.date && s.date >= course.startDate && s.date <= course.endDate
+  );
+  
+  if (inRange.length === 0) return null;
+  
+  // 수업일/휴강일 분리
+  const classDays = inRange.filter(s => typeMap[s.colorId] === 'class');
+  const cancelDays = inRange.filter(s => typeMap[s.colorId] === 'cancel');
+  
+  // 휴강일과 겹치지 않는 수업일만 카운트
+  const cancelDates = new Set(cancelDays.map(c => c.date));
+  let realClasses = classDays.filter(c => !cancelDates.has(c.date));
+  
+  // 중복 날짜 제거 (같은 날짜에 같은 분류 색상 여러 개 등록된 경우)
+  const seenDates = new Set();
+  realClasses = realClasses.filter(c => {
+    if (seenDates.has(c.date)) return false;
+    seenDates.add(c.date);
+    return true;
+  });
+  
+  if (realClasses.length === 0) return null;
+  
+  realClasses.sort((a, b) => a.date.localeCompare(b.date));
+  
+  // 오늘까지 진행된 회차
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  const completedSessions = realClasses.filter(c => c.date <= todayStr).length;
+  
+  // 종강 D-day (course.endDate 기준)
+  const endDateObj = new Date(course.endDate);
+  endDateObj.setHours(0, 0, 0, 0);
+  const dDayNum = Math.round((endDateObj - today) / (1000 * 60 * 60 * 24));
+  let dDay;
+  if (dDayNum > 0) dDay = `D-${dDayNum}`;
+  else if (dDayNum === 0) dDay = 'D-DAY';
+  else dDay = `D+${Math.abs(dDayNum)}`;
+  
+  return {
+    totalSessions: realClasses.length,
+    completedSessions,
+    cancelDays: cancelDays.length,
+    percent: Math.round((completedSessions / realClasses.length) * 100),
+    dDay,
+    course
+  };
+};
+
+// ============================================================
+// 유틸: 월별 회차 진행률 계산 (구버전 호환용)
 // ============================================================
 // schedule: 해당 월의 모든 일정
 // colors: 색상 정의 (type 필드 포함)

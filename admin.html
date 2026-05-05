@@ -309,9 +309,192 @@ input, textarea, select { font-family: inherit; }
 .posts-table .table-row { grid-template-columns: 80px 1fr 100px 80px; }
 .schedule-table .table-row { grid-template-columns: 100px 110px 1fr 80px; }
 .curriculum-table .table-row { grid-template-columns: 1fr 130px 110px 100px 80px; }
+.courses-table .table-row { grid-template-columns: 1fr 130px 130px 90px 80px; }
 .classrooms-table .table-row { grid-template-columns: 130px 1fr 80px; }
 .rules-table .table-row { grid-template-columns: 50px 1fr 80px; }
 .colors-table .table-row { grid-template-columns: 50px 1fr 110px 130px 80px; }
+
+/* ===== 관리자 캘린더 (수업일정) ===== */
+.admin-cal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.admin-cal-month {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+.admin-cal-nav {
+  display: flex;
+  gap: 6px;
+}
+
+/* 색상 팔레트 */
+.color-palette {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--bg-section);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.palette-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-soft);
+  flex-shrink: 0;
+}
+.palette-options {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+.palette-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  background: var(--bg-elevated);
+  border: 1.5px solid transparent;
+  border-radius: 16px;
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.12s;
+  font-family: inherit;
+}
+.palette-chip:hover { background: #fff; box-shadow: var(--shadow-xs); }
+.palette-chip.selected {
+  border-color: var(--accent);
+  background: #fff;
+  box-shadow: var(--shadow-xs);
+}
+.palette-chip-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.palette-chip-name { color: var(--text); }
+
+/* 캘린더 그리드 */
+.admin-cal-grid {
+  border: 0.5px solid var(--border-mid);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow-xs);
+}
+.admin-cal-week-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: var(--bg-section);
+}
+.admin-cal-week-day {
+  padding: 9px 0;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-soft);
+  letter-spacing: 0.02em;
+}
+.admin-cal-week-day.sun { color: var(--danger); }
+.admin-cal-week-day.sat { color: #1d4ed8; }
+
+.admin-cal-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: var(--border-mid);
+  gap: 0.5px;
+}
+.admin-cal-day {
+  background: var(--bg-elevated);
+  min-height: 88px;
+  padding: 7px 8px;
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  font-size: 11.5px;
+  transition: background 0.12s;
+  overflow: hidden;
+}
+.admin-cal-day:hover { background: #f9f8f3; }
+.admin-cal-day.other-month { color: #aaa; background: #fafaf7; cursor: default; }
+.admin-cal-day.other-month:hover { background: #fafaf7; }
+.admin-cal-day-num {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  font-size: 12.5px;
+}
+.admin-cal-day.sun .admin-cal-day-num { color: var(--danger); }
+.admin-cal-day.sat .admin-cal-day-num { color: #1d4ed8; }
+.admin-cal-day.today {
+  background: #fef9e6;
+}
+.admin-cal-day.today .admin-cal-day-num {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.admin-cal-events {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+.admin-cal-event {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 9.5px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: opacity 0.12s;
+}
+.admin-cal-event:hover { opacity: 0.85; }
+
+/* 빈 날짜 호버 시 + 표시 */
+.admin-cal-day:not(.has-event):not(.other-month):hover::after {
+  content: '+';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: var(--accent);
+  opacity: 0.35;
+  pointer-events: none;
+  font-weight: 300;
+}
+
+.schedule-help {
+  margin-top: 14px;
+  padding: 11px 14px;
+  background: #ebe9fc;
+  border-radius: 8px;
+  border-left: 3px solid var(--m-1);
+  font-size: 11.5px;
+  color: #3a2e8a;
+  line-height: 1.55;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.schedule-help strong {
+  font-weight: 700;
+  flex-shrink: 0;
+}
 
 .cell-tag { display: flex; }
 .cell-color {
@@ -1080,9 +1263,9 @@ input, textarea, select { font-family: inherit; }
     </button>
 
     <div class="nav-section">학원 정보</div>
-    <button class="nav-item" data-view="curriculum" onclick="switchView('curriculum')">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-      커리큘럼
+    <button class="nav-item" data-view="courses" onclick="switchView('courses')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      진행 중인 과정
     </button>
     <button class="nav-item" data-view="classrooms" onclick="switchView('classrooms')">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
@@ -1135,32 +1318,51 @@ input, textarea, select { font-family: inherit; }
       </div>
     </section>
 
-    <!-- 학사일정 -->
+    <!-- 수업일정 (캘린더 클릭 방식) -->
     <section id="view-schedule" class="view" style="display: none;">
       <div class="main-header">
         <div>
           <h1 class="main-title">수업일정</h1>
-          <div class="main-subtitle" id="schedule-count">전체 0건</div>
+          <div class="main-subtitle" id="schedule-count">달력의 빈 날짜를 클릭하면 선택한 색상으로 칠해집니다</div>
         </div>
         <div class="action-bar">
-          <button class="btn" onclick="openScheduleModal('single')">
-            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            단일 일정
-          </button>
-          <button class="btn btn-primary" onclick="openScheduleModal('batch')">
+          <button class="btn" onclick="openScheduleModal('batch')" title="여러 날짜에 한 번에 같은 색 적용">
             <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            반복 일정 (요일 패턴)
+            기간 일괄 등록
           </button>
         </div>
       </div>
-      <div class="data-table schedule-table">
-        <div class="table-row header">
-          <div>날짜</div>
-          <div>색상/이름</div>
-          <div>제목</div>
-          <div></div>
+      
+      <!-- 캘린더 헤더 (월 이동) -->
+      <div class="admin-cal-header">
+        <div class="admin-cal-month" id="admin-cal-month-label"></div>
+        <div class="admin-cal-nav">
+          <button class="btn" onclick="adminCalPrev()" style="padding: 6px 10px;">←</button>
+          <button class="btn" onclick="adminCalToday()" style="padding: 6px 12px;">이번 달</button>
+          <button class="btn" onclick="adminCalNext()" style="padding: 6px 10px;">→</button>
         </div>
-        <div id="schedule-list"></div>
+      </div>
+      
+      <!-- 색상 팔레트 (선택된 색으로 칠함) -->
+      <div class="color-palette" id="admin-color-palette"></div>
+      
+      <!-- 캘린더 그리드 -->
+      <div class="admin-cal-grid">
+        <div class="admin-cal-week-header">
+          <div class="admin-cal-week-day sun">일</div>
+          <div class="admin-cal-week-day">월</div>
+          <div class="admin-cal-week-day">화</div>
+          <div class="admin-cal-week-day">수</div>
+          <div class="admin-cal-week-day">목</div>
+          <div class="admin-cal-week-day">금</div>
+          <div class="admin-cal-week-day sat">토</div>
+        </div>
+        <div class="admin-cal-days" id="admin-cal-days"></div>
+      </div>
+      
+      <div class="schedule-help">
+        <strong>사용법</strong>
+        <span>① 위에서 색상 클릭으로 선택  ② 빈 날짜 클릭 → 그 색으로 칠해짐  ③ 칠해진 날짜 클릭 → 편집 / 삭제</span>
       </div>
     </section>
 
@@ -1186,29 +1388,29 @@ input, textarea, select { font-family: inherit; }
       </div>
     </section>
 
-    <!-- 커리큘럼 -->
-    <section id="view-curriculum" class="view" style="display: none;">
+    <!-- 진행 중인 과정 -->
+    <section id="view-courses" class="view" style="display: none;">
       <div class="main-header">
         <div>
-          <h1 class="main-title">커리큘럼</h1>
-          <div class="main-subtitle" id="curriculum-count">전체 0건</div>
+          <h1 class="main-title">진행 중인 과정</h1>
+          <div class="main-subtitle" id="courses-count">홈 화면 진행률 게이지에 표시되는 과정을 관리합니다</div>
         </div>
         <div class="action-bar">
-          <button class="btn btn-primary" onclick="openCurrModal()">
+          <button class="btn btn-primary" onclick="openCourseModal()">
             <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            새 과정 추가
+            과정 추가
           </button>
         </div>
       </div>
-      <div class="data-table curriculum-table">
+      <div class="data-table courses-table">
         <div class="table-row header">
-          <div>과정명</div>
-          <div>기간</div>
-          <div>강의장</div>
-          <div>수업 요일</div>
+          <div>이름</div>
+          <div>시작일</div>
+          <div>종강일</div>
+          <div>표시</div>
           <div></div>
         </div>
-        <div id="curriculum-list"></div>
+        <div id="courses-list"></div>
       </div>
     </section>
 
@@ -1449,6 +1651,8 @@ input, textarea, select { font-family: inherit; }
       </div>
     </div>
     <div class="modal-footer">
+    <div class="modal-footer">
+      <button class="btn btn-danger" id="schedule-delete-btn" onclick="deleteScheduleFromModal()" style="display: none; margin-right: auto;">삭제</button>
       <button class="btn" onclick="closeModal('schedule-modal')">취소</button>
       <button class="btn btn-primary" onclick="saveSchedule()" id="schedule-save-btn">저장</button>
     </div>
@@ -1505,56 +1709,54 @@ input, textarea, select { font-family: inherit; }
   </div>
 </div>
 
-<!-- 커리큘럼 모달 -->
-<div class="modal-backdrop" id="curr-modal">
+<!-- 진행 중인 과정 모달 -->
+<div class="modal-backdrop" id="course-modal">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title" id="curr-modal-title">새 과정 추가</div>
-      <button class="modal-close" onclick="closeModal('curr-modal')">
+      <div class="modal-title" id="course-modal-title">과정 추가</div>
+      <button class="modal-close" onclick="closeModal('course-modal')">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
     <div class="modal-body">
-      <input type="hidden" id="curr-id">
+      <input type="hidden" id="course-id">
       <div class="form-row">
-        <label class="form-label">과정명</label>
-        <input type="text" class="form-input" id="curr-name" placeholder="예: AI 프롬프트 엔지니어링 1">
+        <label class="form-label">과정 이름</label>
+        <input type="text" class="form-input" id="course-name" placeholder="예: AI 프롬프트 5월 개강반">
       </div>
       <div class="form-row split">
         <div>
-          <label class="form-label">개강일</label>
-          <input type="date" class="form-input" id="curr-startDate">
+          <label class="form-label">시작일</label>
+          <input type="date" class="form-input" id="course-startDate">
         </div>
         <div>
           <label class="form-label">종강일</label>
-          <input type="date" class="form-input" id="curr-endDate">
+          <input type="date" class="form-input" id="course-endDate">
         </div>
       </div>
       <div class="form-row">
-        <label class="form-label">강의장 (선택)</label>
-        <input type="text" class="form-input" id="curr-classroom" placeholder="예: A강의장">
+        <label class="form-toggle">
+          <input type="checkbox" id="course-active">
+          <div class="form-toggle-text">
+            <div class="form-toggle-label">현재 진행 중 (홈 화면 게이지에 표시)</div>
+            <div class="form-toggle-help">체크된 과정 중 시작일이 가장 가까운 과정 1개가 홈에 표시됩니다.</div>
+          </div>
+        </label>
       </div>
       <div class="form-row">
-        <label class="form-label">수업 요일</label>
-        <div class="weekday-picker" id="curr-weekday-picker">
-          <button type="button" class="weekday-pick sun" data-day="0" onclick="toggleCurrWeekday(0)">일</button>
-          <button type="button" class="weekday-pick" data-day="1" onclick="toggleCurrWeekday(1)">월</button>
-          <button type="button" class="weekday-pick" data-day="2" onclick="toggleCurrWeekday(2)">화</button>
-          <button type="button" class="weekday-pick" data-day="3" onclick="toggleCurrWeekday(3)">수</button>
-          <button type="button" class="weekday-pick" data-day="4" onclick="toggleCurrWeekday(4)">목</button>
-          <button type="button" class="weekday-pick" data-day="5" onclick="toggleCurrWeekday(5)">금</button>
-          <button type="button" class="weekday-pick sat" data-day="6" onclick="toggleCurrWeekday(6)">토</button>
-        </div>
-        <div class="form-help">참고용입니다. 실제 학사일정 캘린더에는 "학사일정 메뉴"에서 직접 등록하세요.</div>
+        <label class="form-label">설명 (선택)</label>
+        <input type="text" class="form-input" id="course-description" placeholder="간단한 한 줄 설명">
       </div>
-      <div class="form-row">
-        <label class="form-label">설명</label>
-        <textarea class="form-textarea" id="curr-description" placeholder="과정 설명" style="min-height: 80px;"></textarea>
+      <div style="background: var(--bg-section); border-radius: 8px; padding: 11px 13px; font-size: 11.5px; color: var(--text-soft); line-height: 1.55;">
+        <strong style="color: var(--text);">진행률 계산 방식</strong><br>
+        시작일 ~ 종강일 사이의 캘린더 일정을 자동 분석합니다.<br>
+        ・"수업일" 분류 색상으로 등록된 날 = 회차로 카운트<br>
+        ・"휴강/공강" 분류 색상으로 등록된 날 = 회차에서 제외
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModal('curr-modal')">취소</button>
-      <button class="btn btn-primary" onclick="saveCurriculum()">저장</button>
+      <button class="btn" onclick="closeModal('course-modal')">취소</button>
+      <button class="btn btn-primary" onclick="saveCourse()">저장</button>
     </div>
   </div>
 </div>
@@ -1822,7 +2024,7 @@ async function loadView() {
   if (currentView === 'posts') await loadPosts();
   else if (currentView === 'schedule') await loadSchedule();
   else if (currentView === 'materials') await loadMaterialsAdmin();
-  else if (currentView === 'curriculum') await loadCurriculum();
+  else if (currentView === 'courses') await loadCourses();
   else if (currentView === 'classrooms') await loadClassrooms();
   else if (currentView === 'rules') await loadRules();
   else if (currentView === 'colors') await loadColors();
@@ -1968,11 +2170,17 @@ function confirmDeletePost(id, title) {
 }
 
 // ============================================================
-// 학사일정
+// 수업일정 (캘린더 클릭 방식)
 // ============================================================
 let scheduleColors = [];
+let allSchedule = [];
 let selectedWeekdays = new Set();
-let scheduleMode = 'single';
+let scheduleMode = 'batch';
+let selectedColorId = null;
+let adminCalState = {
+  year: new Date().getFullYear(),
+  month: new Date().getMonth()
+};
 
 async function loadSchedule() {
   const [schedule, colors] = await Promise.all([
@@ -1980,47 +2188,181 @@ async function loadSchedule() {
     window.api.call('getScheduleColors')
   ]);
   scheduleColors = colors || [];
-  document.getElementById('schedule-count').textContent = `전체 ${schedule.length}건`;
-  if (schedule.length === 0) {
-    document.getElementById('schedule-list').innerHTML = `<div class="empty-state">등록된 일정이 없습니다</div>`;
+  allSchedule = schedule || [];
+  
+  // 선택된 색상이 없거나 사라졌으면 첫 번째로
+  if (!selectedColorId || !scheduleColors.find(c => c.id === selectedColorId)) {
+    selectedColorId = scheduleColors[0] ? scheduleColors[0].id : null;
+  }
+  
+  renderColorPalette();
+  renderAdminCalendar();
+}
+
+function renderColorPalette() {
+  const container = document.getElementById('admin-color-palette');
+  if (scheduleColors.length === 0) {
+    container.innerHTML = `<div style="font-size: 11.5px; color: var(--text-faint);">먼저 좌측 메뉴 "일정 색상"에서 색상을 등록하세요</div>`;
     return;
   }
-  document.getElementById('schedule-list').innerHTML = schedule.map(s => {
-    const color = scheduleColors.find(c => c.id === s.colorId);
-    const labelHtml = color
-      ? `<span class="cell-color"><span class="color-preview" style="background: ${color.color}"></span><span>${escapeHtml(color.name)}</span></span>`
-      : `<span class="cell-color"><span class="color-preview" style="background: #cbd5e1"></span><span style="color: var(--text-faint);">${escapeHtml(s.category || '미지정')}</span></span>`;
+  container.innerHTML = `
+    <div class="palette-label">칠하기:</div>
+    <div class="palette-options">
+      ${scheduleColors.map(c => `
+        <button class="palette-chip ${c.id === selectedColorId ? 'selected' : ''}" onclick="selectPaletteColor('${c.id}')">
+          <span class="palette-chip-dot" style="background: ${c.color}"></span>
+          <span class="palette-chip-name">${escapeHtml(c.name)}</span>
+        </button>
+      `).join('')}
+    </div>
+  `;
+}
+
+function selectPaletteColor(colorId) {
+  selectedColorId = colorId;
+  renderColorPalette();
+}
+
+function adminCalPrev() {
+  adminCalState.month--;
+  if (adminCalState.month < 0) { adminCalState.month = 11; adminCalState.year--; }
+  renderAdminCalendar();
+}
+function adminCalNext() {
+  adminCalState.month++;
+  if (adminCalState.month > 11) { adminCalState.month = 0; adminCalState.year++; }
+  renderAdminCalendar();
+}
+function adminCalToday() {
+  const now = new Date();
+  adminCalState.year = now.getFullYear();
+  adminCalState.month = now.getMonth();
+  renderAdminCalendar();
+}
+
+function renderAdminCalendar() {
+  const { year, month } = adminCalState;
+  document.getElementById('admin-cal-month-label').textContent = `${year}년 ${month + 1}월`;
+  
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const todayStr_ = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const daysInMonth = lastDay.getDate();
+  const startDayOfWeek = firstDay.getDay();
+  const prevLastDay = new Date(year, month, 0).getDate();
+  
+  const days = [];
+  for (let i = startDayOfWeek - 1; i >= 0; i--) {
+    days.push({ date: new Date(year, month - 1, prevLastDay - i), otherMonth: true });
+  }
+  for (let i = 1; i <= daysInMonth; i++) {
+    days.push({ date: new Date(year, month, i), otherMonth: false });
+  }
+  while (days.length < 42) {
+    const last = days[days.length - 1].date;
+    const next = new Date(last);
+    next.setDate(next.getDate() + 1);
+    days.push({ date: next, otherMonth: true });
+  }
+  
+  const eventsByDate = {};
+  allSchedule.forEach(s => {
+    if (!eventsByDate[s.date]) eventsByDate[s.date] = [];
+    eventsByDate[s.date].push(s);
+  });
+  
+  document.getElementById('admin-cal-days').innerHTML = days.map(({ date, otherMonth }) => {
+    const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    const events = eventsByDate[dateStr] || [];
+    const isToday = dateStr === todayStr_;
+    const dayOfWeek = date.getDay();
+    
+    let classes = ['admin-cal-day'];
+    if (otherMonth) classes.push('other-month');
+    if (isToday) classes.push('today');
+    if (dayOfWeek === 0) classes.push('sun');
+    if (dayOfWeek === 6) classes.push('sat');
+    if (events.length > 0) classes.push('has-event');
+    
+    const eventsHtml = events.map(e => {
+      const color = scheduleColors.find(c => c.id === e.colorId);
+      const bg = color ? color.color : '#64748b';
+      const safeTitle = escapeHtml(e.title || color?.name || '');
+      return `<div class="admin-cal-event" style="background: ${bg}" onclick="event.stopPropagation(); editScheduleEvent('${e.id}')" title="${safeTitle}">${safeTitle}</div>`;
+    }).join('');
+    
+    const clickHandler = otherMonth ? '' : `onclick="onCalDayClick('${dateStr}')"`;
+    
     return `
-      <div class="table-row">
-        <div class="cell-date">${formatScheduleDate(s.date)}</div>
-        <div>${labelHtml}</div>
-        <div class="cell-title">${escapeHtml(s.title)}${s.description ? ` <span style="color: var(--text-faint); font-weight: 400; font-size: 12px;">· ${escapeHtml(s.description)}</span>` : ''}</div>
-        <div class="cell-actions">
-          <button class="icon-btn" onclick="editSchedule('${s.id}')" title="편집"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-          <button class="icon-btn danger" onclick="confirmDeleteSchedule('${s.id}', '${escapeHtml(s.title).replace(/'/g, "\\'")}')" title="삭제"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
-        </div>
+      <div class="${classes.join(' ')}" ${clickHandler}>
+        <div class="admin-cal-day-num">${date.getDate()}</div>
+        <div class="admin-cal-events">${eventsHtml}</div>
       </div>
     `;
   }).join('');
 }
 
+async function onCalDayClick(dateStr) {
+  if (!selectedColorId) {
+    toast('상단에서 칠할 색상을 선택해주세요', 'error');
+    return;
+  }
+  const color = scheduleColors.find(c => c.id === selectedColorId);
+  if (!color) { toast('색상을 찾을 수 없습니다', 'error'); return; }
+  
+  // 빠른 추가 - 색상 이름을 제목으로 자동 입력
+  try {
+    await window.api.call('saveSchedule', {
+      date: dateStr,
+      colorId: selectedColorId,
+      title: color.name,
+      description: ''
+    }, getAuth());
+    toast(`${dateStr} 추가됨`);
+    await loadSchedule();
+  } catch (e) {
+    toast('저장 실패: ' + e.message, 'error');
+  }
+}
+
+async function editScheduleEvent(id) {
+  const item = allSchedule.find(s => s.id === id);
+  if (!item) return;
+  
+  document.getElementById('schedule-modal-title').textContent = '일정 편집';
+  document.getElementById('schedule-id').value = item.id;
+  document.getElementById('schedule-title').value = item.title || '';
+  document.getElementById('schedule-description').value = item.description || '';
+  document.getElementById('schedule-date').value = item.date;
+  populateScheduleColorOptions();
+  document.getElementById('schedule-colorId').value = item.colorId || (scheduleColors[0] ? scheduleColors[0].id : '');
+  
+  switchScheduleMode('single');
+  
+  // 편집 모드: 삭제 버튼 표시
+  const delBtn = document.getElementById('schedule-delete-btn');
+  if (delBtn) delBtn.style.display = '';
+  
+  openModal('schedule-modal');
+}
+
 function populateScheduleColorOptions() {
   const select = document.getElementById('schedule-colorId');
   if (scheduleColors.length === 0) {
-    select.innerHTML = '<option value="">색상이 없습니다 - 먼저 등록하세요</option>';
+    select.innerHTML = '<option value="">색상이 없습니다</option>';
     return;
   }
   select.innerHTML = scheduleColors.map(c => 
-    `<option value="${c.id}" data-color="${c.color}">● ${escapeHtml(c.name)}</option>`
+    `<option value="${c.id}">${escapeHtml(c.name)}</option>`
   ).join('');
 }
 
-function onScheduleColorChange() {
-  // 옵션 색상 시각화는 select 자체에서는 어렵지만, 디자인 위해 별도 처리 가능
-}
+function onScheduleColorChange() {}
 
-async function openScheduleModal(mode = 'single') {
-  // 색상이 없으면 자동 로드
+async function openScheduleModal(mode = 'batch') {
   if (scheduleColors.length === 0) {
     scheduleColors = await window.api.call('getScheduleColors') || [];
   }
@@ -2029,7 +2371,7 @@ async function openScheduleModal(mode = 'single') {
     return;
   }
   
-  document.getElementById('schedule-modal-title').textContent = mode === 'batch' ? '반복 일정 등록' : '단일 일정 등록';
+  document.getElementById('schedule-modal-title').textContent = mode === 'batch' ? '기간 일괄 등록' : '일정 등록';
   document.getElementById('schedule-id').value = '';
   document.getElementById('schedule-title').value = '';
   document.getElementById('schedule-description').value = '';
@@ -2040,7 +2382,13 @@ async function openScheduleModal(mode = 'single') {
   document.querySelectorAll('#weekday-picker .weekday-pick').forEach(b => b.classList.remove('selected'));
   
   populateScheduleColorOptions();
+  if (selectedColorId) document.getElementById('schedule-colorId').value = selectedColorId;
   switchScheduleMode(mode);
+  
+  // 새 등록: 삭제 버튼 숨김
+  const delBtn = document.getElementById('schedule-delete-btn');
+  if (delBtn) delBtn.style.display = 'none';
+  
   openModal('schedule-modal');
   setTimeout(() => document.getElementById('schedule-title').focus(), 100);
 }
@@ -2053,7 +2401,6 @@ function switchScheduleMode(mode) {
   document.getElementById('schedule-single-form').style.display = mode === 'single' ? 'block' : 'none';
   document.getElementById('schedule-batch-form').style.display = mode === 'batch' ? 'block' : 'none';
   
-  // 편집 모드일 땐 반복 일정으로 못 바꿈 (기존 단일 일정 편집은 단일만)
   const editing = !!document.getElementById('schedule-id').value;
   if (editing) {
     document.querySelectorAll('#schedule-mode-tabs button').forEach(b => b.disabled = true);
@@ -2094,27 +2441,6 @@ function updateBatchPreview() {
   `;
 }
 
-async function editSchedule(id) {
-  const all = await window.api.call('getSchedule');
-  const item = all.find(s => s.id === id);
-  if (!item) return;
-  
-  if (scheduleColors.length === 0) {
-    scheduleColors = await window.api.call('getScheduleColors') || [];
-  }
-  
-  document.getElementById('schedule-modal-title').textContent = '일정 편집';
-  document.getElementById('schedule-id').value = item.id;
-  document.getElementById('schedule-title').value = item.title;
-  document.getElementById('schedule-description').value = item.description || '';
-  document.getElementById('schedule-date').value = item.date;
-  populateScheduleColorOptions();
-  document.getElementById('schedule-colorId').value = item.colorId || (scheduleColors[0] ? scheduleColors[0].id : '');
-  
-  switchScheduleMode('single'); // 편집은 항상 단일
-  openModal('schedule-modal');
-}
-
 async function saveSchedule() {
   const id = document.getElementById('schedule-id').value || undefined;
   const colorId = document.getElementById('schedule-colorId').value;
@@ -2122,16 +2448,28 @@ async function saveSchedule() {
   const description = document.getElementById('schedule-description').value.trim();
   
   if (!colorId) { toast('색상을 선택해주세요', 'error'); return; }
-  if (!title) { toast('제목을 입력해주세요', 'error'); return; }
   
   if (scheduleMode === 'single' || id) {
     const date = document.getElementById('schedule-date').value;
     if (!date) { toast('날짜를 선택해주세요', 'error'); return; }
+    
+    // 제목이 비어있으면 색상 이름으로 자동
+    let finalTitle = title;
+    if (!finalTitle) {
+      const color = scheduleColors.find(c => c.id === colorId);
+      finalTitle = color ? color.name : '';
+    }
+    
     try {
-      await window.api.call('saveSchedule', { id, date, colorId, title, description }, getAuth());
+      await window.api.call('saveSchedule', { id, date, colorId, title: finalTitle, description }, getAuth());
       closeModal('schedule-modal');
       toast(id ? '일정이 수정되었습니다' : '일정이 추가되었습니다');
       await loadSchedule();
+      
+      // 편집 후 삭제 버튼 처리
+      if (id && document.getElementById('schedule-delete-btn')) {
+        document.getElementById('schedule-delete-btn').style.display = 'none';
+      }
     } catch (e) {
       toast('저장 실패: ' + e.message, 'error');
     }
@@ -2145,11 +2483,17 @@ async function saveSchedule() {
     const dates = window.expandDateRange(start, end, days);
     if (dates.length === 0) { toast('선택한 조건에 맞는 날짜가 없습니다', 'error'); return; }
     
+    let finalTitle = title;
+    if (!finalTitle) {
+      const color = scheduleColors.find(c => c.id === colorId);
+      finalTitle = color ? color.name : '';
+    }
+    
     try {
       const btn = document.getElementById('schedule-save-btn');
       btn.disabled = true;
       btn.textContent = `등록 중... (${dates.length}일)`;
-      const result = await window.api.call('saveScheduleBatch', { dates, colorId, title, description }, getAuth());
+      const result = await window.api.call('saveScheduleBatch', { dates, colorId, title: finalTitle, description }, getAuth());
       btn.disabled = false;
       btn.textContent = '저장';
       closeModal('schedule-modal');
@@ -2161,6 +2505,21 @@ async function saveSchedule() {
       toast('저장 실패: ' + e.message, 'error');
     }
   }
+}
+
+// 편집 모달에서 삭제 버튼 (편집 모드에서만 보임)
+async function deleteScheduleFromModal() {
+  const id = document.getElementById('schedule-id').value;
+  if (!id) return;
+  const item = allSchedule.find(s => s.id === id);
+  if (!item) return;
+  if (!confirm(`"${item.title}" 일정을 삭제하시겠습니까?`)) return;
+  try {
+    await window.api.call('deleteSchedule', { id }, getAuth());
+    closeModal('schedule-modal');
+    toast('삭제되었습니다');
+    await loadSchedule();
+  } catch (e) { toast('삭제 실패', 'error'); }
 }
 
 function confirmDeleteSchedule(id, title) {
@@ -2175,6 +2534,9 @@ function confirmDeleteSchedule(id, title) {
   };
   openModal('confirm-modal');
 }
+
+// 기존 호환성 (사용 안 함)
+function editSchedule(id) { editScheduleEvent(id); }
 
 // ============================================================
 // 색상 관리
@@ -2289,99 +2651,87 @@ function confirmDeleteColor(id, name) {
 }
 
 // ============================================================
-// 커리큘럼
+// 진행 중인 과정 (courses)
 // ============================================================
-let currState = { items: [], selectedDays: new Set() };
+let coursesState = { items: [] };
 
-async function loadCurriculum() {
-  currState.items = await window.api.call('getCurriculum');
-  document.getElementById('curriculum-count').textContent = `전체 ${currState.items.length}건`;
-  if (currState.items.length === 0) {
-    document.getElementById('curriculum-list').innerHTML = `<div class="empty-state">등록된 과정이 없습니다</div>`;
+async function loadCourses() {
+  coursesState.items = await window.api.call('getCourses');
+  if (coursesState.items.length === 0) {
+    document.getElementById('courses-list').innerHTML = `<div class="empty-state">등록된 과정이 없습니다. "과정 추가"로 시작일/종강일을 지정해보세요.</div>`;
     return;
   }
-  document.getElementById('curriculum-list').innerHTML = currState.items.map(c => `
+  document.getElementById('courses-list').innerHTML = coursesState.items.map(c => `
     <div class="table-row">
-      <div class="cell-title">${escapeHtml(c.name)}${c.description ? ` <span style="color: var(--text-faint); font-size: 11.5px;">· ${escapeHtml(c.description.slice(0, 30))}</span>` : ''}</div>
-      <div class="cell-date">${formatDate(c.startDate)} ~ ${formatDate(c.endDate)}</div>
-      <div class="cell-date">${escapeHtml(c.classroom || '-')}</div>
-      <div style="font-size: 12px; color: var(--text-soft); font-weight: 500;">${dayLabel(c.weekdays || [])}</div>
+      <div class="cell-title">${escapeHtml(c.name)}${c.description ? ` <span style="color: var(--text-faint); font-size: 11.5px; font-weight: 400;">· ${escapeHtml(c.description)}</span>` : ''}</div>
+      <div class="cell-date">${formatDate(c.startDate)}</div>
+      <div class="cell-date">${formatDate(c.endDate)}</div>
+      <div>
+        ${c.active 
+          ? '<span style="display: inline-block; font-size: 10.5px; padding: 3px 9px; border-radius: 5px; font-weight: 600; background: #d1fae5; color: #047857;">● 진행 중</span>' 
+          : '<span style="display: inline-block; font-size: 10.5px; padding: 3px 9px; border-radius: 5px; font-weight: 500; background: var(--bg-soft); color: var(--text-faint);">대기</span>'}
+      </div>
       <div class="cell-actions">
-        <button class="icon-btn" onclick="editCurriculum('${c.id}')" title="편집"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-        <button class="icon-btn danger" onclick="confirmDeleteCurr('${c.id}', '${escapeHtml(c.name).replace(/'/g, "\\'")}')" title="삭제"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+        <button class="icon-btn" onclick="editCourse('${c.id}')" title="편집"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+        <button class="icon-btn danger" onclick="confirmDeleteCourse('${c.id}', '${escapeHtml(c.name).replace(/'/g, "\\'")}')" title="삭제"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
       </div>
     </div>
   `).join('');
 }
 
-function openCurrModal() {
-  document.getElementById('curr-modal-title').textContent = '새 과정 추가';
-  document.getElementById('curr-id').value = '';
-  document.getElementById('curr-name').value = '';
-  document.getElementById('curr-startDate').value = '';
-  document.getElementById('curr-endDate').value = '';
-  document.getElementById('curr-classroom').value = '';
-  document.getElementById('curr-description').value = '';
-  currState.selectedDays.clear();
-  document.querySelectorAll('#curr-weekday-picker .weekday-pick').forEach(b => b.classList.remove('selected'));
-  openModal('curr-modal');
-  setTimeout(() => document.getElementById('curr-name').focus(), 100);
+function openCourseModal() {
+  document.getElementById('course-modal-title').textContent = '과정 추가';
+  document.getElementById('course-id').value = '';
+  document.getElementById('course-name').value = '';
+  document.getElementById('course-startDate').value = '';
+  document.getElementById('course-endDate').value = '';
+  document.getElementById('course-description').value = '';
+  document.getElementById('course-active').checked = true;
+  openModal('course-modal');
+  setTimeout(() => document.getElementById('course-name').focus(), 100);
 }
 
-function toggleCurrWeekday(day) {
-  if (currState.selectedDays.has(day)) currState.selectedDays.delete(day);
-  else currState.selectedDays.add(day);
-  document.querySelectorAll('#curr-weekday-picker .weekday-pick').forEach(b => {
-    b.classList.toggle('selected', currState.selectedDays.has(parseInt(b.dataset.day)));
-  });
-}
-
-function editCurriculum(id) {
-  const c = currState.items.find(x => x.id === id);
+function editCourse(id) {
+  const c = coursesState.items.find(x => x.id === id);
   if (!c) return;
-  document.getElementById('curr-modal-title').textContent = '과정 편집';
-  document.getElementById('curr-id').value = c.id;
-  document.getElementById('curr-name').value = c.name;
-  document.getElementById('curr-startDate').value = c.startDate || '';
-  document.getElementById('curr-endDate').value = c.endDate || '';
-  document.getElementById('curr-classroom').value = c.classroom || '';
-  document.getElementById('curr-description').value = c.description || '';
-  
-  currState.selectedDays = new Set(c.weekdays || []);
-  document.querySelectorAll('#curr-weekday-picker .weekday-pick').forEach(b => {
-    b.classList.toggle('selected', currState.selectedDays.has(parseInt(b.dataset.day)));
-  });
-  openModal('curr-modal');
+  document.getElementById('course-modal-title').textContent = '과정 편집';
+  document.getElementById('course-id').value = c.id;
+  document.getElementById('course-name').value = c.name || '';
+  document.getElementById('course-startDate').value = c.startDate || '';
+  document.getElementById('course-endDate').value = c.endDate || '';
+  document.getElementById('course-description').value = c.description || '';
+  document.getElementById('course-active').checked = !!c.active;
+  openModal('course-modal');
 }
 
-async function saveCurriculum() {
+async function saveCourse() {
   const data = {
-    id: document.getElementById('curr-id').value || undefined,
-    name: document.getElementById('curr-name').value.trim(),
-    startDate: document.getElementById('curr-startDate').value,
-    endDate: document.getElementById('curr-endDate').value,
-    classroom: document.getElementById('curr-classroom').value.trim(),
-    description: document.getElementById('curr-description').value.trim(),
-    weekdays: [...currState.selectedDays].sort()
+    id: document.getElementById('course-id').value || undefined,
+    name: document.getElementById('course-name').value.trim(),
+    startDate: document.getElementById('course-startDate').value,
+    endDate: document.getElementById('course-endDate').value,
+    description: document.getElementById('course-description').value.trim(),
+    active: document.getElementById('course-active').checked
   };
-  if (!data.name) { toast('과정명을 입력해주세요', 'error'); return; }
-  if (!data.startDate || !data.endDate) { toast('개강일/종강일을 선택해주세요', 'error'); return; }
+  if (!data.name) { toast('과정 이름을 입력해주세요', 'error'); return; }
+  if (!data.startDate || !data.endDate) { toast('시작일/종강일을 선택해주세요', 'error'); return; }
+  if (data.startDate > data.endDate) { toast('시작일이 종강일보다 늦을 수 없습니다', 'error'); return; }
   try {
-    await window.api.call('saveCurriculum', data, getAuth());
-    closeModal('curr-modal');
-    toast(data.id ? '수정되었습니다' : '추가되었습니다');
-    await loadCurriculum();
+    await window.api.call('saveCourse', data, getAuth());
+    closeModal('course-modal');
+    toast(data.id ? '과정이 수정되었습니다' : '과정이 추가되었습니다');
+    await loadCourses();
   } catch (e) { toast('저장 실패: ' + e.message, 'error'); }
 }
 
-function confirmDeleteCurr(id, name) {
+function confirmDeleteCourse(id, name) {
   document.getElementById('confirm-title').textContent = '과정 삭제';
   document.getElementById('confirm-text').textContent = `"${name}" 과정을 삭제하시겠습니까?`;
   pendingAction = async () => {
     try {
-      await window.api.call('deleteCurriculum', { id }, getAuth());
+      await window.api.call('deleteCourse', { id }, getAuth());
       toast('삭제되었습니다');
-      await loadCurriculum();
+      await loadCourses();
     } catch (e) { toast('삭제 실패', 'error'); }
   };
   openModal('confirm-modal');
