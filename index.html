@@ -1094,6 +1094,85 @@ button { font-family: inherit; cursor: pointer; }
 .detail-link-btn:active { transform: scale(0.99); }
 .detail-link-btn:hover { background: var(--accent-deep); }
 
+/* 줌 가이드 버튼 */
+.zoom-guide-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: var(--bg-elevated);
+  border: 0.5px solid var(--border);
+  padding: 12px 14px;
+  border-radius: 11px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  box-shadow: var(--shadow-xs);
+  transition: background 0.12s;
+}
+.zoom-guide-btn:active { background: var(--bg-section); }
+.zoom-guide-btn-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.zoom-guide-btn-text { flex: 1; min-width: 0; }
+.zoom-guide-btn-title { font-size: 13px; font-weight: 700; letter-spacing: -0.018em; }
+.zoom-guide-btn-sub { font-size: 11px; color: var(--text-faint); margin-top: 2px; font-weight: 500; }
+.zoom-guide-btn-arrow { color: var(--text-faint); flex-shrink: 0; }
+
+/* 이미지 풀스크린 모달 */
+.image-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  cursor: zoom-out;
+  overflow: auto;
+}
+.image-modal.active { display: flex; }
+.image-modal img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  display: block;
+}
+.image-modal-close {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  line-height: 1;
+}
+
 /* 세미나 카드 */
 .seminar-card {
   background: var(--bg-elevated);
@@ -1109,10 +1188,11 @@ button { font-family: inherit; cursor: pointer; }
 .seminar-card:active { transform: scale(0.99); box-shadow: var(--shadow-sm); }
 .seminar-card-img {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  height: auto;
+  max-height: 480px;
   background: var(--bg-soft);
   display: block;
-  object-fit: cover;
+  object-fit: contain;
 }
 .seminar-card-body { padding: 13px 14px; }
 .seminar-card-title {
@@ -1140,6 +1220,131 @@ button { font-family: inherit; cursor: pointer; }
   border-radius: 4px;
   font-weight: 700;
   margin-left: 6px;
+}
+
+/* 세미나 상세 - 원본 비율 유지 이미지 */
+.seminar-detail-image {
+  margin: 8px 0 4px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg-soft);
+  border: 0.5px solid var(--border);
+  cursor: zoom-in;
+}
+.seminar-detail-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* 세미나 정보 표 */
+.seminar-info-grid {
+  background: var(--bg-elevated);
+  border: 0.5px solid var(--border);
+  border-radius: 11px;
+  padding: 4px 12px;
+  margin-top: 4px;
+  box-shadow: var(--shadow-xs);
+}
+.seminar-info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 0.5px solid var(--border);
+}
+.seminar-info-row:last-child { border-bottom: none; }
+.seminar-info-label {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  font-weight: 600;
+  flex-shrink: 0;
+  width: 72px;
+  padding-top: 1px;
+}
+.seminar-info-value {
+  font-size: 12.5px;
+  color: var(--text);
+  font-weight: 500;
+  flex: 1;
+  line-height: 1.5;
+  word-break: keep-all;
+}
+
+/* 홈 세미나 자동 슬라이드 캐러셀 */
+.seminar-carousel-wrap {
+  margin: 8px -16px 16px;
+  overflow: hidden;
+  position: relative;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+.seminar-carousel-track {
+  display: flex;
+  gap: 10px;
+  width: max-content;
+  animation: seminarMarquee 28s linear infinite;
+}
+.seminar-carousel-wrap:hover .seminar-carousel-track {
+  animation-play-state: paused;
+}
+@keyframes seminarMarquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.seminar-carousel-item {
+  flex: 0 0 auto;
+  width: 220px;
+  background: var(--bg-elevated);
+  border: 0.5px solid var(--border);
+  border-radius: 11px;
+  overflow: hidden;
+  box-shadow: var(--shadow-xs);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.seminar-carousel-item:active { transform: scale(0.98); }
+.seminar-carousel-img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  background: var(--bg-soft);
+}
+.seminar-carousel-noimg {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 10px;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: -0.018em;
+  line-height: 1.4;
+}
+.seminar-carousel-info {
+  padding: 9px 11px 11px;
+}
+.seminar-carousel-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.018em;
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.seminar-carousel-meta {
+  font-size: 10px;
+  color: var(--text-faint);
+  margin-top: 3px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ===== 학칙 (이용안내) ===== */
@@ -1567,6 +1772,11 @@ button { font-family: inherit; cursor: pointer; }
     </button>
   </div>
 
+  <!-- 세미나 자동 슬라이드 캐러셀 -->
+  <div id="home-seminar-carousel" class="seminar-carousel-wrap" style="display: none;">
+    <div class="seminar-carousel-track" id="seminar-carousel-track"></div>
+  </div>
+
   <!-- 다가오는 일정 -->
   <div class="section">
     <div class="section-h">
@@ -1694,9 +1904,16 @@ button { font-family: inherit; cursor: pointer; }
 <!-- 비대면 (강의장) -->
 <main id="page-classrooms" class="page hidden">
   <div class="page-content">
+    <div id="zoom-guide-area"></div>
     <div id="classrooms-list"></div>
   </div>
 </main>
+
+<!-- 이미지 풀스크린 모달 (줌 가이드용) -->
+<div id="image-modal" class="image-modal" onclick="closeImageModal()">
+  <button class="image-modal-close" onclick="closeImageModal()" aria-label="닫기">×</button>
+  <img id="image-modal-img" src="" alt="">
+</div>
 
 <!-- 이용안내 (학칙) -->
 <main id="page-rules" class="page hidden">
@@ -1936,23 +2153,74 @@ function escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 // ============================================================
 // 홈
 // ============================================================
+function renderSeminarCarousel(seminars) {
+  const wrap = document.getElementById('home-seminar-carousel');
+  const track = document.getElementById('seminar-carousel-track');
+  if (!wrap || !track) return;
+  
+  if (!seminars || seminars.length === 0) {
+    wrap.style.display = 'none';
+    return;
+  }
+  
+  // 한 번 렌더링한 카드들을 두 번 반복해서 무한 슬라이드 효과
+  const renderItem = (s) => {
+    const dateInfo = [
+      s.date ? formatDate(s.date) : '',
+      s.time ? s.time : ''
+    ].filter(Boolean).join(' · ');
+    const visual = s.imageUrl
+      ? `<img class="seminar-carousel-img" src="${escapeHtml(s.imageUrl)}" alt="" loading="lazy">`
+      : `<div class="seminar-carousel-noimg">${escapeHtml(s.title)}</div>`;
+    return `
+      <div class="seminar-carousel-item" onclick="navigate('seminar-detail', { id: '${s.id}' })">
+        ${visual}
+        <div class="seminar-carousel-info">
+          <div class="seminar-carousel-title">${escapeHtml(s.title)}</div>
+          <div class="seminar-carousel-meta">${dateInfo || '\u00A0'}</div>
+        </div>
+      </div>
+    `;
+  };
+  
+  // 적은 개수일 때도 슬라이드 효과를 보장하기 위해 반복 횟수 동적 결정
+  const minCount = 6;
+  let items = [...seminars];
+  while (items.length < minCount) {
+    items = items.concat(seminars);
+  }
+  // translateX -50% 트릭을 위해 두 번 복제
+  const html = items.map(renderItem).join('') + items.map(renderItem).join('');
+  track.innerHTML = html;
+  
+  // 카드 개수에 따라 애니메이션 길이 조절
+  const totalCards = items.length;
+  track.style.animationDuration = (totalCards * 4.5) + 's';
+  
+  wrap.style.display = 'block';
+}
+
 async function loadHome() {
-  let data, schedule, colors, settings, courses;
+  let data, schedule, colors, settings, courses, seminars;
   
   try {
-    [data, schedule, colors, settings, courses] = await Promise.all([
+    [data, schedule, colors, settings, courses, seminars] = await Promise.all([
       window.api.call('getHome'),
       window.api.call('getSchedule'),
       window.api.call('getScheduleColors'),
       window.api.call('getSettings'),
-      window.api.call('getCourses').catch(() => [])
+      window.api.call('getCourses').catch(() => []),
+      window.api.call('getSeminars').catch(() => [])
     ]);
   } catch (e) {
     data = { posts: [], schedule: [], settings: {} };
-    schedule = []; colors = []; settings = {}; courses = [];
+    schedule = []; colors = []; settings = {}; courses = []; seminars = [];
   }
   
   state.cal.colors = colors || [];
+  
+  // 세미나 캐러셀
+  renderSeminarCarousel(seminars || []);
 
   // 안내사항
   const notice = (settings && settings.notice) ? settings.notice.trim() : '';
@@ -2578,7 +2846,28 @@ function renderPostRowHighlight(p, q) {
 // 비대면 (강의장)
 // ============================================================
 async function loadClassrooms() {
-  const items = await window.api.call('getClassrooms');
+  const [items, settings] = await Promise.all([
+    window.api.call('getClassrooms'),
+    window.api.call('getSettings').catch(() => ({}))
+  ]);
+  
+  // 줌 가이드 버튼
+  const guideUrl = settings && settings.zoomGuideUrl;
+  document.getElementById('zoom-guide-area').innerHTML = guideUrl ? `
+    <button class="zoom-guide-btn" onclick="openImageModal('${escapeHtml(guideUrl)}')">
+      <div class="zoom-guide-btn-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+      </div>
+      <div class="zoom-guide-btn-text">
+        <div class="zoom-guide-btn-title">비대면 줌 접속 방법</div>
+        <div class="zoom-guide-btn-sub">탭하면 가이드 이미지가 열립니다</div>
+      </div>
+      <div class="zoom-guide-btn-arrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </button>
+  ` : '';
+  
   if (items.length === 0) {
     document.getElementById('classrooms-list').innerHTML = '<div class="empty">등록된 정보가 없습니다</div>';
     return;
@@ -2674,6 +2963,18 @@ function flashCopyBtn(btn) {
   }, 1200);
 }
 
+function openImageModal(url) {
+  const m = document.getElementById('image-modal');
+  const img = document.getElementById('image-modal-img');
+  img.src = url;
+  m.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeImageModal() {
+  document.getElementById('image-modal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
 // ============================================================
 // 이용안내 (학칙)
 // ============================================================
@@ -2742,7 +3043,6 @@ async function loadSeminarDetail(id) {
     s.date ? formatDate(s.date) : '',
     s.time ? s.time : ''
   ].filter(Boolean).join(' · ');
-  const hostInfo = s.host ? `진행 · ${escapeHtml(s.host)}` : '';
   
   const linkBtn = s.linkUrl 
     ? `<button class="detail-link-btn" onclick="window.open('${escapeHtml(s.linkUrl)}', '_blank')">
@@ -2750,19 +3050,37 @@ async function loadSeminarDetail(id) {
          참여하기 (외부 링크 열림)
        </button>`
     : '';
+  // 이미지 잘리지 않게 (object-fit: contain)
   const imageHtml = s.imageUrl 
-    ? `<div class="detail-image"><img src="${escapeHtml(s.imageUrl)}" alt="" loading="lazy"></div>` 
+    ? `<div class="seminar-detail-image" onclick="openImageModal('${escapeHtml(s.imageUrl)}')"><img src="${escapeHtml(s.imageUrl)}" alt="" loading="lazy"></div>` 
+    : '';
+  
+  // 정보 표
+  const infoRows = [];
+  if (dateInfo) infoRows.push(['특강 일시', dateInfo]);
+  if (s.host) infoRows.push(['특강 강사', escapeHtml(s.host)]);
+  if (s.target) infoRows.push(['특강 대상', escapeHtml(s.target)]);
+  if (s.capacity) infoRows.push(['신청 인원', escapeHtml(s.capacity)]);
+  if (s.fee) infoRows.push(['비용', escapeHtml(s.fee)]);
+  
+  const infoTable = infoRows.length > 0
+    ? `<div class="seminar-info-grid">
+        ${infoRows.map(([label, value]) => `
+          <div class="seminar-info-row">
+            <div class="seminar-info-label">${label}</div>
+            <div class="seminar-info-value">${value}</div>
+          </div>
+        `).join('')}
+      </div>`
     : '';
   
   document.getElementById('seminar-detail-content').innerHTML = `
     <h1 class="detail-title" style="padding-right: 0;">${escapeHtml(s.title)}</h1>
-    <div class="detail-meta">
-      ${dateInfo ? `<span style="font-size: 12px; color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums;">${dateInfo}</span>` : ''}
-      ${hostInfo ? `<span style="font-size: 11px; color: var(--text-faint);">${hostInfo}</span>` : ''}
-    </div>
+    ${dateInfo ? `<div class="detail-meta"><span style="font-size: 12px; color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums;">${dateInfo}</span>${s.host ? `<span style="font-size: 11px; color: var(--text-faint);">진행 · ${escapeHtml(s.host)}</span>` : ''}</div>` : ''}
     ${imageHtml}
     ${linkBtn}
-    ${s.content ? `<div class="detail-content">${linkifyContent(s.content)}</div>` : ''}
+    ${infoTable}
+    ${s.content ? `<div class="detail-content" style="margin-top: 14px;">${linkifyContent(s.content)}</div>` : ''}
   `;
 }
 

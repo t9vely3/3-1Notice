@@ -1670,6 +1670,25 @@ input, textarea, select { font-family: inherit; }
           <label class="form-label">운영시간</label>
           <input type="text" class="form-input" id="set-hours" placeholder="평일 09:00-22:00 / 토 09:00-18:00">
         </div>
+        <hr style="border: none; border-top: 0.5px solid var(--border); margin: 22px 0;">
+        <div class="form-row">
+          <label class="form-label" style="display: flex; align-items: center; gap: 6px;">
+            <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #1e3a5f;"></span>
+            비대면 줌 접속 가이드 이미지
+          </label>
+          <div>
+            <input type="file" id="set-zoomGuide-input" accept="image/*" style="display: none;" onchange="onZoomGuideSelected(event)">
+            <div id="set-zoomGuide-preview" style="display: none; position: relative; margin-bottom: 8px;">
+              <img id="set-zoomGuide-preview-img" src="" style="max-width: 100%; max-height: 240px; border-radius: 8px; border: 0.5px solid var(--border); display: block;">
+              <button type="button" onclick="removeZoomGuide()" style="position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.7); color: #fff; border: none; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-size: 14px;">×</button>
+            </div>
+            <button type="button" class="btn" onclick="document.getElementById('set-zoomGuide-input').click()" id="set-zoomGuide-btn">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span id="set-zoomGuide-label">가이드 이미지 선택</span>
+            </button>
+          </div>
+          <div class="form-help">비대면 안내 페이지 상단의 "줌 접속 방법" 버튼에 사용됩니다. 등록 안 하면 버튼이 표시되지 않습니다.</div>
+        </div>
         <button class="btn btn-primary" onclick="saveSettings()" style="margin-top: 8px;">저장</button>
       </div>
     </section>
@@ -1901,8 +1920,8 @@ input, textarea, select { font-family: inherit; }
     <div class="modal-body">
       <input type="hidden" id="seminar-id">
       <div class="form-row">
-        <label class="form-label">제목</label>
-        <input type="text" class="form-input" id="seminar-title" placeholder="예: 5월 포트폴리오 특강">
+        <label class="form-label">특강 이름 *</label>
+        <input type="text" class="form-input" id="seminar-title" placeholder="예: ACP자격증 일러스트, 포토샵 풀이 특강">
       </div>
       <div class="form-row split">
         <div>
@@ -1911,21 +1930,35 @@ input, textarea, select { font-family: inherit; }
         </div>
         <div>
           <label class="form-label">시간 (선택)</label>
-          <input type="text" class="form-input" id="seminar-time" placeholder="예: 19:00 ~ 21:00">
+          <input type="text" class="form-input" id="seminar-time" placeholder="예: 14:00 ~ 18:00">
         </div>
       </div>
       <div class="form-row">
         <label class="form-label">강사 / 진행자 (선택)</label>
-        <input type="text" class="form-input" id="seminar-host" placeholder="예: 홍길동 멘토">
+        <input type="text" class="form-input" id="seminar-host" placeholder="예: 문소하 강사">
       </div>
       <div class="form-row">
-        <label class="form-label">참여 링크 (줌 등)</label>
+        <label class="form-label">특강 대상 (선택)</label>
+        <input type="text" class="form-input" id="seminar-target" placeholder="예: ACP에 관심있는 모든 수강생">
+      </div>
+      <div class="form-row split">
+        <div>
+          <label class="form-label">신청 인원 (선택)</label>
+          <input type="text" class="form-input" id="seminar-capacity" placeholder="예: 50명 (대면 선착순 8명)">
+        </div>
+        <div>
+          <label class="form-label">비용 (선택)</label>
+          <input type="text" class="form-input" id="seminar-fee" placeholder="예: 무료 / 50,000원">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">참여 링크 (줌 등) (선택)</label>
         <input type="url" class="form-input" id="seminar-linkUrl" placeholder="https://zoom.us/j/...">
         <div class="form-help">상세 페이지에 큰 버튼으로 표시됩니다.</div>
       </div>
       <div class="form-row">
-        <label class="form-label">내용</label>
-        <textarea class="form-textarea" id="seminar-content" placeholder="세미나 내용 (줄바꿈 그대로 표시됩니다)" style="min-height: 100px;"></textarea>
+        <label class="form-label">내용 (선택)</label>
+        <textarea class="form-textarea" id="seminar-content" placeholder="추가 설명 (줄바꿈 그대로 표시됩니다)" style="min-height: 80px;"></textarea>
       </div>
       <div class="form-row">
         <label class="form-label">대표 이미지 (선택)</label>
@@ -3290,6 +3323,9 @@ function openSeminarModal() {
   document.getElementById('seminar-date').value = '';
   document.getElementById('seminar-time').value = '';
   document.getElementById('seminar-host').value = '';
+  document.getElementById('seminar-target').value = '';
+  document.getElementById('seminar-capacity').value = '';
+  document.getElementById('seminar-fee').value = '';
   document.getElementById('seminar-linkUrl').value = '';
   document.getElementById('seminar-content').value = '';
   resetSeminarImageUI();
@@ -3306,6 +3342,9 @@ function editSeminar(id) {
   document.getElementById('seminar-date').value = s.date || '';
   document.getElementById('seminar-time').value = s.time || '';
   document.getElementById('seminar-host').value = s.host || '';
+  document.getElementById('seminar-target').value = s.target || '';
+  document.getElementById('seminar-capacity').value = s.capacity || '';
+  document.getElementById('seminar-fee').value = s.fee || '';
   document.getElementById('seminar-linkUrl').value = s.linkUrl || '';
   document.getElementById('seminar-content').value = s.content || '';
   resetSeminarImageUI();
@@ -3324,12 +3363,15 @@ async function saveSeminar() {
     date: document.getElementById('seminar-date').value,
     time: document.getElementById('seminar-time').value.trim(),
     host: document.getElementById('seminar-host').value.trim(),
+    target: document.getElementById('seminar-target').value.trim(),
+    capacity: document.getElementById('seminar-capacity').value.trim(),
+    fee: document.getElementById('seminar-fee').value.trim(),
     linkUrl: document.getElementById('seminar-linkUrl').value.trim(),
     content: document.getElementById('seminar-content').value.trim(),
     imageUrl: seminarImageState.url || '',
     imagePath: seminarImageState.path || ''
   };
-  if (!data.title) { toast('제목을 입력해주세요', 'error'); return; }
+  if (!data.title) { toast('특강 이름을 입력해주세요', 'error'); return; }
   if (data.linkUrl && !/^https?:\/\//.test(data.linkUrl)) {
     toast('링크는 http:// 또는 https://로 시작해야 합니다', 'error');
     return;
@@ -3453,6 +3495,46 @@ function confirmDeleteRule(id, name) {
 // ============================================================
 // 학원 정보 (settings)
 // ============================================================
+let zoomGuideState = { url: '', path: '' };
+
+function resetZoomGuideUI() {
+  zoomGuideState = { url: '', path: '' };
+  document.getElementById('set-zoomGuide-input').value = '';
+  document.getElementById('set-zoomGuide-preview').style.display = 'none';
+  document.getElementById('set-zoomGuide-preview-img').src = '';
+  document.getElementById('set-zoomGuide-label').textContent = '가이드 이미지 선택';
+}
+function showZoomGuideUI(url) {
+  zoomGuideState.url = url;
+  document.getElementById('set-zoomGuide-preview-img').src = url;
+  document.getElementById('set-zoomGuide-preview').style.display = 'block';
+  document.getElementById('set-zoomGuide-label').textContent = '이미지 변경';
+}
+async function onZoomGuideSelected(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const btn = document.getElementById('set-zoomGuide-btn');
+  const label = document.getElementById('set-zoomGuide-label');
+  btn.disabled = true;
+  label.textContent = '업로드 중...';
+  try {
+    const result = await window.api.uploadImage(file, 'settings');
+    zoomGuideState.url = result.url;
+    zoomGuideState.path = result.path;
+    showZoomGuideUI(result.url);
+    toast('이미지가 업로드되었습니다');
+  } catch (e) {
+    toast('업로드 실패: ' + e.message, 'error');
+  }
+  btn.disabled = false;
+}
+async function removeZoomGuide() {
+  if (zoomGuideState.path) {
+    try { await window.api.deleteImage(zoomGuideState.path); } catch(_){}
+  }
+  resetZoomGuideUI();
+}
+
 async function loadSettings() {
   const s = await window.api.call('getSettings');
   document.getElementById('set-notice').value = s.notice || '';
@@ -3461,6 +3543,12 @@ async function loadSettings() {
   document.getElementById('set-contact').value = s.contact || '';
   document.getElementById('set-address').value = s.address || '';
   document.getElementById('set-hours').value = s.hours || '';
+  resetZoomGuideUI();
+  if (s.zoomGuideUrl) {
+    zoomGuideState.url = s.zoomGuideUrl;
+    zoomGuideState.path = s.zoomGuidePath || '';
+    showZoomGuideUI(s.zoomGuideUrl);
+  }
 }
 
 async function saveSettings() {
@@ -3470,7 +3558,9 @@ async function saveSettings() {
     phone: document.getElementById('set-phone').value.trim(),
     contact: document.getElementById('set-contact').value.trim(),
     address: document.getElementById('set-address').value.trim(),
-    hours: document.getElementById('set-hours').value.trim()
+    hours: document.getElementById('set-hours').value.trim(),
+    zoomGuideUrl: zoomGuideState.url || '',
+    zoomGuidePath: zoomGuideState.path || ''
   };
   try {
     await window.api.call('saveSettings', data, getAuth());
