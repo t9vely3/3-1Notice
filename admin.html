@@ -1263,10 +1263,6 @@ input, textarea, select { font-family: inherit; }
     </button>
 
     <div class="nav-section">학원 정보</div>
-    <button class="nav-item" data-view="courses" onclick="switchView('courses')">
-      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-      진행 중인 과정
-    </button>
     <button class="nav-item" data-view="classrooms" onclick="switchView('classrooms')">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
       비대면 안내
@@ -1318,51 +1314,91 @@ input, textarea, select { font-family: inherit; }
       </div>
     </section>
 
-    <!-- 수업일정 (캘린더 클릭 방식) -->
+    <!-- 수업일정 (수업일정 묶음 관리 + 캘린더 편집) -->
     <section id="view-schedule" class="view" style="display: none;">
-      <div class="main-header">
-        <div>
-          <h1 class="main-title">수업일정</h1>
-          <div class="main-subtitle" id="schedule-count">달력의 빈 날짜를 클릭하면 선택한 색상으로 칠해집니다</div>
+      
+      <!-- 모드 1: 수업일정 목록 -->
+      <div id="schedule-mode-list">
+        <div class="main-header">
+          <div>
+            <h1 class="main-title">수업일정</h1>
+            <div class="main-subtitle">기수별 수업일정을 등록하고 캘린더에 색칠하세요</div>
+          </div>
+          <div class="action-bar">
+            <button class="btn btn-primary" onclick="openCourseModal()">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              수업일정 추가
+            </button>
+          </div>
         </div>
-        <div class="action-bar">
-          <button class="btn" onclick="openScheduleModal('batch')" title="여러 날짜에 한 번에 같은 색 적용">
-            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            기간 일괄 등록
-          </button>
+        <div class="data-table courses-table">
+          <div class="table-row header">
+            <div>이름</div>
+            <div>시작일</div>
+            <div>종강일</div>
+            <div>표시</div>
+            <div></div>
+          </div>
+          <div id="courses-list"></div>
         </div>
       </div>
       
-      <!-- 캘린더 헤더 (월 이동) -->
-      <div class="admin-cal-header">
-        <div class="admin-cal-month" id="admin-cal-month-label"></div>
-        <div class="admin-cal-nav">
-          <button class="btn" onclick="adminCalPrev()" style="padding: 6px 10px;">←</button>
-          <button class="btn" onclick="adminCalToday()" style="padding: 6px 12px;">이번 달</button>
-          <button class="btn" onclick="adminCalNext()" style="padding: 6px 10px;">→</button>
+      <!-- 모드 2: 개별 수업일정 편집 (캘린더) -->
+      <div id="schedule-mode-edit" style="display: none;">
+        <div class="main-header">
+          <div>
+            <button class="btn" onclick="closeCourseEditor()" style="margin-bottom: 10px; padding: 5px 10px; font-size: 12px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 3px;"><polyline points="15 18 9 12 15 6"/></svg>
+              수업일정 목록으로
+            </button>
+            <h1 class="main-title" id="editor-course-name">수업일정</h1>
+            <div class="main-subtitle" id="editor-course-meta"></div>
+          </div>
+          <div class="action-bar">
+            <button class="btn" onclick="confirmResetCourseSchedule()" title="이 수업일정의 모든 색칠 제거">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+              초기화
+            </button>
+            <button class="btn btn-primary" onclick="saveCourseSchedule()" id="save-changes-btn">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              저장 <span id="save-changes-count" style="display: none; font-size: 11px; opacity: 0.85; margin-left: 4px;"></span>
+            </button>
+          </div>
         </div>
-      </div>
-      
-      <!-- 색상 팔레트 (선택된 색으로 칠함) -->
-      <div class="color-palette" id="admin-color-palette"></div>
-      
-      <!-- 캘린더 그리드 -->
-      <div class="admin-cal-grid">
-        <div class="admin-cal-week-header">
-          <div class="admin-cal-week-day sun">일</div>
-          <div class="admin-cal-week-day">월</div>
-          <div class="admin-cal-week-day">화</div>
-          <div class="admin-cal-week-day">수</div>
-          <div class="admin-cal-week-day">목</div>
-          <div class="admin-cal-week-day">금</div>
-          <div class="admin-cal-week-day sat">토</div>
+        
+        <!-- 진행률 미리보기 -->
+        <div id="editor-progress" style="margin-bottom: 14px;"></div>
+        
+        <!-- 캘린더 헤더 (월 이동) -->
+        <div class="admin-cal-header">
+          <div class="admin-cal-month" id="admin-cal-month-label"></div>
+          <div class="admin-cal-nav">
+            <button class="btn" onclick="adminCalPrev()" style="padding: 6px 10px;">←</button>
+            <button class="btn" onclick="adminCalNext()" style="padding: 6px 10px;">→</button>
+          </div>
         </div>
-        <div class="admin-cal-days" id="admin-cal-days"></div>
-      </div>
-      
-      <div class="schedule-help">
-        <strong>사용법</strong>
-        <span>① 위에서 색상 클릭으로 선택  ② 빈 날짜 클릭 → 그 색으로 칠해짐  ③ 칠해진 날짜 클릭 → 편집 / 삭제</span>
+        
+        <!-- 색상 팔레트 -->
+        <div class="color-palette" id="admin-color-palette"></div>
+        
+        <!-- 캘린더 그리드 -->
+        <div class="admin-cal-grid">
+          <div class="admin-cal-week-header">
+            <div class="admin-cal-week-day sun">일</div>
+            <div class="admin-cal-week-day">월</div>
+            <div class="admin-cal-week-day">화</div>
+            <div class="admin-cal-week-day">수</div>
+            <div class="admin-cal-week-day">목</div>
+            <div class="admin-cal-week-day">금</div>
+            <div class="admin-cal-week-day sat">토</div>
+          </div>
+          <div class="admin-cal-days" id="admin-cal-days"></div>
+        </div>
+        
+        <div class="schedule-help">
+          <strong>사용법</strong>
+          <span>① 위에서 색상 클릭으로 선택  ② 빈 날짜 클릭 → 그 색으로 칠해짐  ③ 칠해진 날짜 다시 클릭 → 색 해제  ④ 다른 색 선택 후 클릭 → 색 변경  ⑤ "저장" 버튼 클릭으로 변경사항 반영</span>
+        </div>
       </div>
     </section>
 
@@ -1385,32 +1421,6 @@ input, textarea, select { font-family: inherit; }
           <div id="mat-tree-list"></div>
         </div>
         <div class="mat-content" id="mat-content"></div>
-      </div>
-    </section>
-
-    <!-- 진행 중인 과정 -->
-    <section id="view-courses" class="view" style="display: none;">
-      <div class="main-header">
-        <div>
-          <h1 class="main-title">진행 중인 과정</h1>
-          <div class="main-subtitle" id="courses-count">홈 화면 진행률 게이지에 표시되는 과정을 관리합니다</div>
-        </div>
-        <div class="action-bar">
-          <button class="btn btn-primary" onclick="openCourseModal()">
-            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            과정 추가
-          </button>
-        </div>
-      </div>
-      <div class="data-table courses-table">
-        <div class="table-row header">
-          <div>이름</div>
-          <div>시작일</div>
-          <div>종강일</div>
-          <div>표시</div>
-          <div></div>
-        </div>
-        <div id="courses-list"></div>
       </div>
     </section>
 
@@ -1580,83 +1590,6 @@ input, textarea, select { font-family: inherit; }
   </div>
 </div>
 
-<!-- 일정 모달 (단일/반복 통합) -->
-<div class="modal-backdrop" id="schedule-modal">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title" id="schedule-modal-title">새 일정</div>
-      <button class="modal-close" onclick="closeModal('schedule-modal')">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-    <div class="modal-body">
-      <input type="hidden" id="schedule-id">
-      
-      <div class="tab-switch" id="schedule-mode-tabs">
-        <button class="active" onclick="switchScheduleMode('single')">단일 일정</button>
-        <button onclick="switchScheduleMode('batch')">반복 일정</button>
-      </div>
-
-      <!-- 단일 일정 -->
-      <div id="schedule-single-form">
-        <div class="form-row">
-          <label class="form-label">날짜</label>
-          <input type="date" class="form-input" id="schedule-date">
-        </div>
-      </div>
-
-      <!-- 반복 일정 -->
-      <div id="schedule-batch-form" style="display: none;">
-        <div class="form-row split">
-          <div>
-            <label class="form-label">시작일</label>
-            <input type="date" class="form-input" id="schedule-start" oninput="updateBatchPreview()">
-          </div>
-          <div>
-            <label class="form-label">종료일</label>
-            <input type="date" class="form-input" id="schedule-end" oninput="updateBatchPreview()">
-          </div>
-        </div>
-        <div class="form-row">
-          <label class="form-label">요일 선택</label>
-          <div class="weekday-picker" id="weekday-picker">
-            <button type="button" class="weekday-pick sun" data-day="0" onclick="toggleWeekday(0)">일</button>
-            <button type="button" class="weekday-pick" data-day="1" onclick="toggleWeekday(1)">월</button>
-            <button type="button" class="weekday-pick" data-day="2" onclick="toggleWeekday(2)">화</button>
-            <button type="button" class="weekday-pick" data-day="3" onclick="toggleWeekday(3)">수</button>
-            <button type="button" class="weekday-pick" data-day="4" onclick="toggleWeekday(4)">목</button>
-            <button type="button" class="weekday-pick" data-day="5" onclick="toggleWeekday(5)">금</button>
-            <button type="button" class="weekday-pick sat" data-day="6" onclick="toggleWeekday(6)">토</button>
-          </div>
-          <div class="form-help">선택한 요일들에 해당하는 모든 날짜가 일괄 등록됩니다.</div>
-        </div>
-        <div class="batch-preview" id="batch-preview">
-          시작일/종료일/요일을 모두 선택하세요
-        </div>
-      </div>
-
-      <div class="form-row">
-        <label class="form-label">색상</label>
-        <select class="form-select" id="schedule-colorId" onchange="onScheduleColorChange()">
-        </select>
-        <div class="form-help">색상이 없거나 새로 추가하려면 좌측 메뉴 "일정 색상"에서 관리하세요.</div>
-      </div>
-      <div class="form-row">
-        <label class="form-label">제목</label>
-        <input type="text" class="form-input" id="schedule-title" placeholder="예: 어린이날 휴강, 정상 수업">
-      </div>
-      <div class="form-row">
-        <label class="form-label">설명 (선택)</label>
-        <input type="text" class="form-input" id="schedule-description" placeholder="추가 설명">
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-danger" id="schedule-delete-btn" onclick="deleteScheduleFromModal()" style="display: none; margin-right: auto;">삭제</button>
-      <button class="btn" onclick="closeModal('schedule-modal')">취소</button>
-      <button class="btn btn-primary" onclick="saveSchedule()" id="schedule-save-btn">저장</button>
-    </div>
-  </div>
-</div>
 
 <!-- 색상 모달 -->
 <div class="modal-backdrop" id="color-modal">
@@ -2023,7 +1956,6 @@ async function loadView() {
   if (currentView === 'posts') await loadPosts();
   else if (currentView === 'schedule') await loadSchedule();
   else if (currentView === 'materials') await loadMaterialsAdmin();
-  else if (currentView === 'courses') await loadCourses();
   else if (currentView === 'classrooms') await loadClassrooms();
   else if (currentView === 'rules') await loadRules();
   else if (currentView === 'colors') await loadColors();
@@ -2169,33 +2101,183 @@ function confirmDeletePost(id, title) {
 }
 
 // ============================================================
-// 수업일정 (캘린더 클릭 방식)
+// 수업일정 (수업일정 묶음 관리 + 캘린더 편집)
 // ============================================================
 let scheduleColors = [];
 let allSchedule = [];
-let selectedWeekdays = new Set();
-let scheduleMode = 'batch';
 let selectedColorId = null;
-let adminCalState = {
-  year: new Date().getFullYear(),
-  month: new Date().getMonth()
+let coursesState = { items: [] };
+
+// 캘린더 편집 상태
+let editorState = {
+  course: null,         // 현재 편집 중인 수업일정 (course 객체)
+  year: 0, month: 0,    // 현재 보고 있는 월
+  schedule: [],         // 이 수업일정 기간 내 일정 (메모리 작업용)
+  changes: new Map()    // 변경 내역: dateStr -> { action: 'set'|'delete', colorId?, existingId? }
 };
 
 async function loadSchedule() {
-  const [schedule, colors] = await Promise.all([
-    window.api.call('getSchedule'),
-    window.api.call('getScheduleColors')
+  // 모드: 목록 모드 (기본)
+  closeCourseEditor(false);  // UI 전환만, 데이터 다시 안 불러옴
+  
+  const [colors, courses] = await Promise.all([
+    window.api.call('getScheduleColors'),
+    window.api.call('getCourses')
   ]);
   scheduleColors = colors || [];
-  allSchedule = schedule || [];
+  coursesState.items = courses || [];
+  renderCoursesList();
+}
+
+function renderCoursesList() {
+  const items = coursesState.items;
+  if (items.length === 0) {
+    document.getElementById('courses-list').innerHTML = `<div class="empty-state">등록된 수업일정이 없습니다.<br>"수업일정 추가"로 시작일과 종강일을 지정해보세요.</div>`;
+    return;
+  }
+  // 시작일 내림차순 정렬 (최신이 위)
+  const sorted = [...items].sort((a, b) => (b.startDate || '').localeCompare(a.startDate || ''));
+  document.getElementById('courses-list').innerHTML = sorted.map(c => `
+    <div class="table-row" style="cursor: pointer;" onclick="openCourseEditor('${c.id}')">
+      <div class="cell-title">${escapeHtml(c.name)}${c.description ? ` <span style="color: var(--text-faint); font-size: 11.5px; font-weight: 400;">· ${escapeHtml(c.description)}</span>` : ''}</div>
+      <div class="cell-date">${formatDate(c.startDate)}</div>
+      <div class="cell-date">${formatDate(c.endDate)}</div>
+      <div onclick="event.stopPropagation()">
+        ${c.active 
+          ? '<span style="display: inline-block; font-size: 10.5px; padding: 3px 9px; border-radius: 5px; font-weight: 600; background: #d1fae5; color: #047857;">● 진행 중</span>' 
+          : '<span style="display: inline-block; font-size: 10.5px; padding: 3px 9px; border-radius: 5px; font-weight: 500; background: var(--bg-soft); color: var(--text-faint);">대기</span>'}
+      </div>
+      <div class="cell-actions" onclick="event.stopPropagation()">
+        <button class="icon-btn" onclick="editCourse('${c.id}')" title="이름/기간 편집"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+        <button class="icon-btn danger" onclick="confirmDeleteCourse('${c.id}', '${escapeHtml(c.name).replace(/\'/g, "\\\'")}')" title="삭제"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===== 수업일정 추가/편집 모달 =====
+function openCourseModal() {
+  document.getElementById('course-modal-title').textContent = '수업일정 추가';
+  document.getElementById('course-id').value = '';
+  document.getElementById('course-name').value = '';
+  document.getElementById('course-startDate').value = '';
+  document.getElementById('course-endDate').value = '';
+  document.getElementById('course-description').value = '';
+  document.getElementById('course-active').checked = true;
+  openModal('course-modal');
+  setTimeout(() => document.getElementById('course-name').focus(), 100);
+}
+
+function editCourse(id) {
+  const c = coursesState.items.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('course-modal-title').textContent = '수업일정 편집';
+  document.getElementById('course-id').value = c.id;
+  document.getElementById('course-name').value = c.name || '';
+  document.getElementById('course-startDate').value = c.startDate || '';
+  document.getElementById('course-endDate').value = c.endDate || '';
+  document.getElementById('course-description').value = c.description || '';
+  document.getElementById('course-active').checked = !!c.active;
+  openModal('course-modal');
+}
+
+async function saveCourse() {
+  const data = {
+    id: document.getElementById('course-id').value || undefined,
+    name: document.getElementById('course-name').value.trim(),
+    startDate: document.getElementById('course-startDate').value,
+    endDate: document.getElementById('course-endDate').value,
+    description: document.getElementById('course-description').value.trim(),
+    active: document.getElementById('course-active').checked
+  };
+  if (!data.name) { toast('수업일정 이름을 입력해주세요', 'error'); return; }
+  if (!data.startDate || !data.endDate) { toast('시작일/종강일을 선택해주세요', 'error'); return; }
+  if (data.startDate > data.endDate) { toast('시작일이 종강일보다 늦을 수 없습니다', 'error'); return; }
+  try {
+    await window.api.call('saveCourse', data, getAuth());
+    closeModal('course-modal');
+    toast(data.id ? '수업일정이 수정되었습니다' : '수업일정이 추가되었습니다');
+    await loadSchedule();
+  } catch (e) { toast('저장 실패: ' + e.message, 'error'); }
+}
+
+function confirmDeleteCourse(id, name) {
+  document.getElementById('confirm-title').textContent = '수업일정 삭제';
+  document.getElementById('confirm-text').innerHTML = `"${name}" 수업일정을 삭제하시겠습니까?<br><span style="color: var(--text-faint); font-size: 12px;">캘린더에 칠해진 일정 데이터는 그대로 남습니다 (수업일정만 삭제).</span>`;
+  pendingAction = async () => {
+    try {
+      await window.api.call('deleteCourse', { id }, getAuth());
+      toast('삭제되었습니다');
+      await loadSchedule();
+    } catch (e) { toast('삭제 실패', 'error'); }
+  };
+  openModal('confirm-modal');
+}
+
+// ===== 캘린더 편집 모드 =====
+async function openCourseEditor(courseId) {
+  const course = coursesState.items.find(c => c.id === courseId);
+  if (!course) return;
   
-  // 선택된 색상이 없거나 사라졌으면 첫 번째로
-  if (!selectedColorId || !scheduleColors.find(c => c.id === selectedColorId)) {
-    selectedColorId = scheduleColors[0] ? scheduleColors[0].id : null;
+  // 색상이 없으면 등록 안내
+  if (scheduleColors.length === 0) {
+    scheduleColors = await window.api.call('getScheduleColors') || [];
+  }
+  if (scheduleColors.length === 0) {
+    toast('먼저 좌측 메뉴 "일정 색상"에서 색상을 등록해주세요', 'error');
+    return;
   }
   
+  // 해당 기간 일정 가져오기
+  const allSch = await window.api.call('getSchedule');
+  const inRange = (allSch || []).filter(s => 
+    s.date >= course.startDate && s.date <= course.endDate
+  );
+  
+  editorState.course = course;
+  editorState.schedule = inRange;
+  editorState.changes = new Map();
+  
+  // 시작일이 있는 월로 이동
+  const startDate = new Date(course.startDate);
+  editorState.year = startDate.getFullYear();
+  editorState.month = startDate.getMonth();
+  
+  // 첫 색상을 기본 선택
+  if (!selectedColorId || !scheduleColors.find(c => c.id === selectedColorId)) {
+    selectedColorId = scheduleColors[0].id;
+  }
+  
+  // UI 전환
+  document.getElementById('schedule-mode-list').style.display = 'none';
+  document.getElementById('schedule-mode-edit').style.display = 'block';
+  
+  document.getElementById('editor-course-name').textContent = course.name;
+  document.getElementById('editor-course-meta').textContent = 
+    `${formatDate(course.startDate)} ~ ${formatDate(course.endDate)}`;
+  
   renderColorPalette();
-  renderAdminCalendar();
+  renderEditorCalendar();
+  updateEditorProgress();
+  updateSaveButton();
+}
+
+function closeCourseEditor(reload = true) {
+  // 변경사항 있으면 확인
+  if (editorState.changes && editorState.changes.size > 0) {
+    if (!confirm(`저장하지 않은 변경사항이 ${editorState.changes.size}개 있습니다. 정말 나가시겠습니까?`)) {
+      return;
+    }
+  }
+  
+  editorState.course = null;
+  editorState.schedule = [];
+  editorState.changes = new Map();
+  
+  document.getElementById('schedule-mode-edit').style.display = 'none';
+  document.getElementById('schedule-mode-list').style.display = 'block';
+  
+  if (reload) loadSchedule();
 }
 
 function renderColorPalette() {
@@ -2223,24 +2305,52 @@ function selectPaletteColor(colorId) {
 }
 
 function adminCalPrev() {
-  adminCalState.month--;
-  if (adminCalState.month < 0) { adminCalState.month = 11; adminCalState.year--; }
-  renderAdminCalendar();
+  // 시작일이 있는 월보다 이전으로는 못 감
+  const course = editorState.course;
+  if (!course) return;
+  const startMonthYear = new Date(course.startDate);
+  startMonthYear.setHours(0,0,0,0);
+  const startMonth = startMonthYear.getFullYear() * 12 + startMonthYear.getMonth();
+  const currMonth = editorState.year * 12 + editorState.month;
+  if (currMonth <= startMonth) return;
+  
+  editorState.month--;
+  if (editorState.month < 0) { editorState.month = 11; editorState.year--; }
+  renderEditorCalendar();
 }
 function adminCalNext() {
-  adminCalState.month++;
-  if (adminCalState.month > 11) { adminCalState.month = 0; adminCalState.year++; }
-  renderAdminCalendar();
+  const course = editorState.course;
+  if (!course) return;
+  const endMonthYear = new Date(course.endDate);
+  endMonthYear.setHours(0,0,0,0);
+  const endMonth = endMonthYear.getFullYear() * 12 + endMonthYear.getMonth();
+  const currMonth = editorState.year * 12 + editorState.month;
+  if (currMonth >= endMonth) return;
+  
+  editorState.month++;
+  if (editorState.month > 11) { editorState.month = 0; editorState.year++; }
+  renderEditorCalendar();
 }
-function adminCalToday() {
-  const now = new Date();
-  adminCalState.year = now.getFullYear();
-  adminCalState.month = now.getMonth();
-  renderAdminCalendar();
+// 호환성용 (사용 안 함)
+function adminCalToday() {}
+
+// 현재 보이는 일정 (서버 + 변경 내역 적용)
+function getEffectiveScheduleForDate(dateStr) {
+  if (editorState.changes.has(dateStr)) {
+    const change = editorState.changes.get(dateStr);
+    if (change.action === 'delete') return null;
+    if (change.action === 'set') {
+      return { date: dateStr, colorId: change.colorId, _temp: true };
+    }
+  }
+  // 변경 없음 → 서버 데이터 그대로
+  return editorState.schedule.find(s => s.date === dateStr) || null;
 }
 
-function renderAdminCalendar() {
-  const { year, month } = adminCalState;
+function renderEditorCalendar() {
+  const { year, month, course } = editorState;
+  if (!course) return;
+  
   document.getElementById('admin-cal-month-label').textContent = `${year}년 ${month + 1}월`;
   
   const today = new Date();
@@ -2267,275 +2377,241 @@ function renderAdminCalendar() {
     days.push({ date: next, otherMonth: true });
   }
   
-  const eventsByDate = {};
-  allSchedule.forEach(s => {
-    if (!eventsByDate[s.date]) eventsByDate[s.date] = [];
-    eventsByDate[s.date].push(s);
-  });
-  
   document.getElementById('admin-cal-days').innerHTML = days.map(({ date, otherMonth }) => {
     const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    const events = eventsByDate[dateStr] || [];
     const isToday = dateStr === todayStr_;
     const dayOfWeek = date.getDay();
     
+    // 수업일정 기간 내인지
+    const inRange = dateStr >= course.startDate && dateStr <= course.endDate;
+    const event = inRange ? getEffectiveScheduleForDate(dateStr) : null;
+    
     let classes = ['admin-cal-day'];
-    if (otherMonth) classes.push('other-month');
+    if (otherMonth || !inRange) classes.push('other-month');
     if (isToday) classes.push('today');
     if (dayOfWeek === 0) classes.push('sun');
     if (dayOfWeek === 6) classes.push('sat');
-    if (events.length > 0) classes.push('has-event');
+    if (event) classes.push('has-event');
     
-    const eventsHtml = events.map(e => {
-      const color = scheduleColors.find(c => c.id === e.colorId);
+    let eventHtml = '';
+    if (event) {
+      const color = scheduleColors.find(c => c.id === event.colorId);
       const bg = color ? color.color : '#64748b';
-      const safeTitle = escapeHtml(e.title || color?.name || '');
-      return `<div class="admin-cal-event" style="background: ${bg}" onclick="event.stopPropagation(); editScheduleEvent('${e.id}')" title="${safeTitle}">${safeTitle}</div>`;
-    }).join('');
+      const name = color ? color.name : '미정';
+      eventHtml = `<div class="admin-cal-event" style="background: ${bg}">${escapeHtml(name)}</div>`;
+    }
     
-    const clickHandler = otherMonth ? '' : `onclick="onCalDayClick('${dateStr}')"`;
+    const clickHandler = inRange ? `onclick="onEditorDayClick('${dateStr}')"` : '';
     
     return `
       <div class="${classes.join(' ')}" ${clickHandler}>
         <div class="admin-cal-day-num">${date.getDate()}</div>
-        <div class="admin-cal-events">${eventsHtml}</div>
+        <div class="admin-cal-events">${eventHtml}</div>
       </div>
     `;
   }).join('');
 }
 
-async function onCalDayClick(dateStr) {
+function onEditorDayClick(dateStr) {
   if (!selectedColorId) {
-    toast('상단에서 칠할 색상을 선택해주세요', 'error');
+    toast('상단에서 칠할 색상을 먼저 선택해주세요', 'error');
     return;
   }
-  const color = scheduleColors.find(c => c.id === selectedColorId);
-  if (!color) { toast('색상을 찾을 수 없습니다', 'error'); return; }
   
-  // 빠른 추가 - 색상 이름을 제목으로 자동 입력
+  const current = getEffectiveScheduleForDate(dateStr);
+  
+  if (current && current.colorId === selectedColorId) {
+    // 같은 색 다시 클릭 → 해제
+    if (current._temp) {
+      // 임시 추가한 거였다 → 변경 내역에서 제거
+      editorState.changes.delete(dateStr);
+    } else {
+      // 서버에 있는 거 → 삭제 표시
+      editorState.changes.set(dateStr, { action: 'delete', existingId: current.id });
+    }
+  } else if (current) {
+    // 다른 색으로 변경
+    if (current._temp) {
+      editorState.changes.set(dateStr, { action: 'set', colorId: selectedColorId });
+    } else {
+      // 서버에 있는 일정의 색상을 바꿈 (delete + set 조합 대신, 같은 ID 업데이트)
+      editorState.changes.set(dateStr, { action: 'set', colorId: selectedColorId, existingId: current.id });
+    }
+  } else {
+    // 빈 날짜 → 색칠
+    editorState.changes.set(dateStr, { action: 'set', colorId: selectedColorId });
+  }
+  
+  renderEditorCalendar();
+  updateEditorProgress();
+  updateSaveButton();
+}
+
+function updateSaveButton() {
+  const cnt = editorState.changes.size;
+  const span = document.getElementById('save-changes-count');
+  if (cnt > 0) {
+    span.style.display = '';
+    span.textContent = `(${cnt}개 변경)`;
+  } else {
+    span.style.display = 'none';
+  }
+}
+
+// 진행률 미리보기 (저장 전이라도 변경사항 반영)
+function updateEditorProgress() {
+  const course = editorState.course;
+  if (!course) return;
+  
+  // 변경사항 적용된 가상 일정 만들기
+  const virtualSchedule = [];
+  // 1) 서버 일정 중 삭제 안 된 것
+  editorState.schedule.forEach(s => {
+    const ch = editorState.changes.get(s.date);
+    if (!ch) {
+      virtualSchedule.push(s);
+    } else if (ch.action === 'set' && ch.existingId === s.id) {
+      // 같은 ID인데 색상만 바꾼 경우
+      virtualSchedule.push({ ...s, colorId: ch.colorId });
+    }
+    // delete는 안 추가
+  });
+  // 2) 새로 추가된 것
+  editorState.changes.forEach((ch, dateStr) => {
+    if (ch.action === 'set' && !ch.existingId) {
+      virtualSchedule.push({ date: dateStr, colorId: ch.colorId });
+    }
+  });
+  
+  const progress = window.computeCourseProgress(course, virtualSchedule, scheduleColors);
+  const target = document.getElementById('editor-progress');
+  
+  if (!progress) {
+    // 진행률 계산 불가 (수업일 색상 분류 일정이 없음)
+    target.innerHTML = `
+      <div style="background: var(--bg-section); border-radius: 10px; padding: 12px 14px; font-size: 12px; color: var(--text-soft);">
+        진행률 계산 가능한 일정이 없습니다. 수업일 색상으로 날짜를 칠하면 진행률이 표시됩니다.
+      </div>
+    `;
+    return;
+  }
+  
+  target.innerHTML = `
+    <div style="background: var(--bg-elevated); border: 0.5px solid var(--border); border-radius: 10px; padding: 12px 14px; box-shadow: var(--shadow-xs);">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 7px;">
+        <span style="font-size: 12.5px; font-weight: 600;">현재 진행률 (${progress.totalSessions}일 중 ${progress.completedSessions}회차 · 휴강 ${progress.cancelDays}일)</span>
+        <span style="font-size: 12.5px; font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums;">${progress.percent}%  ${progress.dDay}</span>
+      </div>
+      <div style="height: 6px; background: rgba(0,0,0,0.06); border-radius: 3px; overflow: hidden;">
+        <div style="height: 100%; background: var(--accent); border-radius: 3px; width: ${progress.percent}%;"></div>
+      </div>
+    </div>
+  `;
+}
+
+// 변경사항 저장
+async function saveCourseSchedule() {
+  const course = editorState.course;
+  if (!course) return;
+  if (editorState.changes.size === 0) {
+    toast('변경된 내용이 없습니다');
+    return;
+  }
+  
+  const btn = document.getElementById('save-changes-btn');
+  if (btn) { btn.disabled = true; }
+  
   try {
-    await window.api.call('saveSchedule', {
-      date: dateStr,
-      colorId: selectedColorId,
-      title: color.name,
-      description: ''
-    }, getAuth());
-    toast(`${dateStr} 추가됨`);
-    await loadSchedule();
+    let added = 0, updated = 0, deleted = 0;
+    
+    for (const [dateStr, ch] of editorState.changes) {
+      if (ch.action === 'delete') {
+        await window.api.call('deleteSchedule', { id: ch.existingId }, getAuth());
+        deleted++;
+      } else if (ch.action === 'set') {
+        const color = scheduleColors.find(c => c.id === ch.colorId);
+        const data = {
+          date: dateStr,
+          colorId: ch.colorId,
+          title: color ? color.name : '',
+          description: ''
+        };
+        if (ch.existingId) {
+          data.id = ch.existingId;
+          await window.api.call('saveSchedule', data, getAuth());
+          updated++;
+        } else {
+          await window.api.call('saveSchedule', data, getAuth());
+          added++;
+        }
+      }
+    }
+    
+    if (btn) btn.disabled = false;
+    
+    let msg = '저장됨';
+    const parts = [];
+    if (added) parts.push(`추가 ${added}개`);
+    if (updated) parts.push(`수정 ${updated}개`);
+    if (deleted) parts.push(`삭제 ${deleted}개`);
+    if (parts.length) msg = `저장됨 · ${parts.join(', ')}`;
+    toast(msg);
+    
+    // 변경사항 비우고 다시 로드
+    editorState.changes = new Map();
+    const allSch = await window.api.call('getSchedule');
+    editorState.schedule = (allSch || []).filter(s => 
+      s.date >= course.startDate && s.date <= course.endDate
+    );
+    renderEditorCalendar();
+    updateEditorProgress();
+    updateSaveButton();
   } catch (e) {
+    if (btn) btn.disabled = false;
     toast('저장 실패: ' + e.message, 'error');
   }
 }
 
-async function editScheduleEvent(id) {
-  const item = allSchedule.find(s => s.id === id);
-  if (!item) return;
+// 초기화 (이 수업일정의 모든 일정 삭제)
+function confirmResetCourseSchedule() {
+  const course = editorState.course;
+  if (!course) return;
   
-  document.getElementById('schedule-modal-title').textContent = '일정 편집';
-  document.getElementById('schedule-id').value = item.id;
-  document.getElementById('schedule-title').value = item.title || '';
-  document.getElementById('schedule-description').value = item.description || '';
-  document.getElementById('schedule-date').value = item.date;
-  populateScheduleColorOptions();
-  document.getElementById('schedule-colorId').value = item.colorId || (scheduleColors[0] ? scheduleColors[0].id : '');
+  // 서버에 저장된 일정 + 추가하려던 임시 변경
+  const serverCount = editorState.schedule.length;
+  const tempAdd = [...editorState.changes.values()].filter(ch => ch.action === 'set' && !ch.existingId).length;
+  const totalToReset = serverCount + tempAdd;
   
-  switchScheduleMode('single');
-  
-  // 편집 모드: 삭제 버튼 표시
-  const delBtn = document.getElementById('schedule-delete-btn');
-  if (delBtn) delBtn.style.display = '';
-  
-  openModal('schedule-modal');
-}
-
-function populateScheduleColorOptions() {
-  const select = document.getElementById('schedule-colorId');
-  if (scheduleColors.length === 0) {
-    select.innerHTML = '<option value="">색상이 없습니다</option>';
-    return;
-  }
-  select.innerHTML = scheduleColors.map(c => 
-    `<option value="${c.id}">${escapeHtml(c.name)}</option>`
-  ).join('');
-}
-
-function onScheduleColorChange() {}
-
-async function openScheduleModal(mode = 'batch') {
-  if (scheduleColors.length === 0) {
-    scheduleColors = await window.api.call('getScheduleColors') || [];
-  }
-  if (scheduleColors.length === 0) {
-    toast('먼저 좌측 메뉴 "일정 색상"에서 색상을 등록해주세요', 'error');
+  if (totalToReset === 0) {
+    toast('초기화할 일정이 없습니다');
     return;
   }
   
-  document.getElementById('schedule-modal-title').textContent = mode === 'batch' ? '기간 일괄 등록' : '일정 등록';
-  document.getElementById('schedule-id').value = '';
-  document.getElementById('schedule-title').value = '';
-  document.getElementById('schedule-description').value = '';
-  document.getElementById('schedule-date').value = todayStr();
-  document.getElementById('schedule-start').value = todayStr();
-  document.getElementById('schedule-end').value = '';
-  selectedWeekdays.clear();
-  document.querySelectorAll('#weekday-picker .weekday-pick').forEach(b => b.classList.remove('selected'));
-  
-  populateScheduleColorOptions();
-  if (selectedColorId) document.getElementById('schedule-colorId').value = selectedColorId;
-  switchScheduleMode(mode);
-  
-  // 새 등록: 삭제 버튼 숨김
-  const delBtn = document.getElementById('schedule-delete-btn');
-  if (delBtn) delBtn.style.display = 'none';
-  
-  openModal('schedule-modal');
-  setTimeout(() => document.getElementById('schedule-title').focus(), 100);
-}
-
-function switchScheduleMode(mode) {
-  scheduleMode = mode;
-  document.querySelectorAll('#schedule-mode-tabs button').forEach((b, i) => {
-    b.classList.toggle('active', (i === 0 && mode === 'single') || (i === 1 && mode === 'batch'));
-  });
-  document.getElementById('schedule-single-form').style.display = mode === 'single' ? 'block' : 'none';
-  document.getElementById('schedule-batch-form').style.display = mode === 'batch' ? 'block' : 'none';
-  
-  const editing = !!document.getElementById('schedule-id').value;
-  if (editing) {
-    document.querySelectorAll('#schedule-mode-tabs button').forEach(b => b.disabled = true);
-  } else {
-    document.querySelectorAll('#schedule-mode-tabs button').forEach(b => b.disabled = false);
-  }
-}
-
-function toggleWeekday(day) {
-  if (selectedWeekdays.has(day)) selectedWeekdays.delete(day);
-  else selectedWeekdays.add(day);
-  document.querySelectorAll('#weekday-picker .weekday-pick').forEach(b => {
-    b.classList.toggle('selected', selectedWeekdays.has(parseInt(b.dataset.day)));
-  });
-  updateBatchPreview();
-}
-
-function updateBatchPreview() {
-  const start = document.getElementById('schedule-start').value;
-  const end = document.getElementById('schedule-end').value;
-  const days = [...selectedWeekdays];
-  const preview = document.getElementById('batch-preview');
-  
-  if (!start || !end || days.length === 0) {
-    preview.innerHTML = '시작일/종료일/요일을 모두 선택하세요';
-    return;
-  }
-  
-  const dates = window.expandDateRange(start, end, days);
-  if (dates.length === 0) {
-    preview.innerHTML = '<span style="color: var(--danger);">선택한 조건에 맞는 날짜가 없습니다</span>';
-    return;
-  }
-  
-  preview.innerHTML = `
-    <div><span class="batch-preview-count">${dates.length}일</span> 등록됩니다 (${dayLabel(days)})</div>
-    <div style="margin-top: 6px; font-size: 11px; color: var(--text-faint);">첫 날: ${formatDate(dates[0])} · 마지막 날: ${formatDate(dates[dates.length - 1])}</div>
+  document.getElementById('confirm-title').textContent = '수업일정 초기화';
+  document.getElementById('confirm-text').innerHTML = `
+    "${escapeHtml(course.name)}" 수업일정의 캘린더에 칠해진 모든 색을 제거합니다.<br>
+    <span style="color: var(--danger); font-weight: 600;">${totalToReset}개 일정이 삭제됩니다.</span><br>
+    <span style="color: var(--text-faint); font-size: 12px;">저장하지 않은 변경사항도 함께 초기화됩니다.</span>
   `;
-}
-
-async function saveSchedule() {
-  const id = document.getElementById('schedule-id').value || undefined;
-  const colorId = document.getElementById('schedule-colorId').value;
-  const title = document.getElementById('schedule-title').value.trim();
-  const description = document.getElementById('schedule-description').value.trim();
-  
-  if (!colorId) { toast('색상을 선택해주세요', 'error'); return; }
-  
-  if (scheduleMode === 'single' || id) {
-    const date = document.getElementById('schedule-date').value;
-    if (!date) { toast('날짜를 선택해주세요', 'error'); return; }
-    
-    // 제목이 비어있으면 색상 이름으로 자동
-    let finalTitle = title;
-    if (!finalTitle) {
-      const color = scheduleColors.find(c => c.id === colorId);
-      finalTitle = color ? color.name : '';
-    }
-    
-    try {
-      await window.api.call('saveSchedule', { id, date, colorId, title: finalTitle, description }, getAuth());
-      closeModal('schedule-modal');
-      toast(id ? '일정이 수정되었습니다' : '일정이 추가되었습니다');
-      await loadSchedule();
-      
-      // 편집 후 삭제 버튼 처리
-      if (id && document.getElementById('schedule-delete-btn')) {
-        document.getElementById('schedule-delete-btn').style.display = 'none';
-      }
-    } catch (e) {
-      toast('저장 실패: ' + e.message, 'error');
-    }
-  } else {
-    // 반복 일정
-    const start = document.getElementById('schedule-start').value;
-    const end = document.getElementById('schedule-end').value;
-    const days = [...selectedWeekdays];
-    if (!start || !end) { toast('시작일/종료일을 선택해주세요', 'error'); return; }
-    if (days.length === 0) { toast('요일을 하나 이상 선택해주세요', 'error'); return; }
-    const dates = window.expandDateRange(start, end, days);
-    if (dates.length === 0) { toast('선택한 조건에 맞는 날짜가 없습니다', 'error'); return; }
-    
-    let finalTitle = title;
-    if (!finalTitle) {
-      const color = scheduleColors.find(c => c.id === colorId);
-      finalTitle = color ? color.name : '';
-    }
-    
-    try {
-      const btn = document.getElementById('schedule-save-btn');
-      btn.disabled = true;
-      btn.textContent = `등록 중... (${dates.length}일)`;
-      const result = await window.api.call('saveScheduleBatch', { dates, colorId, title: finalTitle, description }, getAuth());
-      btn.disabled = false;
-      btn.textContent = '저장';
-      closeModal('schedule-modal');
-      toast(`${result.count}개 일정이 등록되었습니다`);
-      await loadSchedule();
-    } catch (e) {
-      document.getElementById('schedule-save-btn').disabled = false;
-      document.getElementById('schedule-save-btn').textContent = '저장';
-      toast('저장 실패: ' + e.message, 'error');
-    }
-  }
-}
-
-// 편집 모달에서 삭제 버튼 (편집 모드에서만 보임)
-async function deleteScheduleFromModal() {
-  const id = document.getElementById('schedule-id').value;
-  if (!id) return;
-  const item = allSchedule.find(s => s.id === id);
-  if (!item) return;
-  if (!confirm(`"${item.title}" 일정을 삭제하시겠습니까?`)) return;
-  try {
-    await window.api.call('deleteSchedule', { id }, getAuth());
-    closeModal('schedule-modal');
-    toast('삭제되었습니다');
-    await loadSchedule();
-  } catch (e) { toast('삭제 실패', 'error'); }
-}
-
-function confirmDeleteSchedule(id, title) {
-  document.getElementById('confirm-title').textContent = '일정 삭제';
-  document.getElementById('confirm-text').textContent = `"${title}" 일정을 삭제하시겠습니까?`;
   pendingAction = async () => {
     try {
-      await window.api.call('deleteSchedule', { id }, getAuth());
-      toast('삭제되었습니다');
-      await loadSchedule();
-    } catch (e) { toast('삭제 실패', 'error'); }
+      // 서버 데이터 모두 삭제
+      for (const s of editorState.schedule) {
+        await window.api.call('deleteSchedule', { id: s.id }, getAuth());
+      }
+      // 메모리 변경사항 비우기
+      editorState.schedule = [];
+      editorState.changes = new Map();
+      
+      toast(`${totalToReset}개 일정이 초기화되었습니다`);
+      renderEditorCalendar();
+      updateEditorProgress();
+      updateSaveButton();
+    } catch (e) { toast('초기화 실패: ' + e.message, 'error'); }
   };
   openModal('confirm-modal');
 }
 
-// 기존 호환성 (사용 안 함)
-function editSchedule(id) { editScheduleEvent(id); }
 
 // ============================================================
 // 색상 관리
@@ -2544,14 +2620,13 @@ async function loadColors() {
   const colors = await window.api.call('getScheduleColors');
   scheduleColors = colors;
   
-  // 기본 색상 (DEFAULT_*)은 편집/삭제 불가, 새 색상 안내
   const isDefault = c => c.id && c.id.startsWith('_d_');
   
   if (colors.length === 0 || colors.every(isDefault)) {
     document.getElementById('colors-list').innerHTML = `
       <div class="empty-state">
         <div class="empty-state-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div>
-        ${colors.length === 0 ? '등록된 색상이 없습니다' : '기본 색상만 있습니다. 추가해보세요.'}
+        <div>현재는 기본 색상만 표시됩니다. "색상 추가"로 학원에 맞는 색상을 등록하세요.</div>
       </div>
     `;
   }
@@ -2582,11 +2657,6 @@ async function loadColors() {
   }
 }
 
-function setColor(hex) {
-  document.getElementById('color-value').value = hex;
-  document.getElementById('color-hex').value = hex;
-}
-
 function openColorModal() {
   document.getElementById('color-modal-title').textContent = '색상 추가';
   document.getElementById('color-id').value = '';
@@ -2606,6 +2676,11 @@ function editColor(id) {
   document.getElementById('color-type').value = c.type || 'class';
   setColor(c.color);
   openModal('color-modal');
+}
+
+function setColor(hex) {
+  document.getElementById('color-value').value = hex;
+  document.getElementById('color-hex').value = hex;
 }
 
 async function saveColor() {
@@ -2638,103 +2713,17 @@ async function saveColor() {
 
 function confirmDeleteColor(id, name) {
   document.getElementById('confirm-title').textContent = '색상 삭제';
-  document.getElementById('confirm-text').textContent = `"${name}" 색상을 삭제하시겠습니까? 이 색상을 사용 중인 일정은 색상 표시가 사라집니다.`;
+  document.getElementById('confirm-text').innerHTML = `"${name}" 색상을 삭제하시겠습니까?<br><span style="color: var(--text-faint); font-size: 12px;">이 색상으로 등록된 일정은 색상이 사라진 상태가 됩니다.</span>`;
   pendingAction = async () => {
     try {
       await window.api.call('deleteScheduleColor', { id }, getAuth());
       toast('삭제되었습니다');
       await loadColors();
-    } catch (e) { toast('삭제 실패', 'error'); }
+    } catch (e) { toast('삭제 실패: ' + e.message, 'error'); }
   };
   openModal('confirm-modal');
 }
 
-// ============================================================
-// 진행 중인 과정 (courses)
-// ============================================================
-let coursesState = { items: [] };
-
-async function loadCourses() {
-  coursesState.items = await window.api.call('getCourses');
-  if (coursesState.items.length === 0) {
-    document.getElementById('courses-list').innerHTML = `<div class="empty-state">등록된 과정이 없습니다. "과정 추가"로 시작일/종강일을 지정해보세요.</div>`;
-    return;
-  }
-  document.getElementById('courses-list').innerHTML = coursesState.items.map(c => `
-    <div class="table-row">
-      <div class="cell-title">${escapeHtml(c.name)}${c.description ? ` <span style="color: var(--text-faint); font-size: 11.5px; font-weight: 400;">· ${escapeHtml(c.description)}</span>` : ''}</div>
-      <div class="cell-date">${formatDate(c.startDate)}</div>
-      <div class="cell-date">${formatDate(c.endDate)}</div>
-      <div>
-        ${c.active 
-          ? '<span style="display: inline-block; font-size: 10.5px; padding: 3px 9px; border-radius: 5px; font-weight: 600; background: #d1fae5; color: #047857;">● 진행 중</span>' 
-          : '<span style="display: inline-block; font-size: 10.5px; padding: 3px 9px; border-radius: 5px; font-weight: 500; background: var(--bg-soft); color: var(--text-faint);">대기</span>'}
-      </div>
-      <div class="cell-actions">
-        <button class="icon-btn" onclick="editCourse('${c.id}')" title="편집"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-        <button class="icon-btn danger" onclick="confirmDeleteCourse('${c.id}', '${escapeHtml(c.name).replace(/'/g, "\\'")}')" title="삭제"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function openCourseModal() {
-  document.getElementById('course-modal-title').textContent = '과정 추가';
-  document.getElementById('course-id').value = '';
-  document.getElementById('course-name').value = '';
-  document.getElementById('course-startDate').value = '';
-  document.getElementById('course-endDate').value = '';
-  document.getElementById('course-description').value = '';
-  document.getElementById('course-active').checked = true;
-  openModal('course-modal');
-  setTimeout(() => document.getElementById('course-name').focus(), 100);
-}
-
-function editCourse(id) {
-  const c = coursesState.items.find(x => x.id === id);
-  if (!c) return;
-  document.getElementById('course-modal-title').textContent = '과정 편집';
-  document.getElementById('course-id').value = c.id;
-  document.getElementById('course-name').value = c.name || '';
-  document.getElementById('course-startDate').value = c.startDate || '';
-  document.getElementById('course-endDate').value = c.endDate || '';
-  document.getElementById('course-description').value = c.description || '';
-  document.getElementById('course-active').checked = !!c.active;
-  openModal('course-modal');
-}
-
-async function saveCourse() {
-  const data = {
-    id: document.getElementById('course-id').value || undefined,
-    name: document.getElementById('course-name').value.trim(),
-    startDate: document.getElementById('course-startDate').value,
-    endDate: document.getElementById('course-endDate').value,
-    description: document.getElementById('course-description').value.trim(),
-    active: document.getElementById('course-active').checked
-  };
-  if (!data.name) { toast('과정 이름을 입력해주세요', 'error'); return; }
-  if (!data.startDate || !data.endDate) { toast('시작일/종강일을 선택해주세요', 'error'); return; }
-  if (data.startDate > data.endDate) { toast('시작일이 종강일보다 늦을 수 없습니다', 'error'); return; }
-  try {
-    await window.api.call('saveCourse', data, getAuth());
-    closeModal('course-modal');
-    toast(data.id ? '과정이 수정되었습니다' : '과정이 추가되었습니다');
-    await loadCourses();
-  } catch (e) { toast('저장 실패: ' + e.message, 'error'); }
-}
-
-function confirmDeleteCourse(id, name) {
-  document.getElementById('confirm-title').textContent = '과정 삭제';
-  document.getElementById('confirm-text').textContent = `"${name}" 과정을 삭제하시겠습니까?`;
-  pendingAction = async () => {
-    try {
-      await window.api.call('deleteCourse', { id }, getAuth());
-      toast('삭제되었습니다');
-      await loadCourses();
-    } catch (e) { toast('삭제 실패', 'error'); }
-  };
-  openModal('confirm-modal');
-}
 
 // ============================================================
 // 강의장
