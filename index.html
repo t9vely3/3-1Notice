@@ -933,6 +933,215 @@ button { font-family: inherit; cursor: pointer; }
   font-weight: 600;
 }
 
+/* 수강생 비대면 카드 (펼침/접힘) */
+.cls-card {
+  background: var(--bg-elevated);
+  border: 0.5px solid var(--border);
+  border-radius: 11px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow 0.15s;
+}
+.cls-card.open { box-shadow: var(--shadow-sm); }
+.cls-card-head {
+  padding: 13px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  gap: 10px;
+}
+.cls-name-wrap {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: 1;
+  min-width: 0;
+}
+.cls-icon {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.cls-card-info { flex: 1; min-width: 0; }
+.cls-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.018em;
+}
+.cls-prog-count {
+  font-size: 10.5px;
+  color: var(--text-faint);
+  margin-top: 2px;
+  font-weight: 500;
+}
+.cls-chevron {
+  width: 22px; height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-faint);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.cls-card.open .cls-chevron {
+  transform: rotate(180deg);
+  color: var(--accent);
+}
+.cls-card-body {
+  display: none;
+  border-top: 0.5px solid var(--border);
+  padding: 14px;
+  background: var(--bg-section);
+}
+.cls-card.open .cls-card-body { display: block; }
+
+.cls-info-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 11px;
+  background: var(--bg-elevated);
+  border: 0.5px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+.cls-info-label {
+  font-size: 9.5px;
+  color: var(--text-soft);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+  min-width: 56px;
+}
+.cls-info-value {
+  flex: 1;
+  font-size: 12.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  font-family: 'SF Mono', Menlo, Consolas, monospace;
+  word-break: break-all;
+}
+.cls-copy-btn {
+  background: var(--bg-section);
+  border: 0.5px solid var(--border-mid);
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-soft);
+  flex-shrink: 0;
+  font-family: inherit;
+  transition: background 0.12s, color 0.12s;
+}
+.cls-copy-btn:active { transform: scale(0.94); }
+.cls-progs-title {
+  font-size: 9.5px;
+  color: var(--text-soft);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-top: 12px;
+  margin-bottom: 6px;
+  padding: 0 2px;
+}
+.cls-progs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.cls-prog-chip {
+  font-size: 10.5px;
+  padding: 3px 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 5px;
+  font-weight: 600;
+}
+
+/* 참여 링크 버튼 (공지/세미나 상세) */
+.detail-link-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  background: var(--accent);
+  color: #fff;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  margin: 12px 0 4px;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.12s, transform 0.1s;
+  box-shadow: var(--shadow-xs);
+}
+.detail-link-btn:active { transform: scale(0.99); }
+.detail-link-btn:hover { background: var(--accent-deep); }
+
+/* 세미나 카드 */
+.seminar-card {
+  background: var(--bg-elevated);
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  padding: 0;
+  margin-bottom: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: var(--shadow-xs);
+  transition: transform 0.12s, box-shadow 0.15s;
+}
+.seminar-card:active { transform: scale(0.99); box-shadow: var(--shadow-sm); }
+.seminar-card-img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--bg-soft);
+  display: block;
+  object-fit: cover;
+}
+.seminar-card-body { padding: 13px 14px; }
+.seminar-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.018em;
+  line-height: 1.4;
+}
+.seminar-card-meta {
+  font-size: 11.5px;
+  color: var(--text-soft);
+  margin-top: 5px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.seminar-card-meta b {
+  color: var(--text);
+  font-weight: 700;
+}
+.seminar-card-link {
+  font-size: 10.5px;
+  background: #ebe9fc;
+  color: #3a2e8a;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-weight: 700;
+  margin-left: 6px;
+}
+
 /* ===== 학칙 (이용안내) ===== */
 .accordion {
   border: 0.5px solid var(--border);
@@ -1503,6 +1712,17 @@ button { font-family: inherit; cursor: pointer; }
   </div>
 </main>
 
+<!-- 세미나 상세 -->
+<main id="page-seminar-detail" class="page hidden">
+  <div class="page-content">
+    <button class="detail-back" onclick="goBack()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      뒤로
+    </button>
+    <div id="seminar-detail-content"></div>
+  </div>
+</main>
+
 <!-- 탭바 -->
 <nav class="tabbar">
   <button class="tab active" data-page="home" onclick="navigate('home')">
@@ -1544,6 +1764,7 @@ const state = {
     classrooms: '비대면 안내',
     rules: '이용안내',
     seminars: '특강·세미나',
+    'seminar-detail': '특강·세미나',
     materials: '수업안내',
     'materials-sub': '수업안내',
     'materials-list': '수업안내',
@@ -1621,6 +1842,7 @@ function navigate(page, params = {}, isPopState = false) {
   else if (page === 'classrooms') loadClassrooms();
   else if (page === 'rules') loadRules();
   else if (page === 'seminars') loadSeminars();
+  else if (page === 'seminar-detail') loadSeminarDetail(params.id);
   else if (page === 'search') initSearch();
   else if (page === 'materials') loadMaterials();
   else if (page === 'materials-sub') loadMaterialsSub(params.parentId);
@@ -1933,6 +2155,12 @@ async function loadPostDetail(id) {
   const imageHtml = post.imageUrl 
     ? `<div class="detail-image"><img src="${escapeHtml(post.imageUrl)}" alt="" loading="lazy"></div>` 
     : '';
+  const linkBtn = post.linkUrl 
+    ? `<button class="detail-link-btn" onclick="window.open('${escapeHtml(post.linkUrl)}', '_blank')">
+         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+         참여하기 (외부 링크 열림)
+       </button>`
+    : '';
   document.getElementById('post-detail-content').innerHTML = `
     <div class="detail-title-wrap">
       <h1 class="detail-title">${escapeHtml(post.title)}</h1>
@@ -1945,6 +2173,7 @@ async function loadPostDetail(id) {
       <span style="font-size: 11px; color: var(--text-faint); font-variant-numeric: tabular-nums;">${formatDate(post.date)}</span>
     </div>
     ${imageHtml}
+    ${linkBtn}
     <div class="detail-content">${linkifyContent(post.content)}</div>
   `;
 }
@@ -2354,19 +2583,95 @@ async function loadClassrooms() {
     document.getElementById('classrooms-list').innerHTML = '<div class="empty">등록된 정보가 없습니다</div>';
     return;
   }
-  document.getElementById('classrooms-list').innerHTML = items.map(c => {
+  document.getElementById('classrooms-list').innerHTML = items.map((c, idx) => {
     const programs = (c.programs || '').split(',').map(p => p.trim()).filter(Boolean);
-    const chips = programs.length > 0 && programs[0] !== '-'
-      ? `<div class="program-chips">${programs.map(p => `<span class="program-chip">${escapeHtml(p)}</span>`).join('')}</div>`
+    const initialChar = (c.name || '').charAt(0) || '?';
+    const progChips = programs.length > 0 && programs[0] !== '-'
+      ? `<div class="cls-progs-title">설치 프로그램</div>
+         <div class="cls-progs">${programs.map(p => `<span class="cls-prog-chip">${escapeHtml(p)}</span>`).join('')}</div>`
       : '';
+    
+    const idRow = c.loginId 
+      ? `<div class="cls-info-row">
+          <div class="cls-info-label">접속 ID</div>
+          <div class="cls-info-value">${escapeHtml(c.loginId)}</div>
+          <button class="cls-copy-btn" onclick="event.stopPropagation(); copyToClipboard('${escapeHtml(c.loginId)}', this)" title="복사">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>` : '';
+    const pwRow = c.password
+      ? `<div class="cls-info-row">
+          <div class="cls-info-label">비밀번호</div>
+          <div class="cls-info-value">${escapeHtml(c.password)}</div>
+          <button class="cls-copy-btn" onclick="event.stopPropagation(); copyToClipboard('${escapeHtml(c.password)}', this)" title="복사">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>` : '';
+    
     return `
-      <div class="list-card">
-        <div class="list-card-title">${escapeHtml(c.name)}</div>
-        <div class="list-card-desc">${escapeHtml(c.description || '')}</div>
-        ${chips}
+      <div class="cls-card" id="cls-card-${idx}">
+        <div class="cls-card-head" onclick="toggleClsCard(${idx})">
+          <div class="cls-name-wrap">
+            <div class="cls-icon">${escapeHtml(initialChar)}</div>
+            <div class="cls-card-info">
+              <div class="cls-name">${escapeHtml(c.name)}${c.description ? ` <span style="font-weight: 400; color: var(--text-faint); font-size: 11px;">· ${escapeHtml(c.description)}</span>` : ''}</div>
+              <div class="cls-prog-count">${programs.length}개 프로그램${c.loginId ? ' · 접속 정보 있음' : ''}</div>
+            </div>
+          </div>
+          <div class="cls-chevron">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="cls-card-body">
+          ${idRow}
+          ${pwRow}
+          ${!c.loginId && !c.password ? '<div style="font-size: 11px; color: var(--text-faint); padding: 6px 2px;">접속 정보가 등록되지 않았습니다</div>' : ''}
+          ${progChips}
+        </div>
       </div>
     `;
   }).join('');
+}
+
+function toggleClsCard(idx) {
+  const card = document.getElementById('cls-card-' + idx);
+  if (card) card.classList.toggle('open');
+}
+
+function copyToClipboard(text, btn) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      flashCopyBtn(btn);
+    }).catch(() => {
+      fallbackCopy(text, btn);
+    });
+  } else {
+    fallbackCopy(text, btn);
+  }
+}
+
+function fallbackCopy(text, btn) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.left = '-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); flashCopyBtn(btn); } catch(_){}
+  document.body.removeChild(ta);
+}
+
+function flashCopyBtn(btn) {
+  if (!btn) return;
+  const original = btn.innerHTML;
+  btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+  btn.style.background = '#d1fae5';
+  btn.style.color = '#047857';
+  setTimeout(() => {
+    btn.innerHTML = original;
+    btn.style.background = '';
+    btn.style.color = '';
+  }, 1200);
 }
 
 // ============================================================
@@ -2393,11 +2698,72 @@ async function loadRules() {
 // 특강·세미나
 // ============================================================
 async function loadSeminars() {
-  const posts = await window.api.call('getPosts');
-  const filtered = posts.filter(p => p.category === '세미나' || p.category === '특강');
-  document.getElementById('seminars-list').innerHTML = filtered.length === 0
-    ? '<div class="empty">예정된 특강·세미나가 없습니다</div>'
-    : filtered.map(renderPostRow).join('');
+  const seminars = await window.api.call('getSeminars').catch(() => []);
+  
+  if (!seminars || seminars.length === 0) {
+    document.getElementById('seminars-list').innerHTML = '<div class="empty">등록된 특강·세미나가 없습니다</div>';
+    return;
+  }
+  
+  document.getElementById('seminars-list').innerHTML = seminars.map(s => {
+    const dateInfo = [
+      s.date ? `<b>${formatDate(s.date)}</b>` : '',
+      s.time ? s.time : '',
+      s.host ? `진행 ${escapeHtml(s.host)}` : ''
+    ].filter(Boolean).join(' · ');
+    const linkBadge = s.linkUrl ? '<span class="seminar-card-link">참여 LINK</span>' : '';
+    const img = s.imageUrl ? `<img class="seminar-card-img" src="${escapeHtml(s.imageUrl)}" alt="" loading="lazy">` : '';
+    
+    return `
+      <div class="seminar-card" onclick="openSeminarDetail('${s.id}')">
+        ${img}
+        <div class="seminar-card-body">
+          <div class="seminar-card-title">${escapeHtml(s.title)}${linkBadge}</div>
+          <div class="seminar-card-meta">${dateInfo || '<span style="color: var(--text-faint);">날짜 미정</span>'}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openSeminarDetail(id) {
+  navigate('seminar-detail', { id });
+}
+
+async function loadSeminarDetail(id) {
+  const seminars = await window.api.call('getSeminars').catch(() => []);
+  const s = seminars.find(x => x.id === id);
+  if (!s) {
+    document.getElementById('seminar-detail-content').innerHTML = '<div class="empty">세미나를 찾을 수 없습니다</div>';
+    return;
+  }
+  
+  const dateInfo = [
+    s.date ? formatDate(s.date) : '',
+    s.time ? s.time : ''
+  ].filter(Boolean).join(' · ');
+  const hostInfo = s.host ? `진행 · ${escapeHtml(s.host)}` : '';
+  
+  const linkBtn = s.linkUrl 
+    ? `<button class="detail-link-btn" onclick="window.open('${escapeHtml(s.linkUrl)}', '_blank')">
+         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+         참여하기 (외부 링크 열림)
+       </button>`
+    : '';
+  const imageHtml = s.imageUrl 
+    ? `<div class="detail-image"><img src="${escapeHtml(s.imageUrl)}" alt="" loading="lazy"></div>` 
+    : '';
+  
+  document.getElementById('seminar-detail-content').innerHTML = `
+    <h1 class="detail-title" style="padding-right: 0;">${escapeHtml(s.title)}</h1>
+    <div class="detail-meta">
+      ${dateInfo ? `<span style="font-size: 12px; color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums;">${dateInfo}</span>` : ''}
+      ${hostInfo ? `<span style="font-size: 11px; color: var(--text-faint);">${hostInfo}</span>` : ''}
+    </div>
+    ${imageHtml}
+    ${linkBtn}
+    ${s.content ? `<div class="detail-content">${linkifyContent(s.content)}</div>` : ''}
+  `;
 }
 
 // ============================================================

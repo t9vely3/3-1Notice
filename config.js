@@ -47,11 +47,12 @@ window.api = {
     if (action === 'getPost')        return await this._getPost(data.id);
     if (action === 'getSchedule')    return await this._getSchedule();
     if (action === 'getCurriculum')  return await this._getList('curriculum', 'startDate', 'asc');
-    if (action === 'getClassrooms')  return await this._getList('classrooms');
+    if (action === 'getClassrooms')  return await this._getList('classrooms', 'order', 'asc');
     if (action === 'getRules')       return await this._getList('rules', 'order', 'asc');
     if (action === 'getSettings')    return await this._getSettings();
     if (action === 'getScheduleColors') return await this._getScheduleColors();
     if (action === 'getCourses')     return await this._getList('courses', 'startDate', 'asc');
+    if (action === 'getSeminars')    return await this._getList('seminars', 'order', 'asc');
     
     // 수업자료
     if (action === 'getMaterialCategories') return await this._getMaterialCategories(data.includeHidden);
@@ -80,6 +81,9 @@ window.api = {
     if (action === 'saveSettings')     return await this._saveSettings(data);
     if (action === 'saveScheduleColor')   return await this._save('scheduleColors', data);
     if (action === 'deleteScheduleColor') return await this._delete('scheduleColors', data.id);
+    if (action === 'saveSeminar')      return await this._save('seminars', data);
+    if (action === 'deleteSeminar')    return await this._delete('seminars', data.id);
+    if (action === 'reorderItems')     return await this._reorderItems(data.collection, data.orderedIds);
     
     if (action === 'saveMaterialCategory')   return await this._save('materialCategories', data);
     if (action === 'deleteMaterialCategory') return await this._deleteMaterialCategory(data.id);
@@ -213,6 +217,20 @@ window.api = {
   async _delete(collection, id) {
     await db.collection(collection).doc(id).delete();
     return { deleted: id };
+  },
+
+  // 순서 일괄 변경 (드래그 앤 드롭용)
+  async _reorderItems(collection, orderedIds) {
+    if (!collection || !Array.isArray(orderedIds)) {
+      throw new Error('collection과 orderedIds 필요');
+    }
+    const batch = db.batch();
+    orderedIds.forEach((id, idx) => {
+      const ref = db.collection(collection).doc(id);
+      batch.update(ref, { order: idx });
+    });
+    await batch.commit();
+    return { ok: true, count: orderedIds.length };
   },
 
   // 일정 일괄 등록 (반복 패턴)

@@ -544,6 +544,85 @@ input, textarea, select { font-family: inherit; }
   flex-shrink: 0;
 }
 
+/* 드래그 정렬 카드 리스트 */
+.sortable-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sortable-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--bg-elevated);
+  border: 0.5px solid var(--border);
+  border-radius: 11px;
+  padding: 13px 14px;
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow 0.15s, transform 0.1s, opacity 0.15s;
+}
+.sortable-card.dragging {
+  opacity: 0.4;
+  cursor: grabbing;
+}
+.sortable-card.drag-over {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
+  transform: scale(1.005);
+}
+.sortable-handle {
+  cursor: grab;
+  color: #aaa;
+  padding: 4px 2px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-top: -2px;
+  transition: color 0.12s;
+}
+.sortable-handle:hover { color: var(--text-mid); }
+.sortable-handle:active { cursor: grabbing; }
+.sortable-card-content { flex: 1; min-width: 0; }
+.sortable-card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.018em;
+}
+.sortable-card-meta {
+  font-size: 11.5px;
+  color: var(--text-soft);
+  margin-top: 4px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  word-break: break-all;
+}
+.sortable-card-meta strong {
+  color: var(--text);
+  font-weight: 700;
+  font-family: 'SF Mono', Menlo, Consolas, monospace;
+}
+.sortable-card-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+.sortable-card-chip {
+  font-size: 10.5px;
+  padding: 3px 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 5px;
+  font-weight: 600;
+}
+.sortable-card-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
 .cell-tag { display: flex; }
 .cell-color {
   display: flex;
@@ -1309,6 +1388,10 @@ input, textarea, select { font-family: inherit; }
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
       수업안내
     </button>
+    <button class="nav-item" data-view="seminars" onclick="switchView('seminars')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      특강·세미나
+    </button>
 
     <div class="nav-section">학원 정보</div>
     <button class="nav-item" data-view="classrooms" onclick="switchView('classrooms')">
@@ -1477,7 +1560,7 @@ input, textarea, select { font-family: inherit; }
       <div class="main-header">
         <div>
           <h1 class="main-title">비대면 안내</h1>
-          <div class="main-subtitle" id="classrooms-count">전체 0개</div>
+          <div class="main-subtitle" id="classrooms-count">드래그로 순서를 변경할 수 있습니다</div>
         </div>
         <div class="action-bar">
           <button class="btn btn-primary" onclick="openClassModal()">
@@ -1486,14 +1569,24 @@ input, textarea, select { font-family: inherit; }
           </button>
         </div>
       </div>
-      <div class="data-table classrooms-table">
-        <div class="table-row header">
-          <div>이름</div>
-          <div>설치 프로그램</div>
-          <div></div>
+      <div id="classrooms-list" class="sortable-list"></div>
+    </section>
+
+    <!-- 특강·세미나 -->
+    <section id="view-seminars" class="view" style="display: none;">
+      <div class="main-header">
+        <div>
+          <h1 class="main-title">특강·세미나</h1>
+          <div class="main-subtitle" id="seminars-count">드래그로 순서를 변경할 수 있습니다</div>
         </div>
-        <div id="classrooms-list"></div>
+        <div class="action-bar">
+          <button class="btn btn-primary" onclick="openSeminarModal()">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            세미나 추가
+          </button>
+        </div>
       </div>
+      <div id="seminars-list" class="sortable-list"></div>
     </section>
 
     <!-- 학칙 -->
@@ -1501,23 +1594,16 @@ input, textarea, select { font-family: inherit; }
       <div class="main-header">
         <div>
           <h1 class="main-title">이용안내</h1>
-          <div class="main-subtitle" id="rules-count">전체 0건</div>
+          <div class="main-subtitle" id="rules-count">드래그로 순서를 변경할 수 있습니다</div>
         </div>
         <div class="action-bar">
           <button class="btn btn-primary" onclick="openRuleModal()">
             <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            학칙 항목 추가
+            이용안내 항목 추가
           </button>
         </div>
       </div>
-      <div class="data-table rules-table">
-        <div class="table-row header">
-          <div>순서</div>
-          <div>제목</div>
-          <div></div>
-        </div>
-        <div id="rules-list"></div>
-      </div>
+      <div id="rules-list" class="sortable-list"></div>
     </section>
 
     <!-- 일정 색상 -->
@@ -1629,6 +1715,11 @@ input, textarea, select { font-family: inherit; }
       <div class="form-row">
         <label class="form-label">본문</label>
         <textarea class="form-textarea" id="post-content" placeholder="본문 (줄바꿈 그대로 표시됩니다)"></textarea>
+      </div>
+      <div class="form-row">
+        <label class="form-label">참여/관련 링크 (선택)</label>
+        <input type="url" class="form-input" id="post-linkUrl" placeholder="https://zoom.us/j/...">
+        <div class="form-help">줌 링크나 관련 사이트 URL을 입력하면 상세 페이지에 큰 버튼으로 표시됩니다.</div>
       </div>
       <div class="form-row">
         <label class="form-label">대표 이미지 (선택)</label>
@@ -1771,19 +1862,89 @@ input, textarea, select { font-family: inherit; }
         <label class="form-label">강의장 이름</label>
         <input type="text" class="form-input" id="class-name" placeholder="예: A강의장">
       </div>
-      <div class="form-row">
-        <label class="form-label">설명</label>
-        <input type="text" class="form-input" id="class-description" placeholder="예: 30석, 듀얼 모니터 환경">
+      <div class="form-row split">
+        <div>
+          <label class="form-label">접속 ID</label>
+          <input type="text" class="form-input" id="class-loginId" placeholder="예: 212 312 9660">
+        </div>
+        <div>
+          <label class="form-label">비밀번호</label>
+          <input type="text" class="form-input" id="class-password" placeholder="예: 123412">
+        </div>
       </div>
       <div class="form-row">
         <label class="form-label">설치 프로그램</label>
-        <input type="text" class="form-input" id="class-programs" placeholder="예: Photoshop, Illustrator, Premiere Pro">
-        <div class="form-help">콤마(,)로 구분하면 수강생 페이지에서 칩 형태로 표시됩니다.</div>
+        <input type="text" class="form-input" id="class-programs" placeholder="예: Adobe2024, OFFICE2021, 캐드2022">
+        <div class="form-help">콤마(,)로 구분하면 칩 형태로 표시됩니다.</div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">메모 (선택)</label>
+        <input type="text" class="form-input" id="class-description" placeholder="예: 웹툰 / 컨셉드로잉 전용 / 30석">
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn" onclick="closeModal('class-modal')">취소</button>
       <button class="btn btn-primary" onclick="saveClassroom()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 세미나 모달 -->
+<div class="modal-backdrop" id="seminar-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="seminar-modal-title">세미나 추가</div>
+      <button class="modal-close" onclick="closeModal('seminar-modal')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="seminar-id">
+      <div class="form-row">
+        <label class="form-label">제목</label>
+        <input type="text" class="form-input" id="seminar-title" placeholder="예: 5월 포트폴리오 특강">
+      </div>
+      <div class="form-row split">
+        <div>
+          <label class="form-label">날짜</label>
+          <input type="date" class="form-input" id="seminar-date">
+        </div>
+        <div>
+          <label class="form-label">시간 (선택)</label>
+          <input type="text" class="form-input" id="seminar-time" placeholder="예: 19:00 ~ 21:00">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">강사 / 진행자 (선택)</label>
+        <input type="text" class="form-input" id="seminar-host" placeholder="예: 홍길동 멘토">
+      </div>
+      <div class="form-row">
+        <label class="form-label">참여 링크 (줌 등)</label>
+        <input type="url" class="form-input" id="seminar-linkUrl" placeholder="https://zoom.us/j/...">
+        <div class="form-help">상세 페이지에 큰 버튼으로 표시됩니다.</div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">내용</label>
+        <textarea class="form-textarea" id="seminar-content" placeholder="세미나 내용 (줄바꿈 그대로 표시됩니다)" style="min-height: 100px;"></textarea>
+      </div>
+      <div class="form-row">
+        <label class="form-label">대표 이미지 (선택)</label>
+        <div>
+          <input type="file" id="seminar-image-input" accept="image/*" style="display: none;" onchange="onSeminarImageSelected(event)">
+          <div id="seminar-image-preview" style="display: none; position: relative; margin-bottom: 8px;">
+            <img id="seminar-image-preview-img" src="" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 0.5px solid var(--border); display: block;">
+            <button type="button" onclick="removeSeminarImage()" style="position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.7); color: #fff; border: none; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-size: 14px;">×</button>
+          </div>
+          <button type="button" class="btn" onclick="document.getElementById('seminar-image-input').click()" id="seminar-image-upload-btn">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span id="seminar-image-upload-label">이미지 선택</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('seminar-modal')">취소</button>
+      <button class="btn btn-primary" onclick="saveSeminar()">저장</button>
     </div>
   </div>
 </div>
@@ -2020,6 +2181,7 @@ async function loadView() {
   else if (currentView === 'schedule') await loadSchedule();
   else if (currentView === 'materials') await loadMaterialsAdmin();
   else if (currentView === 'classrooms') await loadClassrooms();
+  else if (currentView === 'seminars') await loadSeminars();
   else if (currentView === 'rules') await loadRules();
   else if (currentView === 'colors') await loadColors();
   else if (currentView === 'settings') await loadSettings();
@@ -2048,6 +2210,69 @@ function toast(msg, type = 'success') {
   el.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+// ============================================================
+// 드래그 앤 드롭 정렬 헬퍼
+// ============================================================
+// containerId: 카드들이 있는 컨테이너의 id
+// collection: Firestore 컬렉션 이름 (저장용)
+// onChange: 순서 변경 후 호출 (orderedIds 인자)
+function initSortable(containerId, collection, onChange) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  
+  let draggedEl = null;
+  
+  container.querySelectorAll('.sortable-card').forEach(card => {
+    card.addEventListener('dragstart', (e) => {
+      draggedEl = card;
+      card.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      // Firefox 호환을 위해 데이터 설정 필요
+      try { e.dataTransfer.setData('text/plain', card.dataset.id); } catch(_){}
+    });
+    
+    card.addEventListener('dragend', () => {
+      card.classList.remove('dragging');
+      container.querySelectorAll('.sortable-card').forEach(c => c.classList.remove('drag-over'));
+      draggedEl = null;
+    });
+    
+    card.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      if (draggedEl && draggedEl !== card) {
+        // 마우스 위치에 따라 위/아래 결정
+        const rect = card.getBoundingClientRect();
+        const after = (e.clientY - rect.top) > rect.height / 2;
+        if (after) {
+          card.parentNode.insertBefore(draggedEl, card.nextSibling);
+        } else {
+          card.parentNode.insertBefore(draggedEl, card);
+        }
+      }
+    });
+    
+    card.addEventListener('drop', async (e) => {
+      e.preventDefault();
+    });
+  });
+  
+  // 컨테이너 자체에 drop 핸들러 - 모든 카드에서 떨어진 후 저장
+  container.addEventListener('drop', async (e) => {
+    e.preventDefault();
+    const newOrder = [...container.querySelectorAll('.sortable-card')].map(c => c.dataset.id);
+    if (typeof onChange === 'function') {
+      try { onChange(newOrder); } catch (_) {}
+    }
+    try {
+      await window.api.call('reorderItems', { collection, orderedIds: newOrder }, getAuth());
+      toast('순서가 변경되었습니다');
+    } catch (err) {
+      toast('순서 저장 실패: ' + err.message, 'error');
+    }
+  });
 }
 
 // ============================================================
@@ -2157,6 +2382,7 @@ function openPostModal() {
   document.getElementById('post-category').value = '학사';
   document.getElementById('post-title').value = '';
   document.getElementById('post-content').value = '';
+  document.getElementById('post-linkUrl').value = '';
   document.getElementById('post-date').value = todayStr();
   resetPostImageUI();
   openModal('post-modal');
@@ -2171,6 +2397,7 @@ async function editPost(id) {
   document.getElementById('post-category').value = post.category;
   document.getElementById('post-title').value = post.title;
   document.getElementById('post-content').value = post.content;
+  document.getElementById('post-linkUrl').value = post.linkUrl || '';
   document.getElementById('post-date').value = post.date;
   resetPostImageUI();
   if (post.imageUrl) {
@@ -2188,11 +2415,17 @@ async function savePost() {
     title: document.getElementById('post-title').value.trim(),
     content: document.getElementById('post-content').value.trim(),
     date: document.getElementById('post-date').value,
+    linkUrl: document.getElementById('post-linkUrl').value.trim(),
     imageUrl: postImageState.url || '',
     imagePath: postImageState.path || ''
   };
   if (!data.title) { toast('제목을 입력해주세요', 'error'); return; }
   if (!data.date) { toast('날짜를 선택해주세요', 'error'); return; }
+  // URL 형식 간단 체크
+  if (data.linkUrl && !/^https?:\/\//.test(data.linkUrl)) {
+    toast('링크는 http:// 또는 https://로 시작해야 합니다', 'error');
+    return;
+  }
   try {
     await window.api.call('savePost', data, getAuth());
     closeModal('post-modal');
@@ -2846,33 +3079,60 @@ function confirmDeleteColor(id, name) {
 
 
 // ============================================================
-// 강의장
+// 강의장 (비대면 안내)
 // ============================================================
 let classState = { items: [] };
 
 async function loadClassrooms() {
   classState.items = await window.api.call('getClassrooms');
-  document.getElementById('classrooms-count').textContent = `전체 ${classState.items.length}개`;
+  document.getElementById('classrooms-count').textContent = 
+    `${classState.items.length}개 강의장 · 드래그로 순서 변경 가능`;
   if (classState.items.length === 0) {
     document.getElementById('classrooms-list').innerHTML = `<div class="empty-state">등록된 강의장이 없습니다</div>`;
     return;
   }
-  document.getElementById('classrooms-list').innerHTML = classState.items.map(c => `
-    <div class="table-row">
-      <div class="cell-title">${escapeHtml(c.name)}${c.description ? ` <span style="color: var(--text-faint); font-size: 11.5px; font-weight: 400;">· ${escapeHtml(c.description)}</span>` : ''}</div>
-      <div style="font-size: 12px; color: var(--text-soft);">${escapeHtml(c.programs || '-')}</div>
-      <div class="cell-actions">
-        <button class="icon-btn" onclick="editClassroom('${c.id}')" title="편집"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-        <button class="icon-btn danger" onclick="confirmDeleteClass('${c.id}', '${escapeHtml(c.name).replace(/'/g, "\\'")}')" title="삭제"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+  renderClassroomsList();
+}
+
+function renderClassroomsList() {
+  document.getElementById('classrooms-list').innerHTML = classState.items.map(c => {
+    const programs = (c.programs || '').split(',').map(p => p.trim()).filter(Boolean);
+    const progChips = programs.length > 0
+      ? `<div class="sortable-card-chips">${programs.map(p => `<span class="sortable-card-chip">${escapeHtml(p)}</span>`).join('')}</div>`
+      : '';
+    return `
+      <div class="sortable-card" draggable="true" data-id="${c.id}">
+        <div class="sortable-handle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="18" r="1"/></svg>
+        </div>
+        <div class="sortable-card-content">
+          <div class="sortable-card-title">${escapeHtml(c.name)}${c.description ? ` <span style="color: var(--text-faint); font-size: 11.5px; font-weight: 400;">· ${escapeHtml(c.description)}</span>` : ''}</div>
+          <div class="sortable-card-meta">
+            ${c.loginId ? `ID: <strong>${escapeHtml(c.loginId)}</strong>` : '<span style="color: var(--text-faint);">ID 없음</span>'}
+            ${c.password ? ` · PW: <strong>${escapeHtml(c.password)}</strong>` : ''}
+          </div>
+          ${progChips}
+        </div>
+        <div class="sortable-card-actions">
+          <button class="icon-btn" onclick="editClassroom('${c.id}')" title="편집"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="icon-btn danger" onclick="confirmDeleteClass('${c.id}', '${escapeHtml(c.name).replace(/'/g, "\\'")}')" title="삭제"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+        </div>
       </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
+  
+  // 드래그 활성화
+  initSortable('classrooms-list', 'classrooms', async (orderedIds) => {
+    classState.items = orderedIds.map(id => classState.items.find(x => x.id === id)).filter(Boolean);
+  });
 }
 
 function openClassModal() {
   document.getElementById('class-modal-title').textContent = '강의장 추가';
   document.getElementById('class-id').value = '';
   document.getElementById('class-name').value = '';
+  document.getElementById('class-loginId').value = '';
+  document.getElementById('class-password').value = '';
   document.getElementById('class-description').value = '';
   document.getElementById('class-programs').value = '';
   openModal('class-modal');
@@ -2885,6 +3145,8 @@ function editClassroom(id) {
   document.getElementById('class-modal-title').textContent = '강의장 편집';
   document.getElementById('class-id').value = c.id;
   document.getElementById('class-name').value = c.name;
+  document.getElementById('class-loginId').value = c.loginId || '';
+  document.getElementById('class-password').value = c.password || '';
   document.getElementById('class-description').value = c.description || '';
   document.getElementById('class-programs').value = c.programs || '';
   openModal('class-modal');
@@ -2894,10 +3156,19 @@ async function saveClassroom() {
   const data = {
     id: document.getElementById('class-id').value || undefined,
     name: document.getElementById('class-name').value.trim(),
+    loginId: document.getElementById('class-loginId').value.trim(),
+    password: document.getElementById('class-password').value.trim(),
     description: document.getElementById('class-description').value.trim(),
     programs: document.getElementById('class-programs').value.trim()
   };
   if (!data.name) { toast('이름을 입력해주세요', 'error'); return; }
+  // 신규 등록 시 order 부여
+  if (!data.id) {
+    data.order = classState.items.length;
+  } else {
+    const existing = classState.items.find(c => c.id === data.id);
+    if (existing && existing.order !== undefined) data.order = existing.order;
+  }
   try {
     await window.api.call('saveClassroom', data, getAuth());
     closeModal('class-modal');
@@ -2920,27 +3191,213 @@ function confirmDeleteClass(id, name) {
 }
 
 // ============================================================
+// 세미나
+// ============================================================
+let seminarState = { items: [] };
+let seminarImageState = { url: '', path: '' };
+
+async function loadSeminars() {
+  seminarState.items = await window.api.call('getSeminars');
+  document.getElementById('seminars-count').textContent = 
+    `${seminarState.items.length}개 세미나 · 드래그로 순서 변경 가능`;
+  if (seminarState.items.length === 0) {
+    document.getElementById('seminars-list').innerHTML = `<div class="empty-state">등록된 세미나가 없습니다</div>`;
+    return;
+  }
+  renderSeminarsList();
+}
+
+function renderSeminarsList() {
+  document.getElementById('seminars-list').innerHTML = seminarState.items.map(s => {
+    const linkBadge = s.linkUrl 
+      ? `<span style="display: inline-block; font-size: 10px; padding: 2px 6px; background: #ebe9fc; color: #3a2e8a; border-radius: 4px; font-weight: 600; margin-left: 6px;">🔗 LINK</span>` 
+      : '';
+    const imageBadge = s.imageUrl
+      ? `<span style="display: inline-block; font-size: 10px; padding: 2px 6px; background: #d1fae5; color: #047857; border-radius: 4px; font-weight: 600; margin-left: 6px;">🖼 IMG</span>`
+      : '';
+    const dateInfo = [
+      s.date ? formatDate(s.date) : '',
+      s.time ? s.time : '',
+      s.host ? `진행: ${escapeHtml(s.host)}` : ''
+    ].filter(Boolean).join(' · ');
+    return `
+      <div class="sortable-card" draggable="true" data-id="${s.id}">
+        <div class="sortable-handle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="18" r="1"/></svg>
+        </div>
+        <div class="sortable-card-content">
+          <div class="sortable-card-title">${escapeHtml(s.title)}${linkBadge}${imageBadge}</div>
+          <div class="sortable-card-meta">${dateInfo || '<span style="color: var(--text-faint);">날짜 정보 없음</span>'}</div>
+        </div>
+        <div class="sortable-card-actions">
+          <button class="icon-btn" onclick="editSeminar('${s.id}')" title="편집"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="icon-btn danger" onclick="confirmDeleteSeminar('${s.id}', '${escapeHtml(s.title).replace(/'/g, "\\'")}')" title="삭제"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  initSortable('seminars-list', 'seminars', (orderedIds) => {
+    seminarState.items = orderedIds.map(id => seminarState.items.find(x => x.id === id)).filter(Boolean);
+  });
+}
+
+function resetSeminarImageUI() {
+  seminarImageState = { url: '', path: '' };
+  document.getElementById('seminar-image-input').value = '';
+  document.getElementById('seminar-image-preview').style.display = 'none';
+  document.getElementById('seminar-image-preview-img').src = '';
+  document.getElementById('seminar-image-upload-label').textContent = '이미지 선택';
+}
+
+function showSeminarImageUI(url) {
+  seminarImageState.url = url;
+  document.getElementById('seminar-image-preview-img').src = url;
+  document.getElementById('seminar-image-preview').style.display = 'block';
+  document.getElementById('seminar-image-upload-label').textContent = '이미지 변경';
+}
+
+async function onSeminarImageSelected(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const btn = document.getElementById('seminar-image-upload-btn');
+  const label = document.getElementById('seminar-image-upload-label');
+  btn.disabled = true;
+  label.textContent = '업로드 중...';
+  try {
+    const result = await window.api.uploadImage(file, 'seminars');
+    seminarImageState.url = result.url;
+    seminarImageState.path = result.path;
+    showSeminarImageUI(result.url);
+    toast('이미지가 업로드되었습니다');
+  } catch (e) {
+    toast('업로드 실패: ' + e.message, 'error');
+  }
+  btn.disabled = false;
+}
+
+async function removeSeminarImage() {
+  if (seminarImageState.path) {
+    try { await window.api.deleteImage(seminarImageState.path); } catch (_) {}
+  }
+  resetSeminarImageUI();
+}
+
+function openSeminarModal() {
+  document.getElementById('seminar-modal-title').textContent = '세미나 추가';
+  document.getElementById('seminar-id').value = '';
+  document.getElementById('seminar-title').value = '';
+  document.getElementById('seminar-date').value = '';
+  document.getElementById('seminar-time').value = '';
+  document.getElementById('seminar-host').value = '';
+  document.getElementById('seminar-linkUrl').value = '';
+  document.getElementById('seminar-content').value = '';
+  resetSeminarImageUI();
+  openModal('seminar-modal');
+  setTimeout(() => document.getElementById('seminar-title').focus(), 100);
+}
+
+function editSeminar(id) {
+  const s = seminarState.items.find(x => x.id === id);
+  if (!s) return;
+  document.getElementById('seminar-modal-title').textContent = '세미나 편집';
+  document.getElementById('seminar-id').value = s.id;
+  document.getElementById('seminar-title').value = s.title || '';
+  document.getElementById('seminar-date').value = s.date || '';
+  document.getElementById('seminar-time').value = s.time || '';
+  document.getElementById('seminar-host').value = s.host || '';
+  document.getElementById('seminar-linkUrl').value = s.linkUrl || '';
+  document.getElementById('seminar-content').value = s.content || '';
+  resetSeminarImageUI();
+  if (s.imageUrl) {
+    seminarImageState.url = s.imageUrl;
+    seminarImageState.path = s.imagePath || '';
+    showSeminarImageUI(s.imageUrl);
+  }
+  openModal('seminar-modal');
+}
+
+async function saveSeminar() {
+  const data = {
+    id: document.getElementById('seminar-id').value || undefined,
+    title: document.getElementById('seminar-title').value.trim(),
+    date: document.getElementById('seminar-date').value,
+    time: document.getElementById('seminar-time').value.trim(),
+    host: document.getElementById('seminar-host').value.trim(),
+    linkUrl: document.getElementById('seminar-linkUrl').value.trim(),
+    content: document.getElementById('seminar-content').value.trim(),
+    imageUrl: seminarImageState.url || '',
+    imagePath: seminarImageState.path || ''
+  };
+  if (!data.title) { toast('제목을 입력해주세요', 'error'); return; }
+  if (data.linkUrl && !/^https?:\/\//.test(data.linkUrl)) {
+    toast('링크는 http:// 또는 https://로 시작해야 합니다', 'error');
+    return;
+  }
+  if (!data.id) {
+    data.order = seminarState.items.length;
+  } else {
+    const existing = seminarState.items.find(x => x.id === data.id);
+    if (existing && existing.order !== undefined) data.order = existing.order;
+  }
+  try {
+    await window.api.call('saveSeminar', data, getAuth());
+    closeModal('seminar-modal');
+    toast(data.id ? '세미나가 수정되었습니다' : '세미나가 추가되었습니다');
+    await loadSeminars();
+  } catch (e) {
+    toast('저장 실패: ' + e.message, 'error');
+  }
+}
+
+function confirmDeleteSeminar(id, title) {
+  document.getElementById('confirm-title').textContent = '세미나 삭제';
+  document.getElementById('confirm-text').textContent = `"${title}" 세미나를 삭제하시겠습니까?`;
+  pendingAction = async () => {
+    try {
+      await window.api.call('deleteSeminar', { id }, getAuth());
+      toast('삭제되었습니다');
+      await loadSeminars();
+    } catch (e) { toast('삭제 실패: ' + e.message, 'error'); }
+  };
+  openModal('confirm-modal');
+}
+
+// ============================================================
 // 학칙
 // ============================================================
 let ruleState = { items: [] };
 
 async function loadRules() {
   ruleState.items = await window.api.call('getRules');
-  document.getElementById('rules-count').textContent = `전체 ${ruleState.items.length}건`;
+  document.getElementById('rules-count').textContent = 
+    `${ruleState.items.length}개 항목 · 드래그로 순서 변경 가능`;
   if (ruleState.items.length === 0) {
-    document.getElementById('rules-list').innerHTML = `<div class="empty-state">등록된 학칙이 없습니다</div>`;
+    document.getElementById('rules-list').innerHTML = `<div class="empty-state">등록된 항목이 없습니다</div>`;
     return;
   }
-  document.getElementById('rules-list').innerHTML = ruleState.items.map((r, i) => `
-    <div class="table-row">
-      <div class="cell-num">${r.order || i + 1}</div>
-      <div class="cell-title">${escapeHtml(r.section)}</div>
-      <div class="cell-actions">
-        <button class="icon-btn" onclick="editRule('${r.id}')" title="편집"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-        <button class="icon-btn danger" onclick="confirmDeleteRule('${r.id}', '${escapeHtml(r.section).replace(/'/g, "\\'")}')" title="삭제"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+  document.getElementById('rules-list').innerHTML = ruleState.items.map(r => {
+    const preview = (r.content || '').slice(0, 60);
+    return `
+      <div class="sortable-card" draggable="true" data-id="${r.id}">
+        <div class="sortable-handle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="18" r="1"/></svg>
+        </div>
+        <div class="sortable-card-content">
+          <div class="sortable-card-title">${escapeHtml(r.section)}</div>
+          ${preview ? `<div class="sortable-card-meta" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(preview)}${r.content.length > 60 ? '...' : ''}</div>` : ''}
+        </div>
+        <div class="sortable-card-actions">
+          <button class="icon-btn" onclick="editRule('${r.id}')" title="편집"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="icon-btn danger" onclick="confirmDeleteRule('${r.id}', '${escapeHtml(r.section).replace(/'/g, "\\'")}')" title="삭제"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+        </div>
       </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
+  
+  initSortable('rules-list', 'rules', (orderedIds) => {
+    ruleState.items = orderedIds.map(id => ruleState.items.find(x => x.id === id)).filter(Boolean);
+  });
 }
 
 function openRuleModal() {
