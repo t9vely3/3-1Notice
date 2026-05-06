@@ -696,16 +696,46 @@ button { font-family: inherit; cursor: pointer; }
 }
 .cal-day:nth-child(7n) { border-right: none; }
 .cal-day:active { background: var(--bg-section); }
+
+/* 다른 달 (수업일정 없을 때) */
 .cal-day.other-month { color: var(--text-faint); background: rgba(0, 0, 0, 0.015); }
-.cal-day.selected { background: var(--accent-soft); }
-.cal-day.today .cal-day-num {
-  background: var(--danger);
-  color: #fff;
-  border-radius: 50%;
-  width: 20px; height: 20px;
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto;
+
+/* 수업일정 외부의 다른 달은 빈 칸 */
+.cal-day.cal-day-empty {
+  background: transparent;
+  cursor: default;
+  pointer-events: none;
+  border-color: transparent;
 }
+
+/* 수업일정 기간 외 (같은 달이지만 활성기간 아님) */
+.cal-day.out-range {
+  background: rgba(0, 0, 0, 0.02);
+  cursor: default;
+}
+.cal-day.out-range .cal-day-num { color: #c5c5c5; }
+.cal-day.out-range.sun .cal-day-num,
+.cal-day.out-range.sat .cal-day-num { color: #c5c5c5; opacity: 0.7; }
+
+/* 지나간 수업일 (오늘 이전) - 살짝 회색 */
+.cal-day.past { opacity: 0.45; }
+.cal-day.past.in-range::before { opacity: 0.6; }
+
+/* 선택된 날짜 */
+.cal-day.selected { background: var(--accent-soft); }
+
+/* 오늘 - 빨간 원 → 하늘색 배경 */
+.cal-day.today {
+  background: #dbeafe;
+}
+.cal-day.today .cal-day-num {
+  color: #1d4ed8;
+  font-weight: 700;
+}
+.cal-day.today.selected {
+  background: #c7dafc;
+}
+
 .cal-day-num {
   font-size: 12.5px;
   font-weight: 600;
@@ -777,6 +807,17 @@ button { font-family: inherit; cursor: pointer; }
   font-variant-numeric: tabular-nums;
   opacity: 0.8;
 }
+.cal-course-cancel {
+  font-size: 11px;
+  color: #be185d;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 0.5px dashed rgba(190, 24, 93, 0.25);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  word-break: keep-all;
+  line-height: 1.5;
+}
 
 /* 기간 표시 띠 (in-range) */
 .cal-day.in-range::before {
@@ -841,7 +882,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 .cal-selected-title-today {
   font-size: 10.5px;
-  background: var(--danger);
+  background: #1d4ed8;
   color: #fff;
   padding: 2px 6px;
   border-radius: 3px;
@@ -1961,10 +2002,30 @@ function renderCalendarLegend() {
   
   let courseInfoHtml = '';
   if (course) {
+    // 휴강/공강 일정 추출 (해당 수업일정 기간 내, type='cancel' 색상)
+    const cancelTypeIds = new Set(
+      colors.filter(c => c.type === 'cancel').map(c => c.id)
+    );
+    const cancelDates = (state.cal.schedule || [])
+      .filter(s => 
+        s.date >= course.startDate && 
+        s.date <= course.endDate && 
+        cancelTypeIds.has(s.colorId)
+      )
+      .map(s => s.date)
+      .sort();
+    
+    let cancelLine = '';
+    if (cancelDates.length > 0) {
+      const dateLabels = cancelDates.map(d => formatDateShort(d)).join(', ');
+      cancelLine = `<div class="cal-course-cancel">휴강 ${cancelDates.length}일 · ${dateLabels}</div>`;
+    }
+    
     courseInfoHtml = `
       <div class="cal-course-banner">
         <div class="cal-course-name">${escapeHtml(course.name)}</div>
         <div class="cal-course-period">${formatDate(course.startDate)} 개강 · ${formatDate(course.endDate)} 종강</div>
+        ${cancelLine}
       </div>
     `;
   }
@@ -2078,10 +2139,18 @@ function renderCalendar() {
     const isStart = activeCourse && dateStr === activeCourse.startDate;
     const isEnd = activeCourse && dateStr === activeCourse.endDate;
     
+    // activeCourse가 있고 다른 달이면 → 완전히 빈 칸 (날짜 자체 안 보이게)
+    if (activeCourse && otherMonth) {
+      return `<div class="cal-day cal-day-empty"></div>`;
+    }
+    
+    // 오늘 이전 (지나간 수업)
+    const todayStr = `${TODAY.getFullYear()}-${String(TODAY.getMonth() + 1).padStart(2, '0')}-${String(TODAY.getDate()).padStart(2, '0')}`;
+    const isPast = dateStr < todayStr && inRange;
+    
     let classes = ['cal-day'];
-    // activeCourse가 있으면 기간 외는 회색 처리
     if (activeCourse) {
-      if (otherMonth || !inRange) classes.push('other-month');
+      if (!inRange) classes.push('out-range');
     } else {
       if (otherMonth) classes.push('other-month');
     }
@@ -2092,12 +2161,15 @@ function renderCalendar() {
     if (inRange) classes.push('in-range');
     if (isStart) classes.push('start-day');
     if (isEnd) classes.push('end-day');
+    if (isPast && !isTodayCell) classes.push('past');
     
-    const eventDots = events.slice(0, 4).map(e => {
+    // 기간 외 날짜는 점도 표시 안 함
+    const showDots = !activeCourse || inRange;
+    const eventDots = showDots ? events.slice(0, 4).map(e => {
       const color = getColorById(e.colorId);
       const bg = color ? color.color : '#64748b';
       return `<span class="cal-event-dot" style="background: ${bg}"></span>`;
-    }).join('');
+    }).join('') : '';
     
     // 기간 외 날짜는 클릭해도 select 안 됨
     const clickHandler = (activeCourse && !inRange) ? '' : `onclick="calSelectDate('${dateStr}')"`;
@@ -2115,7 +2187,15 @@ function renderCalendar() {
 }
 
 function renderSelectedDayEvents() {
-  const { selectedDate, schedule } = state.cal;
+  const { selectedDate, schedule, activeCourse } = state.cal;
+  
+  // 수업일정이 있고 selectedDate가 기간 외면 안내만 표시
+  if (activeCourse && (selectedDate < activeCourse.startDate || selectedDate > activeCourse.endDate)) {
+    document.getElementById('cal-selected-title').innerHTML = '';
+    document.getElementById('cal-selected-events').innerHTML = `<div class="empty">수업일정 기간 내 날짜를 선택해주세요</div>`;
+    return;
+  }
+  
   const events = schedule.filter(s => s.date === selectedDate);
   const date = new Date(selectedDate);
   const days = ['일','월','화','수','목','금','토'];
