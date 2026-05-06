@@ -423,6 +423,29 @@ button { font-family: inherit; cursor: pointer; }
   margin-top: 1px;
 }
 .post-body { flex: 1; min-width: 0; }
+.post-thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 0.5px solid var(--border);
+  background: var(--bg-soft);
+}
+.detail-image {
+  margin: 6px 0 16px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 0.5px solid var(--border);
+  background: var(--bg-soft);
+}
+.detail-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: cover;
+}
 .post-title {
   font-size: 12px;
   font-weight: 500;
@@ -731,6 +754,70 @@ button { font-family: inherit; cursor: pointer; }
   width: 9px; height: 9px;
   border-radius: 50%;
   flex-shrink: 0;
+}
+
+/* 수업일정 정보 배너 */
+.cal-course-banner {
+  background: var(--accent-soft);
+  border: 0.5px solid rgba(30, 58, 95, 0.2);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+}
+.cal-course-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.018em;
+}
+.cal-course-period {
+  font-size: 11px;
+  color: var(--accent);
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
+}
+
+/* 기간 표시 띠 (in-range) */
+.cal-day.in-range::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 0;
+  height: 3px;
+  background: #047857;
+  z-index: 1;
+}
+/* 시작일: 띠가 30%부터 시작 (왼쪽 비움) */
+.cal-day.start-day::before {
+  left: 30%;
+}
+/* 종강일: 띠가 70%까지만 (오른쪽 비움) */
+.cal-day.end-day::before {
+  right: 30%;
+}
+/* 시작일/종강일 글자 표시 */
+.cal-day.start-day::after,
+.cal-day.end-day::after {
+  position: absolute;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  bottom: 5px;
+  z-index: 2;
+}
+.cal-day.start-day::after {
+  content: '개강';
+  left: 4px;
+  color: #047857;
+}
+.cal-day.end-day::after {
+  content: '종강';
+  right: 4px;
+  color: #be185d;
+}
+.cal-day.end-day::before {
+  background: #be185d;
 }
 
 .cal-selected-day { margin-top: 14px; }
@@ -1742,6 +1829,9 @@ function renderEventRow(s) {
 function renderPostRow(p) {
   const newBadge = isNew(p.date) ? '<span class="post-new">NEW</span>' : '';
   const readClass = isRead(p.id) ? 'read' : '';
+  const thumb = p.imageUrl 
+    ? `<img class="post-thumb" src="${escapeHtml(p.imageUrl)}" alt="" loading="lazy">` 
+    : '';
   return `
     <div class="post ${readClass}" onclick="openPost('${p.id}')">
       <span class="post-tag ${tagClass(p.category)}">${escapeHtml(p.category || '기타')}</span>
@@ -1752,6 +1842,7 @@ function renderPostRow(p) {
           ${newBadge}
         </div>
       </div>
+      ${thumb}
     </div>
   `;
 }
@@ -1798,6 +1889,9 @@ async function loadPostDetail(id) {
     return;
   }
   const bookmarked = isBookmarked(post.id);
+  const imageHtml = post.imageUrl 
+    ? `<div class="detail-image"><img src="${escapeHtml(post.imageUrl)}" alt="" loading="lazy"></div>` 
+    : '';
   document.getElementById('post-detail-content').innerHTML = `
     <div class="detail-title-wrap">
       <h1 class="detail-title">${escapeHtml(post.title)}</h1>
@@ -1809,6 +1903,7 @@ async function loadPostDetail(id) {
       <span class="post-tag ${tagClass(post.category)}">${escapeHtml(post.category || '기타')}</span>
       <span style="font-size: 11px; color: var(--text-faint); font-variant-numeric: tabular-nums;">${formatDate(post.date)}</span>
     </div>
+    ${imageHtml}
     <div class="detail-content">${linkifyContent(post.content)}</div>
   `;
 }
@@ -1824,48 +1919,116 @@ function toggleDetailBookmark(id, btn) {
 // 캘린더
 // ============================================================
 async function loadSchedule() {
-  const [schedule, colors] = await Promise.all([
+  const [schedule, colors, courses] = await Promise.all([
     window.api.call('getSchedule'),
-    window.api.call('getScheduleColors')
+    window.api.call('getScheduleColors'),
+    window.api.call('getCourses').catch(() => [])
   ]);
   state.cal.schedule = schedule || [];
   state.cal.colors = colors || [];
+  state.cal.courses = (courses || []).filter(c => c.active && c.startDate && c.endDate);
+  
+  // 진행 중인 수업일정 1개 자동 선택 (홈 게이지와 같은 로직)
+  const todayStr = `${TODAY.getFullYear()}-${String(TODAY.getMonth() + 1).padStart(2, '0')}-${String(TODAY.getDate()).padStart(2, '0')}`;
+  const inProgress = state.cal.courses.filter(c => c.startDate <= todayStr && c.endDate >= todayStr);
+  inProgress.sort((a, b) => a.endDate.localeCompare(b.endDate));
+  const upcomingCs = state.cal.courses.filter(c => c.startDate > todayStr);
+  upcomingCs.sort((a, b) => a.startDate.localeCompare(b.startDate));
+  const pastCs = state.cal.courses.filter(c => c.endDate < todayStr);
+  pastCs.sort((a, b) => b.endDate.localeCompare(a.endDate));
+  state.cal.activeCourse = inProgress[0] || upcomingCs[0] || pastCs[0] || null;
+  
+  // 캘린더 시작 위치: 진행 중인 수업일정의 시작일 월
+  if (state.cal.activeCourse) {
+    const startD = new Date(state.cal.activeCourse.startDate);
+    state.cal.year = startD.getFullYear();
+    state.cal.month = startD.getMonth();
+    // 선택된 날짜는 오늘이 기간 내라면 오늘, 아니면 시작일
+    if (todayStr >= state.cal.activeCourse.startDate && todayStr <= state.cal.activeCourse.endDate) {
+      state.cal.selectedDate = todayStr;
+    } else {
+      state.cal.selectedDate = state.cal.activeCourse.startDate;
+    }
+  }
+  
   renderCalendarLegend();
   renderCalendar();
 }
 
 function renderCalendarLegend() {
   const colors = state.cal.colors || [];
-  if (colors.length === 0) {
-    document.getElementById('cal-legend').innerHTML = '';
-    return;
+  const course = state.cal.activeCourse;
+  
+  let courseInfoHtml = '';
+  if (course) {
+    courseInfoHtml = `
+      <div class="cal-course-banner">
+        <div class="cal-course-name">${escapeHtml(course.name)}</div>
+        <div class="cal-course-period">${formatDate(course.startDate)} 개강 · ${formatDate(course.endDate)} 종강</div>
+      </div>
+    `;
   }
-  document.getElementById('cal-legend').innerHTML = `
-    <div class="cal-legend">
-      ${colors.map(c => `
-        <div class="cal-legend-item">
-          <span class="cal-legend-dot" style="background: ${escapeHtml(c.color)}"></span>
-          <span>${escapeHtml(c.name)}</span>
-        </div>
-      `).join('')}
-    </div>
-  `;
+  
+  let legendHtml = '';
+  if (colors.length > 0) {
+    legendHtml = `
+      <div class="cal-legend">
+        ${colors.map(c => `
+          <div class="cal-legend-item">
+            <span class="cal-legend-dot" style="background: ${escapeHtml(c.color)}"></span>
+            <span>${escapeHtml(c.name)}</span>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+  
+  document.getElementById('cal-legend').innerHTML = courseInfoHtml + legendHtml;
 }
 
 function calPrev() {
+  // 수업일정 시작 월보다 이전으로는 안 감
+  const course = state.cal.activeCourse;
+  if (course) {
+    const startD = new Date(course.startDate);
+    const startMonth = startD.getFullYear() * 12 + startD.getMonth();
+    const currMonth = state.cal.year * 12 + state.cal.month;
+    if (currMonth <= startMonth) return;
+  }
   state.cal.month--;
   if (state.cal.month < 0) { state.cal.month = 11; state.cal.year--; }
   renderCalendar();
 }
 function calNext() {
+  const course = state.cal.activeCourse;
+  if (course) {
+    const endD = new Date(course.endDate);
+    const endMonth = endD.getFullYear() * 12 + endD.getMonth();
+    const currMonth = state.cal.year * 12 + state.cal.month;
+    if (currMonth >= endMonth) return;
+  }
   state.cal.month++;
   if (state.cal.month > 11) { state.cal.month = 0; state.cal.year++; }
   renderCalendar();
 }
 function calGoToday() {
-  state.cal.year = TODAY.getFullYear();
-  state.cal.month = TODAY.getMonth();
-  state.cal.selectedDate = TODAY.toISOString().split('T')[0];
+  // "오늘" 버튼: 오늘이 수업일정 기간 안에 있으면 그 월로, 아니면 시작 월로
+  const course = state.cal.activeCourse;
+  const todayStr = `${TODAY.getFullYear()}-${String(TODAY.getMonth() + 1).padStart(2, '0')}-${String(TODAY.getDate()).padStart(2, '0')}`;
+  if (course && todayStr >= course.startDate && todayStr <= course.endDate) {
+    state.cal.year = TODAY.getFullYear();
+    state.cal.month = TODAY.getMonth();
+    state.cal.selectedDate = todayStr;
+  } else if (course) {
+    const startD = new Date(course.startDate);
+    state.cal.year = startD.getFullYear();
+    state.cal.month = startD.getMonth();
+    state.cal.selectedDate = course.startDate;
+  } else {
+    state.cal.year = TODAY.getFullYear();
+    state.cal.month = TODAY.getMonth();
+    state.cal.selectedDate = todayStr;
+  }
   renderCalendar();
 }
 function calSelectDate(dateStr) {
@@ -1874,7 +2037,7 @@ function calSelectDate(dateStr) {
 }
 
 function renderCalendar() {
-  const { year, month, selectedDate, schedule } = state.cal;
+  const { year, month, selectedDate, schedule, activeCourse } = state.cal;
   document.getElementById('cal-month-label').textContent = `${year}년 ${month + 1}월`;
   
   const firstDay = new Date(year, month, 1);
@@ -1910,12 +2073,25 @@ function renderCalendar() {
     const isSelected = dateStr === selectedDate;
     const dayOfWeek = date.getDay();
     
+    // 수업일정 기간 안인지
+    const inRange = activeCourse && dateStr >= activeCourse.startDate && dateStr <= activeCourse.endDate;
+    const isStart = activeCourse && dateStr === activeCourse.startDate;
+    const isEnd = activeCourse && dateStr === activeCourse.endDate;
+    
     let classes = ['cal-day'];
-    if (otherMonth) classes.push('other-month');
+    // activeCourse가 있으면 기간 외는 회색 처리
+    if (activeCourse) {
+      if (otherMonth || !inRange) classes.push('other-month');
+    } else {
+      if (otherMonth) classes.push('other-month');
+    }
     if (isTodayCell) classes.push('today');
-    if (isSelected) classes.push('selected');
+    if (isSelected && inRange) classes.push('selected');
     if (dayOfWeek === 0) classes.push('sun');
     if (dayOfWeek === 6) classes.push('sat');
+    if (inRange) classes.push('in-range');
+    if (isStart) classes.push('start-day');
+    if (isEnd) classes.push('end-day');
     
     const eventDots = events.slice(0, 4).map(e => {
       const color = getColorById(e.colorId);
@@ -1923,8 +2099,11 @@ function renderCalendar() {
       return `<span class="cal-event-dot" style="background: ${bg}"></span>`;
     }).join('');
     
+    // 기간 외 날짜는 클릭해도 select 안 됨
+    const clickHandler = (activeCourse && !inRange) ? '' : `onclick="calSelectDate('${dateStr}')"`;
+    
     return `
-      <div class="${classes.join(' ')}" onclick="calSelectDate('${dateStr}')">
+      <div class="${classes.join(' ')}" ${clickHandler}>
         <div class="cal-day-num">${date.getDate()}</div>
         <div class="cal-events">${eventDots}</div>
       </div>
@@ -2046,6 +2225,9 @@ function highlightText(text, q) {
 function renderPostRowHighlight(p, q) {
   const newBadge = isNew(p.date) ? '<span class="post-new">NEW</span>' : '';
   const readClass = isRead(p.id) ? 'read' : '';
+  const thumb = p.imageUrl 
+    ? `<img class="post-thumb" src="${escapeHtml(p.imageUrl)}" alt="" loading="lazy">` 
+    : '';
   return `
     <div class="post ${readClass}" onclick="openPost('${p.id}')">
       <span class="post-tag ${tagClass(p.category)}">${escapeHtml(p.category || '기타')}</span>
@@ -2056,6 +2238,7 @@ function renderPostRowHighlight(p, q) {
           ${newBadge}
         </div>
       </div>
+      ${thumb}
     </div>
   `;
 }
@@ -2238,7 +2421,6 @@ async function loadMaterialsList(categoryId) {
           <div class="material-card-content">
             <div class="material-card-title">${escapeHtml(m.title)}</div>
             ${m.description ? `<div class="material-card-desc">${escapeHtml(m.description)}</div>` : ''}
-            <div class="material-card-meta">${(m.steps || []).length}단계</div>
           </div>
         </div>
       `).join('')
