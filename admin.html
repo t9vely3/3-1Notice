@@ -1687,7 +1687,12 @@ input, textarea, select { font-family: inherit; }
               <span id="set-zoomGuide-label">가이드 이미지 선택</span>
             </button>
           </div>
-          <div class="form-help">비대면 안내 페이지 상단의 "줌 접속 방법" 버튼에 사용됩니다. 등록 안 하면 버튼이 표시되지 않습니다.</div>
+          <div class="form-help">비대면 안내 페이지 상단에 이미지 그대로 표시됩니다. 등록 안 하면 표시되지 않습니다.</div>
+        </div>
+        <div class="form-row">
+          <label class="form-label">가이드 이미지 클릭 시 이동할 링크 (선택)</label>
+          <input type="url" class="form-input" id="set-zoomGuideLink" placeholder="https://zoom.us/...">
+          <div class="form-help">수강생이 가이드 이미지를 <strong>2번 클릭(더블탭)</strong>하면 이 링크가 새 창으로 열립니다.</div>
         </div>
         <button class="btn btn-primary" onclick="saveSettings()" style="margin-top: 8px;">저장</button>
       </div>
@@ -3543,6 +3548,7 @@ async function loadSettings() {
   document.getElementById('set-contact').value = s.contact || '';
   document.getElementById('set-address').value = s.address || '';
   document.getElementById('set-hours').value = s.hours || '';
+  document.getElementById('set-zoomGuideLink').value = s.zoomGuideLink || '';
   resetZoomGuideUI();
   if (s.zoomGuideUrl) {
     zoomGuideState.url = s.zoomGuideUrl;
@@ -3552,6 +3558,11 @@ async function loadSettings() {
 }
 
 async function saveSettings() {
+  const linkUrl = document.getElementById('set-zoomGuideLink').value.trim();
+  if (linkUrl && !/^https?:\/\//.test(linkUrl)) {
+    toast('링크는 http:// 또는 https://로 시작해야 합니다', 'error');
+    return;
+  }
   const data = {
     notice: document.getElementById('set-notice').value.trim(),
     academyName: document.getElementById('set-academyName').value.trim(),
@@ -3560,7 +3571,8 @@ async function saveSettings() {
     address: document.getElementById('set-address').value.trim(),
     hours: document.getElementById('set-hours').value.trim(),
     zoomGuideUrl: zoomGuideState.url || '',
-    zoomGuidePath: zoomGuideState.path || ''
+    zoomGuidePath: zoomGuideState.path || '',
+    zoomGuideLink: linkUrl
   };
   try {
     await window.api.call('saveSettings', data, getAuth());

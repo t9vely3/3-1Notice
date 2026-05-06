@@ -1130,6 +1130,118 @@ button { font-family: inherit; cursor: pointer; }
 .zoom-guide-btn-sub { font-size: 11px; color: var(--text-faint); margin-top: 2px; font-weight: 500; }
 .zoom-guide-btn-arrow { color: var(--text-faint); flex-shrink: 0; }
 
+/* 인앱 브라우저 안내 배너 (상단 고정) */
+.inapp-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background: #1e3a5f;
+  color: #fff;
+  padding: 10px 12px;
+  padding-top: max(10px, env(safe-area-inset-top));
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+  transform: translateY(-100%);
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: inherit;
+}
+.inapp-banner.show { transform: translateY(0); }
+.inapp-banner-icon {
+  flex-shrink: 0;
+  color: #fcd34d;
+}
+.inapp-banner-text {
+  flex: 1;
+  min-width: 0;
+}
+.inapp-banner-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.018em;
+  color: #fff;
+}
+.inapp-banner-sub {
+  font-size: 10.5px;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 1px;
+  font-weight: 500;
+}
+.inapp-banner-open {
+  background: #fff;
+  color: #1e3a5f;
+  border: none;
+  padding: 7px 11px;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-family: inherit;
+  letter-spacing: -0.012em;
+  white-space: nowrap;
+}
+.inapp-banner-open:active { transform: scale(0.95); }
+.inapp-banner-close {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 19px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+}
+.inapp-banner-close:active { background: rgba(255, 255, 255, 0.15); }
+
+/* 줌 가이드 배너 (이미지 자체) */
+.zoom-guide-banner {
+  position: relative;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  cursor: pointer;
+  background: var(--bg-section);
+  border: 0.5px solid var(--border);
+  box-shadow: var(--shadow-xs);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  transition: transform 0.1s;
+}
+.zoom-guide-banner:active { transform: scale(0.99); }
+.zoom-guide-banner img {
+  display: block;
+  width: 100%;
+  height: auto;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+.zoom-guide-hint {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 4px 9px;
+  border-radius: 100px;
+  letter-spacing: -0.012em;
+  pointer-events: none;
+  backdrop-filter: blur(4px);
+}
+
 /* 이미지 풀스크린 모달 */
 .image-modal {
   display: none;
@@ -1274,19 +1386,30 @@ button { font-family: inherit; cursor: pointer; }
 
 /* 홈 세미나 자동 슬라이드 캐러셀 */
 .seminar-carousel-wrap {
-  margin: 8px -16px 16px;
+  margin: 18px -16px 16px;
+  padding: 0;
   overflow: hidden;
   position: relative;
   -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
   mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
 }
+.seminar-carousel-track-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.018em;
+  color: var(--text-soft);
+  padding: 0 16px;
+  margin-bottom: 10px;
+}
 .seminar-carousel-track {
   display: flex;
   gap: 10px;
   width: max-content;
+  padding: 0 6px;
   animation: seminarMarquee 28s linear infinite;
 }
-.seminar-carousel-wrap:hover .seminar-carousel-track {
+.seminar-carousel-wrap:hover .seminar-carousel-track,
+.seminar-carousel-wrap:focus-within .seminar-carousel-track {
   animation-play-state: paused;
 }
 @keyframes seminarMarquee {
@@ -1295,22 +1418,33 @@ button { font-family: inherit; cursor: pointer; }
 }
 .seminar-carousel-item {
   flex: 0 0 auto;
-  width: 220px;
+  width: 200px;
   background: var(--bg-elevated);
   border: 0.5px solid var(--border);
   border-radius: 11px;
   overflow: hidden;
   box-shadow: var(--shadow-xs);
   cursor: pointer;
-  transition: transform 0.15s;
+  transition: transform 0.15s, box-shadow 0.15s;
+  display: flex;
+  flex-direction: column;
 }
 .seminar-carousel-item:active { transform: scale(0.98); }
-.seminar-carousel-img {
+.seminar-carousel-item:hover { box-shadow: var(--shadow-sm); }
+.seminar-carousel-imgwrap {
   width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  display: block;
   background: var(--bg-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.seminar-carousel-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 260px;
+  object-fit: contain;
 }
 .seminar-carousel-noimg {
   width: 100%;
@@ -1772,11 +1906,6 @@ button { font-family: inherit; cursor: pointer; }
     </button>
   </div>
 
-  <!-- 세미나 자동 슬라이드 캐러셀 -->
-  <div id="home-seminar-carousel" class="seminar-carousel-wrap" style="display: none;">
-    <div class="seminar-carousel-track" id="seminar-carousel-track"></div>
-  </div>
-
   <!-- 다가오는 일정 -->
   <div class="section">
     <div class="section-h">
@@ -1794,6 +1923,12 @@ button { font-family: inherit; cursor: pointer; }
       <button class="section-link" onclick="navigate('posts')">전체 ›</button>
     </div>
     <div id="home-posts"></div>
+  </div>
+
+  <!-- 세미나 자동 슬라이드 캐러셀 (페이지 하단) -->
+  <div id="home-seminar-carousel" class="seminar-carousel-wrap" style="display: none;">
+    <div class="seminar-carousel-track-title">진행 중인 특강·세미나</div>
+    <div class="seminar-carousel-track" id="seminar-carousel-track"></div>
   </div>
 
   <a href="admin.html" class="admin-link">관리자 페이지</a>
@@ -2170,7 +2305,7 @@ function renderSeminarCarousel(seminars) {
       s.time ? s.time : ''
     ].filter(Boolean).join(' · ');
     const visual = s.imageUrl
-      ? `<img class="seminar-carousel-img" src="${escapeHtml(s.imageUrl)}" alt="" loading="lazy">`
+      ? `<div class="seminar-carousel-imgwrap"><img class="seminar-carousel-img" src="${escapeHtml(s.imageUrl)}" alt="" loading="lazy"></div>`
       : `<div class="seminar-carousel-noimg">${escapeHtml(s.title)}</div>`;
     return `
       <div class="seminar-carousel-item" onclick="navigate('seminar-detail', { id: '${s.id}' })">
@@ -2424,7 +2559,7 @@ async function loadPostDetail(id) {
     ? `<div class="detail-image"><img src="${escapeHtml(post.imageUrl)}" alt="" loading="lazy"></div>` 
     : '';
   const linkBtn = post.linkUrl 
-    ? `<button class="detail-link-btn" onclick="window.open('${escapeHtml(post.linkUrl)}', '_blank')">
+    ? `<button class="detail-link-btn" onclick="openExternalBrowser('${escapeHtml(post.linkUrl)}')">
          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
          참여하기 (외부 링크 열림)
        </button>`
@@ -2851,22 +2986,25 @@ async function loadClassrooms() {
     window.api.call('getSettings').catch(() => ({}))
   ]);
   
-  // 줌 가이드 버튼
+  // 줌 가이드 이미지 (더블 클릭 시 외부 링크)
   const guideUrl = settings && settings.zoomGuideUrl;
-  document.getElementById('zoom-guide-area').innerHTML = guideUrl ? `
-    <button class="zoom-guide-btn" onclick="openImageModal('${escapeHtml(guideUrl)}')">
-      <div class="zoom-guide-btn-icon">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+  const guideLink = settings && settings.zoomGuideLink;
+  if (guideUrl) {
+    const safeUrl = escapeHtml(guideUrl);
+    const safeLink = escapeHtml(guideLink || '');
+    document.getElementById('zoom-guide-area').innerHTML = `
+      <div class="zoom-guide-banner" 
+           data-link="${safeLink}"
+           data-url="${safeUrl}"
+           ondblclick="onZoomGuideDoubleTap(this)"
+           onclick="onZoomGuideSingleTap(this)">
+        <img src="${safeUrl}" alt="비대면 줌 접속 방법" loading="lazy">
+        ${guideLink ? '<div class="zoom-guide-hint">두 번 탭하여 줌 접속</div>' : '<div class="zoom-guide-hint">탭하여 크게 보기</div>'}
       </div>
-      <div class="zoom-guide-btn-text">
-        <div class="zoom-guide-btn-title">비대면 줌 접속 방법</div>
-        <div class="zoom-guide-btn-sub">탭하면 가이드 이미지가 열립니다</div>
-      </div>
-      <div class="zoom-guide-btn-arrow">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </div>
-    </button>
-  ` : '';
+    `;
+  } else {
+    document.getElementById('zoom-guide-area').innerHTML = '';
+  }
   
   if (items.length === 0) {
     document.getElementById('classrooms-list').innerHTML = '<div class="empty">등록된 정보가 없습니다</div>';
@@ -2976,6 +3114,124 @@ function closeImageModal() {
 }
 
 // ============================================================
+// 외부 브라우저 강제 열기 (카톡/인스타 인앱 브라우저 우회)
+// ============================================================
+function isInAppBrowser() {
+  const ua = (navigator.userAgent || '').toLowerCase();
+  // 카카오톡 / 라인 / 인스타그램 / 페북 / 네이버앱 등 인앱 브라우저 패턴
+  return /kakaotalk|line|instagram|fb_iab|fbav|naver|wv\)|wv;|whale\/|whale\s|daumapps|everytimeapp/i.test(ua);
+}
+
+// 인앱 브라우저 종류 식별
+function getInAppBrowserType() {
+  const ua = (navigator.userAgent || '').toLowerCase();
+  if (/kakaotalk/i.test(ua)) return 'kakao';
+  if (/line\//i.test(ua)) return 'line';
+  if (/instagram/i.test(ua)) return 'instagram';
+  if (/fb_iab|fbav/i.test(ua)) return 'facebook';
+  if (/naver|whale\/|whale\s/i.test(ua)) return 'naver';
+  if (/daumapps/i.test(ua)) return 'daum';
+  if (/everytimeapp/i.test(ua)) return 'everytime';
+  if (/(android).*(wv\)|wv;)/i.test(ua)) return 'android-webview';
+  return null;
+}
+
+function isIOS() {
+  const ua = navigator.userAgent || '';
+  return /iPhone|iPad|iPod/i.test(ua);
+}
+function isAndroid() {
+  return /android/i.test(navigator.userAgent || '');
+}
+
+function openExternalBrowser(url) {
+  if (!url) return;
+  const ua = (navigator.userAgent || '').toLowerCase();
+  
+  // iOS - 카톡: kakaotalk://web/openExternal?url= 스킴 지원
+  // iOS 일반 인앱: 그냥 새 탭 시도
+  // Android: intent:// URL로 브라우저 강제 호출
+  
+  if (/kakaotalk/i.test(ua)) {
+    // 카톡: 외부 브라우저 강제 열기 스킴
+    try {
+      // iOS 카톡
+      const externalUrl = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(url);
+      window.location.href = externalUrl;
+      // 0.5초 후에도 안 열리면 일반 새 창 시도
+      setTimeout(() => {
+        try { window.open(url, '_blank'); } catch(_){}
+      }, 500);
+    } catch (e) {
+      try { window.open(url, '_blank'); } catch(_){}
+    }
+    return;
+  }
+  
+  // 안드로이드 - intent 스킴으로 외부 브라우저(크롬) 호출
+  if (/android/i.test(ua) && isInAppBrowser()) {
+    try {
+      const intentUrl = url.replace(/^https?:\/\//, '');
+      const intent = 'intent://' + intentUrl + '#Intent;scheme=https;package=com.android.chrome;end';
+      window.location.href = intent;
+      // 폴백
+      setTimeout(() => {
+        try { window.open(url, '_blank'); } catch(_){}
+      }, 800);
+    } catch (e) {
+      try { window.open(url, '_blank'); } catch(_){}
+    }
+    return;
+  }
+  
+  // 그 외 (PC, 일반 모바일 브라우저) - 그냥 새 창
+  try {
+    const win = window.open(url, '_blank', 'noopener,noreferrer');
+    if (!win) {
+      // 팝업 차단된 경우 location 이동
+      window.location.href = url;
+    }
+  } catch (e) {
+    window.location.href = url;
+  }
+}
+
+// ============================================================
+// 줌 가이드 - 싱글탭 = 확대 / 더블탭 = 외부 링크
+// ============================================================
+let zoomGuideClickTimer = null;
+
+function onZoomGuideSingleTap(el) {
+  // 더블클릭 가능성 대비 - 250ms 기다린 후 단일클릭 처리
+  if (zoomGuideClickTimer) {
+    // 이미 첫 클릭이 대기 중이었음 → 이건 더블클릭이니 무시 (dblclick에서 처리)
+    return;
+  }
+  zoomGuideClickTimer = setTimeout(() => {
+    // 단일클릭 = 이미지 확대
+    const url = el.getAttribute('data-url');
+    if (url) openImageModal(url);
+    zoomGuideClickTimer = null;
+  }, 280);
+}
+
+function onZoomGuideDoubleTap(el) {
+  // 더블클릭 발생 → 단일클릭 타이머 취소
+  if (zoomGuideClickTimer) {
+    clearTimeout(zoomGuideClickTimer);
+    zoomGuideClickTimer = null;
+  }
+  const link = el.getAttribute('data-link');
+  if (link) {
+    openExternalBrowser(link);
+  } else {
+    // 링크 없으면 그냥 확대
+    const url = el.getAttribute('data-url');
+    if (url) openImageModal(url);
+  }
+}
+
+// ============================================================
 // 이용안내 (학칙)
 // ============================================================
 async function loadRules() {
@@ -3045,7 +3301,7 @@ async function loadSeminarDetail(id) {
   ].filter(Boolean).join(' · ');
   
   const linkBtn = s.linkUrl 
-    ? `<button class="detail-link-btn" onclick="window.open('${escapeHtml(s.linkUrl)}', '_blank')">
+    ? `<button class="detail-link-btn" onclick="openExternalBrowser('${escapeHtml(s.linkUrl)}')">
          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
          참여하기 (외부 링크 열림)
        </button>`
@@ -3251,10 +3507,110 @@ async function loadMaterialsDetail(id) {
   `;
 }
 
+// ============================================================
+// 인앱 브라우저 처리: 카톡 자동 전환 + 그 외 안내 배너
+// ============================================================
+function handleInAppBrowser() {
+  const type = getInAppBrowserType();
+  if (!type) return;
+  
+  const currentUrl = window.location.href;
+  
+  // 카카오톡 → 자동 전환 시도
+  if (type === 'kakao') {
+    // sessionStorage로 이미 전환 시도했으면 재시도 안 함 (무한 루프 방지)
+    if (sessionStorage.getItem('inapp_redirect_tried')) {
+      // 자동 전환 실패한 경우 → 배너 표시
+      showInAppBanner(type, currentUrl);
+      return;
+    }
+    sessionStorage.setItem('inapp_redirect_tried', '1');
+    
+    if (isIOS()) {
+      // iOS 카톡: 전용 스킴
+      window.location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(currentUrl);
+      // 1초 후에도 페이지가 살아있으면 = 전환 실패 → 배너 표시
+      setTimeout(() => {
+        showInAppBanner(type, currentUrl);
+      }, 1500);
+    } else if (isAndroid()) {
+      // 안드로이드 카톡: intent 스킴으로 크롬 호출
+      const cleanUrl = currentUrl.replace(/^https?:\/\//, '');
+      const intent = 'intent://' + cleanUrl + '#Intent;scheme=https;package=com.android.chrome;end';
+      window.location.href = intent;
+      setTimeout(() => {
+        showInAppBanner(type, currentUrl);
+      }, 1500);
+    } else {
+      showInAppBanner(type, currentUrl);
+    }
+    return;
+  }
+  
+  // 그 외 인앱 (인스타/페북/라인/네이버 등) → 안내 배너만
+  showInAppBanner(type, currentUrl);
+}
+
+function getInAppBrowserName(type) {
+  const names = {
+    'kakao': '카카오톡',
+    'line': '라인',
+    'instagram': '인스타그램',
+    'facebook': '페이스북',
+    'naver': '네이버앱',
+    'daum': '다음앱',
+    'everytime': '에브리타임',
+    'android-webview': '인앱 브라우저'
+  };
+  return names[type] || '인앱 브라우저';
+}
+
+function showInAppBanner(type, url) {
+  // 사용자가 닫은 적 있으면 표시 안 함
+  if (sessionStorage.getItem('inapp_banner_closed')) return;
+  
+  const name = getInAppBrowserName(type);
+  const existing = document.getElementById('inapp-banner');
+  if (existing) return;
+  
+  const banner = document.createElement('div');
+  banner.id = 'inapp-banner';
+  banner.className = 'inapp-banner';
+  banner.innerHTML = `
+    <svg class="inapp-banner-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    <div class="inapp-banner-text">
+      <div class="inapp-banner-title">${escapeHtml(name)} 인앱 브라우저로 보고 있어요</div>
+      <div class="inapp-banner-sub">일부 기능 (줌 링크 등)이 제한될 수 있습니다</div>
+    </div>
+    <button class="inapp-banner-open" onclick="openExternalBrowser('${escapeHtml(url)}')">외부 브라우저 열기</button>
+    <button class="inapp-banner-close" onclick="closeInAppBanner()" aria-label="닫기">×</button>
+  `;
+  document.body.appendChild(banner);
+  
+  // 등장 애니메이션
+  setTimeout(() => banner.classList.add('show'), 50);
+}
+
+function closeInAppBanner() {
+  const banner = document.getElementById('inapp-banner');
+  if (banner) {
+    banner.classList.remove('show');
+    setTimeout(() => banner.remove(), 200);
+  }
+  sessionStorage.setItem('inapp_banner_closed', '1');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // 초기 진입: 현재 history entry를 home으로 등록 (replaceState)
   history.replaceState({ page: 'home', params: {} }, '', '#');
   navigate('home', {}, true);
+  
+  // 인앱 브라우저 처리 (페이지 로드 후 약간 딜레이)
+  setTimeout(handleInAppBrowser, 600);
 });
 </script>
 
