@@ -1967,29 +1967,46 @@ async function loadSchedule() {
   ]);
   state.cal.schedule = schedule || [];
   state.cal.colors = colors || [];
-  state.cal.courses = (courses || []).filter(c => c.active && c.startDate && c.endDate);
+  // active=true인 수업일정만 + 시작일 오름차순
+  state.cal.courses = (courses || [])
+    .filter(c => c.active && c.startDate && c.endDate)
+    .sort((a, b) => a.startDate.localeCompare(b.startDate));
   
-  // 진행 중인 수업일정 1개 자동 선택 (홈 게이지와 같은 로직)
+  if (state.cal.courses.length === 0) {
+    state.cal.activeCourse = null;
+    state.cal.courseIndex = -1;
+    document.getElementById('cal-month-label').textContent = '수업일정 없음';
+    document.getElementById('cal-legend').innerHTML = '<div class="empty">등록된 수업일정이 없습니다</div>';
+    document.getElementById('cal-days').innerHTML = '';
+    document.getElementById('cal-selected-title').innerHTML = '';
+    document.getElementById('cal-selected-events').innerHTML = '';
+    return;
+  }
+  
+  // 진행 중 > 예정 > 종강 순으로 우선 선택
   const todayStr = `${TODAY.getFullYear()}-${String(TODAY.getMonth() + 1).padStart(2, '0')}-${String(TODAY.getDate()).padStart(2, '0')}`;
-  const inProgress = state.cal.courses.filter(c => c.startDate <= todayStr && c.endDate >= todayStr);
-  inProgress.sort((a, b) => a.endDate.localeCompare(b.endDate));
-  const upcomingCs = state.cal.courses.filter(c => c.startDate > todayStr);
-  upcomingCs.sort((a, b) => a.startDate.localeCompare(b.startDate));
-  const pastCs = state.cal.courses.filter(c => c.endDate < todayStr);
-  pastCs.sort((a, b) => b.endDate.localeCompare(a.endDate));
-  state.cal.activeCourse = inProgress[0] || upcomingCs[0] || pastCs[0] || null;
-  
-  // 캘린더 시작 위치: 진행 중인 수업일정의 시작일 월
-  if (state.cal.activeCourse) {
-    const startD = new Date(state.cal.activeCourse.startDate);
-    state.cal.year = startD.getFullYear();
-    state.cal.month = startD.getMonth();
-    // 선택된 날짜는 오늘이 기간 내라면 오늘, 아니면 시작일
-    if (todayStr >= state.cal.activeCourse.startDate && todayStr <= state.cal.activeCourse.endDate) {
-      state.cal.selectedDate = todayStr;
+  const inProgressIdx = state.cal.courses.findIndex(c => c.startDate <= todayStr && c.endDate >= todayStr);
+  let initialIdx;
+  if (inProgressIdx >= 0) {
+    initialIdx = inProgressIdx;
+  } else {
+    const upcomingIdx = state.cal.courses.findIndex(c => c.startDate > todayStr);
+    if (upcomingIdx >= 0) {
+      initialIdx = upcomingIdx;
     } else {
-      state.cal.selectedDate = state.cal.activeCourse.startDate;
+      // 다 종강됨 → 마지막
+      initialIdx = state.cal.courses.length - 1;
     }
+  }
+  
+  state.cal.courseIndex = initialIdx;
+  state.cal.activeCourse = state.cal.courses[initialIdx];
+  
+  // 선택된 날짜
+  if (todayStr >= state.cal.activeCourse.startDate && todayStr <= state.cal.activeCourse.endDate) {
+    state.cal.selectedDate = todayStr;
+  } else {
+    state.cal.selectedDate = state.cal.activeCourse.startDate;
   }
   
   renderCalendarLegend();
@@ -2002,7 +2019,6 @@ function renderCalendarLegend() {
   
   let courseInfoHtml = '';
   if (course) {
-    // 휴강/공강 일정 추출 (해당 수업일정 기간 내, type='cancel' 색상)
     const cancelTypeIds = new Set(
       colors.filter(c => c.type === 'cancel').map(c => c.id)
     );
@@ -2048,77 +2064,98 @@ function renderCalendarLegend() {
 }
 
 function calPrev() {
-  // 수업일정 시작 월보다 이전으로는 안 감
-  const course = state.cal.activeCourse;
-  if (course) {
-    const startD = new Date(course.startDate);
-    const startMonth = startD.getFullYear() * 12 + startD.getMonth();
-    const currMonth = state.cal.year * 12 + state.cal.month;
-    if (currMonth <= startMonth) return;
+  // 이전 수업일정으로 이동
+  if (state.cal.courseIndex > 0) {
+    state.cal.courseIndex--;
+    state.cal.activeCourse = state.cal.courses[state.cal.courseIndex];
+    
+    // 선택일 재설정
+    const todayStr = `${TODAY.getFullYear()}-${String(TODAY.getMonth() + 1).padStart(2, '0')}-${String(TODAY.getDate()).padStart(2, '0')}`;
+    if (todayStr >= state.cal.activeCourse.startDate && todayStr <= state.cal.activeCourse.endDate) {
+      state.cal.selectedDate = todayStr;
+    } else {
+      state.cal.selectedDate = state.cal.activeCourse.startDate;
+    }
+    renderCalendarLegend();
+    renderCalendar();
   }
-  state.cal.month--;
-  if (state.cal.month < 0) { state.cal.month = 11; state.cal.year--; }
-  renderCalendar();
 }
+
 function calNext() {
-  const course = state.cal.activeCourse;
-  if (course) {
-    const endD = new Date(course.endDate);
-    const endMonth = endD.getFullYear() * 12 + endD.getMonth();
-    const currMonth = state.cal.year * 12 + state.cal.month;
-    if (currMonth >= endMonth) return;
+  // 다음 수업일정으로 이동
+  if (state.cal.courseIndex < state.cal.courses.length - 1) {
+    state.cal.courseIndex++;
+    state.cal.activeCourse = state.cal.courses[state.cal.courseIndex];
+    
+    const todayStr = `${TODAY.getFullYear()}-${String(TODAY.getMonth() + 1).padStart(2, '0')}-${String(TODAY.getDate()).padStart(2, '0')}`;
+    if (todayStr >= state.cal.activeCourse.startDate && todayStr <= state.cal.activeCourse.endDate) {
+      state.cal.selectedDate = todayStr;
+    } else {
+      state.cal.selectedDate = state.cal.activeCourse.startDate;
+    }
+    renderCalendarLegend();
+    renderCalendar();
   }
-  state.cal.month++;
-  if (state.cal.month > 11) { state.cal.month = 0; state.cal.year++; }
-  renderCalendar();
 }
+
 function calGoToday() {
-  // "오늘" 버튼: 오늘이 수업일정 기간 안에 있으면 그 월로, 아니면 시작 월로
-  const course = state.cal.activeCourse;
+  // "오늘" 버튼: 오늘이 포함된 수업일정으로 이동
   const todayStr = `${TODAY.getFullYear()}-${String(TODAY.getMonth() + 1).padStart(2, '0')}-${String(TODAY.getDate()).padStart(2, '0')}`;
-  if (course && todayStr >= course.startDate && todayStr <= course.endDate) {
-    state.cal.year = TODAY.getFullYear();
-    state.cal.month = TODAY.getMonth();
+  const todayIdx = state.cal.courses.findIndex(c => c.startDate <= todayStr && c.endDate >= todayStr);
+  if (todayIdx >= 0) {
+    state.cal.courseIndex = todayIdx;
+    state.cal.activeCourse = state.cal.courses[todayIdx];
     state.cal.selectedDate = todayStr;
-  } else if (course) {
-    const startD = new Date(course.startDate);
-    state.cal.year = startD.getFullYear();
-    state.cal.month = startD.getMonth();
-    state.cal.selectedDate = course.startDate;
-  } else {
-    state.cal.year = TODAY.getFullYear();
-    state.cal.month = TODAY.getMonth();
-    state.cal.selectedDate = todayStr;
+    renderCalendarLegend();
+    renderCalendar();
   }
-  renderCalendar();
 }
+
 function calSelectDate(dateStr) {
   state.cal.selectedDate = dateStr;
   renderCalendar();
 }
 
 function renderCalendar() {
-  const { year, month, selectedDate, schedule, activeCourse } = state.cal;
-  document.getElementById('cal-month-label').textContent = `${year}년 ${month + 1}월`;
+  const { selectedDate, schedule, activeCourse, courses, courseIndex } = state.cal;
+  if (!activeCourse) return;
   
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
-  const daysInMonth = lastDay.getDate();
-  const startDayOfWeek = firstDay.getDay();
-  const prevLastDay = new Date(year, month, 0).getDate();
+  // 헤더에 수업일정 이름 + 인덱스 표시
+  const totalC = courses.length;
+  document.getElementById('cal-month-label').textContent = `${activeCourse.name} ${totalC > 1 ? `(${courseIndex + 1}/${totalC})` : ''}`;
   
-  const days = [];
-  for (let i = startDayOfWeek - 1; i >= 0; i--) {
-    days.push({ date: new Date(year, month - 1, prevLastDay - i), otherMonth: true });
+  // 화살표 활성/비활성 (전후 수업일정 있는지)
+  const hasPrev = courseIndex > 0;
+  const hasNext = courseIndex < totalC - 1;
+  const prevBtn = document.querySelector('.cal-nav button[onclick="calPrev()"]');
+  const nextBtn = document.querySelector('.cal-nav button[onclick="calNext()"]');
+  if (prevBtn) prevBtn.style.opacity = hasPrev ? '1' : '0.3';
+  if (nextBtn) nextBtn.style.opacity = hasNext ? '1' : '0.3';
+  
+  // 시작일 / 종강일 파싱
+  const startD = new Date(activeCourse.startDate);
+  startD.setHours(0, 0, 0, 0);
+  const endD = new Date(activeCourse.endDate);
+  endD.setHours(0, 0, 0, 0);
+  
+  // 시작일 요일 (0=일)
+  const startDayOfWeek = startD.getDay();
+  
+  // 시작일까지의 빈 칸 + 시작일~종강일 + 종강일 이후 빈 칸 (한 줄 채우기)
+  const cells = [];
+  // 빈 칸 (시작일 요일 전까지)
+  for (let i = 0; i < startDayOfWeek; i++) {
+    cells.push({ empty: true });
   }
-  for (let i = 1; i <= daysInMonth; i++) {
-    days.push({ date: new Date(year, month, i), otherMonth: false });
+  // 시작일 ~ 종강일
+  const cur = new Date(startD);
+  while (cur <= endD) {
+    cells.push({ date: new Date(cur), empty: false });
+    cur.setDate(cur.getDate() + 1);
   }
-  while (days.length < 42) {
-    const lastInArr = days[days.length - 1].date;
-    const next = new Date(lastInArr);
-    next.setDate(next.getDate() + 1);
-    days.push({ date: next, otherMonth: true });
+  // 마지막 줄 채우기 (토요일까지)
+  while (cells.length % 7 !== 0) {
+    cells.push({ empty: true });
   }
   
   const eventsByDate = {};
@@ -2127,55 +2164,40 @@ function renderCalendar() {
     eventsByDate[s.date].push(s);
   });
   
-  const html = days.map(({ date, otherMonth }) => {
+  const todayStr = `${TODAY.getFullYear()}-${String(TODAY.getMonth() + 1).padStart(2, '0')}-${String(TODAY.getDate()).padStart(2, '0')}`;
+  
+  const html = cells.map(cell => {
+    if (cell.empty) {
+      return `<div class="cal-day cal-day-empty"></div>`;
+    }
+    
+    const date = cell.date;
     const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
     const events = eventsByDate[dateStr] || [];
     const isTodayCell = date.toDateString() === TODAY.toDateString();
     const isSelected = dateStr === selectedDate;
     const dayOfWeek = date.getDay();
+    const isStart = dateStr === activeCourse.startDate;
+    const isEnd = dateStr === activeCourse.endDate;
+    const isPast = dateStr < todayStr;
     
-    // 수업일정 기간 안인지
-    const inRange = activeCourse && dateStr >= activeCourse.startDate && dateStr <= activeCourse.endDate;
-    const isStart = activeCourse && dateStr === activeCourse.startDate;
-    const isEnd = activeCourse && dateStr === activeCourse.endDate;
-    
-    // activeCourse가 있고 다른 달이면 → 완전히 빈 칸 (날짜 자체 안 보이게)
-    if (activeCourse && otherMonth) {
-      return `<div class="cal-day cal-day-empty"></div>`;
-    }
-    
-    // 오늘 이전 (지나간 수업)
-    const todayStr = `${TODAY.getFullYear()}-${String(TODAY.getMonth() + 1).padStart(2, '0')}-${String(TODAY.getDate()).padStart(2, '0')}`;
-    const isPast = dateStr < todayStr && inRange;
-    
-    let classes = ['cal-day'];
-    if (activeCourse) {
-      if (!inRange) classes.push('out-range');
-    } else {
-      if (otherMonth) classes.push('other-month');
-    }
+    let classes = ['cal-day', 'in-range'];
     if (isTodayCell) classes.push('today');
-    if (isSelected && inRange) classes.push('selected');
+    if (isSelected) classes.push('selected');
     if (dayOfWeek === 0) classes.push('sun');
     if (dayOfWeek === 6) classes.push('sat');
-    if (inRange) classes.push('in-range');
     if (isStart) classes.push('start-day');
     if (isEnd) classes.push('end-day');
     if (isPast && !isTodayCell) classes.push('past');
     
-    // 기간 외 날짜는 점도 표시 안 함
-    const showDots = !activeCourse || inRange;
-    const eventDots = showDots ? events.slice(0, 4).map(e => {
+    const eventDots = events.slice(0, 4).map(e => {
       const color = getColorById(e.colorId);
       const bg = color ? color.color : '#64748b';
       return `<span class="cal-event-dot" style="background: ${bg}"></span>`;
-    }).join('') : '';
-    
-    // 기간 외 날짜는 클릭해도 select 안 됨
-    const clickHandler = (activeCourse && !inRange) ? '' : `onclick="calSelectDate('${dateStr}')"`;
+    }).join('');
     
     return `
-      <div class="${classes.join(' ')}" ${clickHandler}>
+      <div class="${classes.join(' ')}" onclick="calSelectDate('${dateStr}')">
         <div class="cal-day-num">${date.getDate()}</div>
         <div class="cal-events">${eventDots}</div>
       </div>
