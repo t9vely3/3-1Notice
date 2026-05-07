@@ -354,6 +354,36 @@ button { font-family: inherit; cursor: pointer; }
   gap: 5px;
   letter-spacing: -0.012em;
 }
+.hm-item.clickable {
+  cursor: pointer;
+  padding: 3px 6px;
+  margin: 0 -6px;
+  border-radius: 5px;
+  transition: background 0.12s, color 0.12s;
+}
+.hm-item.clickable:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text);
+}
+.hm-item.clickable:active {
+  background: rgba(0, 0, 0, 0.08);
+}
+.hm-item.clickable {
+  padding: 3px 4px;
+  margin: -3px -4px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.hm-item.clickable:active {
+  background: rgba(0, 0, 0, 0.06);
+}
+@media (hover: hover) {
+  .hm-item.clickable:hover {
+    background: rgba(0, 0, 0, 0.04);
+    color: var(--text);
+  }
+}
 .hm-item .dot {
   display: inline-block;
   width: 4px; height: 4px;
@@ -1973,7 +2003,7 @@ button { font-family: inherit; cursor: pointer; }
 
   <!-- 메뉴 (2x2 카드 + 미리보기) -->
   <div class="hm-grid" id="home-menu-grid">
-    <button class="hm-card" data-key="schedule" onclick="navigate('schedule')">
+    <div class="hm-card" data-key="schedule" onclick="navigate('schedule')" role="button" tabindex="0">
       <div class="hm-head">
         <div class="hm-icon-wrap cal">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -1982,9 +2012,9 @@ button { font-family: inherit; cursor: pointer; }
       </div>
       <div class="hm-divider"></div>
       <div class="hm-items" id="hm-preview-schedule"></div>
-    </button>
+    </div>
     
-    <button class="hm-card" data-key="materials" onclick="navigate('materials')">
+    <div class="hm-card" data-key="materials" onclick="navigate('materials')" role="button" tabindex="0">
       <div class="hm-head">
         <div class="hm-icon-wrap book">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
@@ -1993,9 +2023,9 @@ button { font-family: inherit; cursor: pointer; }
       </div>
       <div class="hm-divider"></div>
       <div class="hm-items" id="hm-preview-materials"></div>
-    </button>
+    </div>
     
-    <button class="hm-card" data-key="classrooms" onclick="navigate('classrooms')">
+    <div class="hm-card" data-key="classrooms" onclick="navigate('classrooms')" role="button" tabindex="0">
       <div class="hm-head">
         <div class="hm-icon-wrap zoom">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
@@ -2004,9 +2034,9 @@ button { font-family: inherit; cursor: pointer; }
       </div>
       <div class="hm-divider"></div>
       <div class="hm-items" id="hm-preview-classrooms"></div>
-    </button>
+    </div>
     
-    <button class="hm-card" data-key="seminars" onclick="navigate('seminars')">
+    <div class="hm-card" data-key="seminars" onclick="navigate('seminars')" role="button" tabindex="0">
       <div class="hm-head">
         <div class="hm-icon-wrap users">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -2015,7 +2045,7 @@ button { font-family: inherit; cursor: pointer; }
       </div>
       <div class="hm-divider"></div>
       <div class="hm-items" id="hm-preview-seminars"></div>
-    </button>
+    </div>
   </div>
 
   <!-- 다가오는 일정 -->
@@ -2302,7 +2332,7 @@ function navigate(page, params = {}, isPopState = false) {
   if (page === 'home') loadHome();
   else if (page === 'posts') loadPosts();
   else if (page === 'post-detail') loadPostDetail(params.id);
-  else if (page === 'schedule') loadSchedule();
+  else if (page === 'schedule') loadSchedule(params.courseId);
   else if (page === 'classrooms') loadClassrooms();
   else if (page === 'rules') loadRules();
   else if (page === 'seminars') loadSeminars();
@@ -2409,7 +2439,9 @@ function renderHomeMenuPreviews({ courses, matCats, classrooms, seminars }) {
   const moreC = sortedCourses.length - showC.length;
   document.getElementById('hm-preview-schedule').innerHTML = showC.length === 0
     ? '<div class="hm-empty">등록된 수업일정 없음</div>'
-    : showC.map(c => `<div class="hm-item"><span class="dot"></span>${escapeHtml(c.name)}</div>`).join('') +
+    : showC.map(c => 
+        `<div class="hm-item clickable" onclick="event.stopPropagation(); navigate('schedule', { courseId: '${c.id}' })"><span class="dot"></span>${escapeHtml(c.name)}</div>`
+      ).join('') +
       (moreC > 0 ? `<div class="hm-more">+${moreC}개</div>` : '');
   
   // === 2. 수업안내 - 카테고리 이름 (최대 3개 + 더보기) ===
@@ -2419,24 +2451,27 @@ function renderHomeMenuPreviews({ courses, matCats, classrooms, seminars }) {
   const moreM = topCats.length - showM.length;
   document.getElementById('hm-preview-materials').innerHTML = showM.length === 0
     ? '<div class="hm-empty">등록된 카테고리 없음</div>'
-    : showM.map(c => `<div class="hm-item"><span class="dot"></span>${escapeHtml(c.name)}</div>`).join('') +
+    : showM.map(c => 
+        `<div class="hm-item clickable" onclick="event.stopPropagation(); navigate('materials-list', { categoryId: '${c.id}' })"><span class="dot"></span>${escapeHtml(c.name)}</div>`
+      ).join('') +
       (moreM > 0 ? `<div class="hm-more">+${moreM}개</div>` : '');
   
   // === 3. 비대면 - 줌 접속방법 + 강의장 N개 ===
   const cls = classrooms || [];
   document.getElementById('hm-preview-classrooms').innerHTML = `
-    <div class="hm-item"><span class="dot"></span>줌 접속 방법</div>
-    <div class="hm-item"><span class="dot"></span>${cls.length > 0 ? `강의장 ${cls.length}개` : '강의장 정보'}</div>
+    <div class="hm-item clickable" onclick="event.stopPropagation(); navigate('classrooms')"><span class="dot"></span>줌 접속 방법</div>
+    <div class="hm-item clickable" onclick="event.stopPropagation(); navigate('classrooms')"><span class="dot"></span>${cls.length > 0 ? `강의장 ${cls.length}개` : '강의장 정보'}</div>
   `;
   
   // === 4. 특강·세미나 - 최신 등록 3개 (제목만) ===
-  // order 기준으로 정렬된 데이터를 그대로 (이미 admin에서 reorder된 순서)
-  // 최신 = 가장 위 = 처음 3개로 표시
+  // 항목 클릭 시 해당 세미나 상세 페이지로 바로 이동
   const showS = (seminars || []).slice(0, 3);
   const moreS = (seminars || []).length - showS.length;
   document.getElementById('hm-preview-seminars').innerHTML = showS.length === 0
     ? '<div class="hm-empty">등록된 세미나 없음</div>'
-    : showS.map(s => `<div class="hm-item"><span class="dot"></span>${escapeHtml(s.title)}</div>`).join('') +
+    : showS.map(s => 
+        `<div class="hm-item clickable" onclick="event.stopPropagation(); navigate('seminar-detail', { id: '${s.id}' })"><span class="dot"></span>${escapeHtml(s.title)}</div>`
+      ).join('') +
       (moreS > 0 ? `<div class="hm-more">+${moreS}개</div>` : '');
 }
 
@@ -2756,7 +2791,7 @@ function toggleDetailBookmark(id, btn) {
 // ============================================================
 // 캘린더
 // ============================================================
-async function loadSchedule() {
+async function loadSchedule(courseId) {
   const [schedule, colors, courses] = await Promise.all([
     window.api.call('getSchedule'),
     window.api.call('getScheduleColors'),
@@ -2782,17 +2817,24 @@ async function loadSchedule() {
   
   // 진행 중 > 예정 > 종강 순으로 우선 선택
   const todayStr = `${TODAY.getFullYear()}-${String(TODAY.getMonth() + 1).padStart(2, '0')}-${String(TODAY.getDate()).padStart(2, '0')}`;
-  const inProgressIdx = state.cal.courses.findIndex(c => c.startDate <= todayStr && c.endDate >= todayStr);
-  let initialIdx;
-  if (inProgressIdx >= 0) {
-    initialIdx = inProgressIdx;
-  } else {
-    const upcomingIdx = state.cal.courses.findIndex(c => c.startDate > todayStr);
-    if (upcomingIdx >= 0) {
-      initialIdx = upcomingIdx;
+  let initialIdx = -1;
+  
+  // 1) courseId가 지정되면 그 수업일정으로 점프
+  if (courseId) {
+    initialIdx = state.cal.courses.findIndex(c => c.id === courseId);
+  }
+  // 2) 없거나 못 찾으면 진행 중 > 예정 > 마지막
+  if (initialIdx < 0) {
+    const inProgressIdx = state.cal.courses.findIndex(c => c.startDate <= todayStr && c.endDate >= todayStr);
+    if (inProgressIdx >= 0) {
+      initialIdx = inProgressIdx;
     } else {
-      // 다 종강됨 → 마지막
-      initialIdx = state.cal.courses.length - 1;
+      const upcomingIdx = state.cal.courses.findIndex(c => c.startDate > todayStr);
+      if (upcomingIdx >= 0) {
+        initialIdx = upcomingIdx;
+      } else {
+        initialIdx = state.cal.courses.length - 1;
+      }
     }
   }
   
