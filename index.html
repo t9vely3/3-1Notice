@@ -1758,6 +1758,97 @@ button { font-family: inherit; cursor: pointer; }
   font-weight: 500;
 }
 
+/* === 교재 카드 (가로 리스트) === */
+.book-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.book-card {
+  background: var(--bg-elevated);
+  border: 0.5px solid var(--border);
+  border-radius: 11px;
+  overflow: hidden;
+  display: flex;
+  align-items: stretch;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.15s;
+  box-shadow: var(--shadow-xs);
+}
+.book-card:active { transform: scale(0.99); box-shadow: var(--shadow-sm); }
+.book-card:hover { box-shadow: var(--shadow-sm); }
+.book-thumb {
+  width: 88px;
+  aspect-ratio: 3 / 4;
+  background: var(--bg-soft);
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+}
+.book-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.book-thumb-noimg {
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: -0.018em;
+  line-height: 1.3;
+  word-break: keep-all;
+}
+.book-body {
+  flex: 1;
+  padding: 12px 13px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+}
+.book-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.018em;
+  color: var(--text);
+  line-height: 1.35;
+}
+.book-sub {
+  font-size: 10.5px;
+  color: var(--text-soft);
+  margin-top: 3px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.book-price {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--accent);
+  margin-top: 5px;
+  letter-spacing: -0.018em;
+  font-variant-numeric: tabular-nums;
+}
+.book-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-top: 6px;
+  letter-spacing: -0.012em;
+}
+
 /* 수업안내 - 단계별 가이드 */
 .material-detail-header {
   margin-bottom: 18px;
@@ -3605,7 +3696,7 @@ async function loadMaterials() {
           </div>
           <div>
             <div class="material-cat-name">${escapeHtml(c.name)}</div>
-            <div class="material-cat-meta" style="margin-top: 4px;">${c.isParent ? `${c.count}개 분류` : `${c.count}건`}</div>
+            <div class="material-cat-meta" style="margin-top: 4px;">${c.isParent ? `${c.count}개 분류` : (c.type === 'book' ? `${c.count}권` : `${c.count}건`)}</div>
           </div>
         </button>
       `).join('')}
@@ -3657,23 +3748,53 @@ async function loadMaterialsList(categoryId) {
   const parent = cat.parentId ? findCategory(cat.parentId) : null;
   const materials = await window.api.call('getMaterials', { categoryId });
   const breadcrumb = parent ? `<div class="material-detail-breadcrumb">${escapeHtml(parent.name)} › ${escapeHtml(cat.name)}</div>` : '';
+  const isBook = cat.type === 'book';
   
   document.getElementById('materials-list-content').innerHTML = `
     ${breadcrumb}
     <h1 class="detail-title" style="padding-right: 0;">${escapeHtml(cat.name)}</h1>
-    <div style="font-size: 12px; color: var(--text-soft); margin-bottom: 18px;">${materials.length}건의 자료</div>
+    <div style="font-size: 12px; color: var(--text-soft); margin-bottom: 18px;">${materials.length}${isBook ? '권' : '건'}</div>
     ${materials.length === 0 
-      ? '<div class="empty">등록된 자료가 없습니다</div>'
-      : materials.map((m, i) => `
-        <div class="material-card" onclick="navigate('materials-detail', {id: '${m.id}'})">
-          <div class="material-card-num">${i + 1}</div>
-          <div class="material-card-content">
-            <div class="material-card-title">${escapeHtml(m.title)}</div>
-            ${m.description ? `<div class="material-card-desc">${escapeHtml(m.description)}</div>` : ''}
+      ? `<div class="empty">${isBook ? '등록된 교재가 없습니다' : '등록된 자료가 없습니다'}</div>`
+      : (isBook 
+        ? `<div class="book-list">${materials.map(renderBookCard).join('')}</div>`
+        : materials.map((m, i) => `
+          <div class="material-card" onclick="navigate('materials-detail', {id: '${m.id}'})">
+            <div class="material-card-num">${i + 1}</div>
+            <div class="material-card-content">
+              <div class="material-card-title">${escapeHtml(m.title)}</div>
+              ${m.description ? `<div class="material-card-desc">${escapeHtml(m.description)}</div>` : ''}
+            </div>
           </div>
-        </div>
-      `).join('')
+        `).join('')
+      )
     }
+  `;
+}
+
+function renderBookCard(m) {
+  const link = m.bookLink || '';
+  const safeLink = escapeHtml(link);
+  const onclickAttr = link
+    ? `onclick="openExternalBrowser('${safeLink}')"`
+    : `onclick="event.preventDefault()"`;
+  const initials = (m.title || '').slice(0, 8);
+  const thumbHtml = m.bookImageUrl
+    ? `<img src="${escapeHtml(m.bookImageUrl)}" alt="" loading="lazy">`
+    : `<div class="book-thumb-noimg">${escapeHtml(initials)}</div>`;
+  
+  return `
+    <div class="book-card" ${onclickAttr}>
+      <div class="book-thumb">${thumbHtml}</div>
+      <div class="book-body">
+        <div>
+          <div class="book-title">${escapeHtml(m.title)}</div>
+          ${m.bookSub ? `<div class="book-sub">${escapeHtml(m.bookSub)}</div>` : ''}
+          ${m.bookPrice ? `<div class="book-price">${escapeHtml(m.bookPrice)}</div>` : ''}
+        </div>
+        ${link ? `<div class="book-cta">교재몰에서 구매 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div>` : '<div class="book-cta" style="color: var(--text-faint);">링크 없음</div>'}
+      </div>
+    </div>
   `;
 }
 

@@ -1278,6 +1278,60 @@ input, textarea, select { font-family: inherit; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* 카테고리 픽커 (수업자료) */
+/* 카테고리 유형 선택 (가이드 / 교재) */
+.cat-type-picker {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.cat-type-option {
+  cursor: pointer;
+}
+.cat-type-option input { display: none; }
+.cat-type-card {
+  border: 1px solid var(--border-mid);
+  background: var(--bg-elevated);
+  border-radius: 10px;
+  padding: 12px 10px;
+  text-align: center;
+  transition: all 0.12s;
+}
+.cat-type-option:hover .cat-type-card {
+  border-color: var(--accent);
+}
+.cat-type-option input:checked + .cat-type-card {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.08);
+}
+.cat-type-icon-wrap {
+  width: 36px;
+  height: 36px;
+  margin: 0 auto 6px;
+  border-radius: 9px;
+  background: var(--bg-section);
+  color: var(--text-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cat-type-option input:checked + .cat-type-card .cat-type-icon-wrap {
+  background: var(--accent);
+  color: #fff;
+}
+.cat-type-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: -0.018em;
+  color: var(--text);
+}
+.cat-type-sub {
+  font-size: 10.5px;
+  color: var(--text-soft);
+  margin-top: 2px;
+  font-weight: 500;
+}
+
 .color-picker {
   display: flex;
   gap: 8px;
@@ -2033,7 +2087,33 @@ input, textarea, select { font-family: inherit; }
       <input type="hidden" id="cat-id">
       <div class="form-row">
         <label class="form-label">카테고리 이름</label>
-        <input type="text" class="form-input" id="cat-name" placeholder="예: 준비물, 자격증, 따즈아">
+        <input type="text" class="form-input" id="cat-name" placeholder="예: 준비물, 자격증, 교재">
+      </div>
+      <div class="form-row">
+        <label class="form-label">카테고리 유형</label>
+        <div class="cat-type-picker">
+          <label class="cat-type-option">
+            <input type="radio" name="cat-type" value="guide" checked onchange="updateCatTypeUI()">
+            <div class="cat-type-card">
+              <div class="cat-type-icon-wrap">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              </div>
+              <div class="cat-type-title">가이드</div>
+              <div class="cat-type-sub">단계별 안내 자료</div>
+            </div>
+          </label>
+          <label class="cat-type-option">
+            <input type="radio" name="cat-type" value="book" onchange="updateCatTypeUI()">
+            <div class="cat-type-card">
+              <div class="cat-type-icon-wrap">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              </div>
+              <div class="cat-type-title">교재</div>
+              <div class="cat-type-sub">썸네일 + 외부 링크</div>
+            </div>
+          </label>
+        </div>
+        <div class="form-help" id="cat-type-help">"가이드"는 단계별 자료, "교재"는 사진/가격/구매 링크 목록입니다.</div>
       </div>
       <div class="form-row">
         <label class="form-label">상위 카테고리 (선택)</label>
@@ -2099,9 +2179,10 @@ input, textarea, select { font-family: inherit; }
     <div class="modal-body">
       <input type="hidden" id="mat-id">
       <input type="hidden" id="mat-categoryId">
+      <input type="hidden" id="mat-mode" value="guide">
       <div class="form-row">
         <label class="form-label">제목</label>
-        <input type="text" class="form-input" id="mat-title" placeholder="예: Photoshop 설치 방법">
+        <input type="text" class="form-input" id="mat-title" placeholder="예: 포토샵 기초 완성 교재">
       </div>
       <div class="form-row">
         <label class="form-label">설명 (선택)</label>
@@ -2116,15 +2197,52 @@ input, textarea, select { font-family: inherit; }
           </div>
         </label>
       </div>
-      <div class="steps-section">
-        <div class="steps-head">
-          <div class="steps-title">단계별 가이드</div>
-          <button class="btn" onclick="addStep()">
-            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            단계 추가
-          </button>
+      
+      <!-- 교재 모드 전용 필드 -->
+      <div id="mat-book-section" style="display: none;">
+        <div class="form-row split">
+          <div>
+            <label class="form-label">가격 (선택)</label>
+            <input type="text" class="form-input" id="mat-bookPrice" placeholder="예: 25,000원">
+          </div>
+          <div>
+            <label class="form-label">부제 (선택)</label>
+            <input type="text" class="form-input" id="mat-bookSub" placeholder="예: SBS 컴퓨터아트학원 출판">
+          </div>
         </div>
-        <div id="steps-list"></div>
+        <div class="form-row">
+          <label class="form-label">교재몰 구매 링크 *</label>
+          <input type="url" class="form-input" id="mat-bookLink" placeholder="https://...">
+          <div class="form-help">탭하면 외부 브라우저에서 이 링크가 열립니다.</div>
+        </div>
+        <div class="form-row">
+          <label class="form-label">교재 썸네일 이미지 (선택)</label>
+          <div>
+            <input type="file" id="mat-bookImage-input" accept="image/*" style="display: none;" onchange="onMatBookImageSelected(event)">
+            <div id="mat-bookImage-preview" style="display: none; position: relative; margin-bottom: 8px;">
+              <img id="mat-bookImage-preview-img" src="" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 0.5px solid var(--border); display: block;">
+              <button type="button" onclick="removeMatBookImage()" style="position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.7); color: #fff; border: none; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-size: 14px;">×</button>
+            </div>
+            <button type="button" class="btn" onclick="document.getElementById('mat-bookImage-input').click()" id="mat-bookImage-btn">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span id="mat-bookImage-label">썸네일 이미지 선택</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 가이드 모드 전용 (단계별 가이드) -->
+      <div id="mat-guide-section">
+        <div class="steps-section">
+          <div class="steps-head">
+            <div class="steps-title">단계별 가이드</div>
+            <button class="btn" onclick="addStep()">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              단계 추가
+            </button>
+          </div>
+          <div id="steps-list"></div>
+        </div>
       </div>
     </div>
     <div class="modal-footer">
@@ -3691,17 +3809,41 @@ function renderMatContent() {
       <div class="mat-content-empty">이 카테고리는 하위 분류를 가지고 있습니다.<br>실제 자료는 좌측 트리의 하위 분류를 선택해 추가하세요.</div>`;
     return;
   }
+  const isBook = cat.type === 'book';
+  const buttonLabel = isBook ? '교재 추가' : '새 자료 작성';
+  const emptyText = isBook 
+    ? '아직 등록된 교재가 없습니다.<br>"교재 추가"로 썸네일과 구매 링크를 등록하세요.'
+    : '아직 등록된 자료가 없습니다.<br>"새 자료 작성"으로 단계별 가이드를 작성해보세요.';
+  
   document.getElementById('mat-content').innerHTML = `
     <div class="mat-content-head">
       <div>
-        <div class="mat-content-title">${escapeHtml(cat.name)}</div>
+        <div class="mat-content-title">${escapeHtml(cat.name)}${isBook ? ' <span style="font-size: 10.5px; padding: 2px 7px; background: var(--accent-soft); color: var(--accent); border-radius: 5px; font-weight: 700; margin-left: 6px;">교재</span>' : ''}</div>
         <div class="mat-content-meta">전체 ${matState.materials.length}건${cat.hidden ? '<span class="mat-content-meta-hidden">카테고리 숨김</span>' : ''}</div>
       </div>
-      <button class="btn btn-primary" onclick="openMatModal()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>새 자료 작성</button>
+      <button class="btn btn-primary" onclick="openMatModal()"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>${buttonLabel}</button>
     </div>
     ${matState.materials.length === 0
-      ? `<div class="mat-content-empty">아직 등록된 자료가 없습니다.<br>"새 자료 작성"으로 단계별 가이드를 작성해보세요.</div>`
-      : matState.materials.map((m, i) => `
+      ? `<div class="mat-content-empty">${emptyText}</div>`
+      : matState.materials.map((m, i) => isBook ? `
+        <div class="mat-item-card ${m.hidden ? 'hidden-mat' : ''}" style="align-items: flex-start;">
+          ${m.bookImageUrl 
+            ? `<img src="${escapeHtml(m.bookImageUrl)}" style="width: 52px; height: 64px; object-fit: cover; border-radius: 6px; flex-shrink: 0; border: 0.5px solid var(--border);">` 
+            : `<div style="width: 52px; height: 64px; background: var(--bg-section); border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--text-faint);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>`}
+          <div class="mat-item-content">
+            <div class="mat-item-title">${escapeHtml(m.title)}${m.hidden ? ' <span style="color: var(--warning); font-size: 11px; font-weight: 600; margin-left: 6px;">[숨김]</span>' : ''}</div>
+            <div class="mat-item-meta">
+              ${m.bookPrice ? `<strong style="color: var(--accent); font-weight: 700;">${escapeHtml(m.bookPrice)}</strong>` : ''}
+              ${m.bookSub ? ` · ${escapeHtml(m.bookSub)}` : ''}
+            </div>
+            ${m.bookLink ? `<div style="font-size: 10.5px; color: var(--text-faint); margin-top: 4px; word-break: break-all; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">🔗 ${escapeHtml(m.bookLink)}</div>` : ''}
+          </div>
+          <div class="mat-item-actions">
+            <button class="icon-btn" onclick="editMaterial('${m.id}')" title="편집"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="icon-btn danger" onclick="confirmDeleteMaterial('${m.id}', '${escapeHtml(m.title).replace(/'/g, "\\'")}')" title="삭제"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+          </div>
+        </div>
+      ` : `
         <div class="mat-item-card ${m.hidden ? 'hidden-mat' : ''}">
           <div class="mat-item-num">${i + 1}</div>
           <div class="mat-item-content">
@@ -3723,9 +3865,11 @@ function openCatModal() {
   document.getElementById('cat-id').value = '';
   document.getElementById('cat-name').value = '';
   document.getElementById('cat-hidden').checked = false;
+  document.querySelector('input[name="cat-type"][value="guide"]').checked = true;
   selectCatColor('6');
   selectCatIcon('file');
   populateCatParents();
+  updateCatTypeUI();
   openModal('cat-modal');
   setTimeout(() => document.getElementById('cat-name').focus(), 100);
 }
@@ -3737,11 +3881,30 @@ function editCategory(id) {
   document.getElementById('cat-id').value = cat.id;
   document.getElementById('cat-name').value = cat.name;
   document.getElementById('cat-hidden').checked = !!cat.hidden;
+  const ctype = cat.type === 'book' ? 'book' : 'guide';
+  document.querySelector(`input[name="cat-type"][value="${ctype}"]`).checked = true;
   selectCatColor(cat.color || '6');
-  selectCatIcon(cat.icon || 'file');
+  selectCatIcon(cat.icon || (ctype === 'book' ? 'book' : 'file'));
   populateCatParents(cat.id);
   document.getElementById('cat-parent').value = cat.parentId || '';
+  updateCatTypeUI();
   openModal('cat-modal');
+}
+
+function updateCatTypeUI() {
+  const selected = document.querySelector('input[name="cat-type"]:checked');
+  if (!selected) return;
+  const isBook = selected.value === 'book';
+  const help = document.getElementById('cat-type-help');
+  if (help) {
+    help.textContent = isBook 
+      ? '교재 카테고리: 썸네일 + 가격 + 구매 링크 형태로 표시됩니다.'
+      : '가이드 카테고리: 단계별 안내 자료를 등록합니다.';
+  }
+  // 아이콘 기본값 자동 선택 (사용자가 아직 안 골랐다면)
+  if (isBook && document.getElementById('cat-icon').value === 'file') {
+    selectCatIcon('book');
+  }
 }
 
 function populateCatParents(excludeId) {
@@ -3772,6 +3935,7 @@ async function saveCatModal() {
   const color = document.getElementById('cat-color').value;
   const icon = document.getElementById('cat-icon').value;
   const hidden = document.getElementById('cat-hidden').checked;
+  const type = (document.querySelector('input[name="cat-type"]:checked') || {}).value || 'guide';
   if (!name) { toast('이름을 입력해주세요', 'error'); return; }
   let order;
   if (id) {
@@ -3782,10 +3946,9 @@ async function saveCatModal() {
     order = siblings.length;
   }
   try {
-    const result = await window.api.call('saveMaterialCategory', { id, name, parentId, color, icon, hidden, order }, getAuth());
+    const result = await window.api.call('saveMaterialCategory', { id, name, parentId, color, icon, hidden, order, type }, getAuth());
     closeModal('cat-modal');
     toast(id ? '카테고리가 수정되었습니다' : '카테고리가 추가되었습니다');
-    // 새 카테고리 추가 시 자동으로 선택
     if (!id && result && result.id) {
       matState.selectedCategoryId = result.id;
     }
@@ -3810,16 +3973,79 @@ function confirmDeleteCategory(id, name) {
   openModal('confirm-modal');
 }
 
+// 교재 이미지 상태
+let matBookImageState = { url: '', path: '' };
+
+function resetMatBookImageUI() {
+  matBookImageState = { url: '', path: '' };
+  document.getElementById('mat-bookImage-input').value = '';
+  document.getElementById('mat-bookImage-preview').style.display = 'none';
+  document.getElementById('mat-bookImage-preview-img').src = '';
+  document.getElementById('mat-bookImage-label').textContent = '썸네일 이미지 선택';
+}
+function showMatBookImageUI(url) {
+  matBookImageState.url = url;
+  document.getElementById('mat-bookImage-preview-img').src = url;
+  document.getElementById('mat-bookImage-preview').style.display = 'block';
+  document.getElementById('mat-bookImage-label').textContent = '이미지 변경';
+}
+async function onMatBookImageSelected(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const btn = document.getElementById('mat-bookImage-btn');
+  const label = document.getElementById('mat-bookImage-label');
+  btn.disabled = true;
+  label.textContent = '업로드 중...';
+  try {
+    const result = await window.api.uploadImage(file, 'books');
+    matBookImageState.url = result.url;
+    matBookImageState.path = result.path;
+    showMatBookImageUI(result.url);
+    toast('이미지가 업로드되었습니다');
+  } catch (e) {
+    toast('업로드 실패: ' + e.message, 'error');
+  }
+  btn.disabled = false;
+}
+async function removeMatBookImage() {
+  if (matBookImageState.path) {
+    try { await window.api.deleteImage(matBookImageState.path); } catch(_){}
+  }
+  resetMatBookImageUI();
+}
+
+// 현재 선택된 카테고리의 type에 따라 모달 UI 전환
+function applyMatModalMode(mode) {
+  const isBook = mode === 'book';
+  document.getElementById('mat-mode').value = mode;
+  document.getElementById('mat-book-section').style.display = isBook ? 'block' : 'none';
+  document.getElementById('mat-guide-section').style.display = isBook ? 'none' : 'block';
+  document.getElementById('mat-modal-title').textContent = isBook 
+    ? (document.getElementById('mat-id').value ? '교재 편집' : '교재 추가')
+    : (document.getElementById('mat-id').value ? '자료 편집' : '새 자료 작성');
+}
+
+function getCurrentCategoryType() {
+  const id = matState.selectedCategoryId;
+  if (!id) return 'guide';
+  const cat = matState.categories.find(c => c.id === id);
+  return (cat && cat.type === 'book') ? 'book' : 'guide';
+}
+
 function openMatModal() {
   if (!matState.selectedCategoryId) return;
-  document.getElementById('mat-modal-title').textContent = '새 자료 작성';
   document.getElementById('mat-id').value = '';
   document.getElementById('mat-categoryId').value = matState.selectedCategoryId;
   document.getElementById('mat-title').value = '';
   document.getElementById('mat-description').value = '';
   document.getElementById('mat-hidden').checked = false;
+  document.getElementById('mat-bookPrice').value = '';
+  document.getElementById('mat-bookSub').value = '';
+  document.getElementById('mat-bookLink').value = '';
+  resetMatBookImageUI();
   matState.editingSteps = [{ title: '', content: '', imageUrl: '', imagePath: '' }];
   renderSteps();
+  applyMatModalMode(getCurrentCategoryType());
   openModal('mat-modal');
   setTimeout(() => document.getElementById('mat-title').focus(), 100);
 }
@@ -3827,15 +4053,25 @@ function openMatModal() {
 async function editMaterial(id) {
   const m = matState.materials.find(x => x.id === id);
   if (!m) return;
-  document.getElementById('mat-modal-title').textContent = '자료 편집';
   document.getElementById('mat-id').value = m.id;
   document.getElementById('mat-categoryId').value = m.categoryId;
   document.getElementById('mat-title').value = m.title;
   document.getElementById('mat-description').value = m.description || '';
   document.getElementById('mat-hidden').checked = !!m.hidden;
+  // 교재 필드 복원
+  document.getElementById('mat-bookPrice').value = m.bookPrice || '';
+  document.getElementById('mat-bookSub').value = m.bookSub || '';
+  document.getElementById('mat-bookLink').value = m.bookLink || '';
+  resetMatBookImageUI();
+  if (m.bookImageUrl) {
+    matBookImageState.url = m.bookImageUrl;
+    matBookImageState.path = m.bookImagePath || '';
+    showMatBookImageUI(m.bookImageUrl);
+  }
   matState.editingSteps = (m.steps || []).map(s => ({ ...s }));
   if (matState.editingSteps.length === 0) matState.editingSteps.push({ title: '', content: '', imageUrl: '', imagePath: '' });
   renderSteps();
+  applyMatModalMode(getCurrentCategoryType());
   openModal('mat-modal');
 }
 
@@ -3933,9 +4169,9 @@ async function saveMatModal() {
   const title = document.getElementById('mat-title').value.trim();
   const description = document.getElementById('mat-description').value.trim();
   const hidden = document.getElementById('mat-hidden').checked;
-  const steps = matState.editingSteps.filter(s => (s.title || '').trim() || (s.content || '').trim() || s.imageUrl);
+  const mode = document.getElementById('mat-mode').value;
   if (!title) { toast('제목을 입력해주세요', 'error'); return; }
-  if (steps.length === 0) { toast('최소 한 단계는 작성해주세요', 'error'); return; }
+  
   let order;
   if (id) {
     const existing = matState.materials.find(m => m.id === id);
@@ -3943,10 +4179,47 @@ async function saveMatModal() {
   } else {
     order = matState.materials.length;
   }
+  
+  let payload;
+  
+  if (mode === 'book') {
+    // 교재 모드
+    const bookPrice = document.getElementById('mat-bookPrice').value.trim();
+    const bookSub = document.getElementById('mat-bookSub').value.trim();
+    const bookLink = document.getElementById('mat-bookLink').value.trim();
+    if (!bookLink) {
+      toast('교재몰 구매 링크를 입력해주세요', 'error');
+      return;
+    }
+    if (!/^https?:\/\//.test(bookLink)) {
+      toast('링크는 http:// 또는 https://로 시작해야 합니다', 'error');
+      return;
+    }
+    payload = {
+      id, categoryId, title, description, hidden, order,
+      type: 'book',
+      bookPrice,
+      bookSub,
+      bookLink,
+      bookImageUrl: matBookImageState.url || '',
+      bookImagePath: matBookImageState.path || '',
+      steps: []
+    };
+  } else {
+    // 가이드 모드 (기존)
+    const steps = matState.editingSteps.filter(s => (s.title || '').trim() || (s.content || '').trim() || s.imageUrl);
+    if (steps.length === 0) { toast('최소 한 단계는 작성해주세요', 'error'); return; }
+    payload = {
+      id, categoryId, title, description, hidden, order,
+      type: 'guide',
+      steps
+    };
+  }
+  
   try {
-    await window.api.call('saveMaterial', { id, categoryId, title, description, hidden, steps, order }, getAuth());
+    await window.api.call('saveMaterial', payload, getAuth());
     closeModal('mat-modal');
-    toast(id ? '자료가 수정되었습니다' : '자료가 등록되었습니다');
+    toast(id ? '수정되었습니다' : '등록되었습니다');
     await selectCategory(categoryId);
   } catch (e) { toast('저장 실패: ' + e.message, 'error'); }
 }
