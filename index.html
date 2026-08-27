@@ -3,48 +3,76 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#fafaf7">
-<title>SBS 아카데미 수강생 안내</title>
+<meta name="theme-color" content="#f4f5f8">
+<title>SBS AIX학원 수강생 안내</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
 :root {
-  --bg: #fafaf7;
+  /* 뉴트럴 - 쿨 그레이 계열 */
+  --bg: #f4f5f8;
   --bg-elevated: #ffffff;
-  --bg-soft: #efeee8;
-  --bg-section: #f4f3ed;
-  
-  --text: #111111;
-  --text-mid: #2d2d2d;
-  --text-soft: #4a4a4a;
-  --text-faint: #777777;
-  
-  --border: rgba(0, 0, 0, 0.07);
-  --border-mid: rgba(0, 0, 0, 0.12);
-  --border-strong: rgba(0, 0, 0, 0.18);
-  
-  --accent: #1e3a5f;
-  --accent-soft: #e8eef5;
-  --accent-deep: #14283f;
-  
-  --danger: #c8323a;
-  --danger-bg: #fce8e9;
-  --warning: #b45309;
+  --bg-soft: #edeef2;
+  --bg-section: #f7f8fa;
+
+  --text: #0d0f16;
+  --text-mid: #2b2f3a;
+  --text-soft: #565c6b;
+  --text-faint: #8b91a0;
+
+  --border: rgba(13, 15, 22, 0.06);
+  --border-mid: rgba(13, 15, 22, 0.10);
+  --border-strong: rgba(13, 15, 22, 0.16);
+
+  /* 액센트 - 인디고 */
+  --accent: #4f46e5;
+  --accent-soft: #eeecff;
+  --accent-mid: #6366f1;
+  --accent-deep: #3730a3;
+  --accent-ink: #1e1b4b;
+
+  --danger: #e11d48;
+  --danger-bg: #ffe4ea;
+  --warning: #d97706;
   --warning-bg: #fef3e0;
-  --notice: #fdf6e3;
-  --notice-text: #4a3416;
-  --notice-strong: #2a1d0c;
-  --notice-label: #92400e;
-  
-  --m-1: #5b21b6; --m-1-bg: #ede9fe;
-  --m-2: #047857; --m-2-bg: #d1fae5;
-  --m-3: #b45309; --m-3-bg: #fef3c7;
-  --m-4: #1d4ed8; --m-4-bg: #dbeafe;
-  --m-5: #be185d; --m-5-bg: #fce7f3;
-  
-  --shadow-xs: 0 1px 1px rgba(0,0,0,0.03);
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.04);
+  --notice: #f2f1ff;
+  --notice-text: #383455;
+  --notice-strong: #1e1b4b;
+  --notice-label: #5b52d9;
+
+  --m-1: #6d28d9; --m-1-bg: #f0eafe;
+  --m-2: #0d9488; --m-2-bg: #d9f5f1;
+  --m-3: #d97706; --m-3-bg: #fdf0d8;
+  --m-4: #4f46e5; --m-4-bg: #eaeaff;
+  --m-5: #db2777; --m-5-bg: #fde8f2;
+
+  --shadow-xs: 0 1px 2px rgba(13, 15, 22, 0.04);
+  --shadow-sm: 0 1px 2px rgba(13, 15, 22, 0.05), 0 2px 6px rgba(13, 15, 22, 0.045);
+  --shadow-md: 0 2px 4px rgba(13, 15, 22, 0.05), 0 8px 20px rgba(13, 15, 22, 0.07);
+  --shadow-lg: 0 4px 10px rgba(13, 15, 22, 0.07), 0 18px 38px rgba(13, 15, 22, 0.11);
+  --shadow-hero: 0 10px 26px rgba(13, 15, 22, 0.26), 0 2px 8px rgba(13, 15, 22, 0.18);
+  --shadow-accent: 0 4px 14px rgba(79, 70, 229, 0.32);
+
+  /* 브랜드 그라데이션 */
+  --grad-hero: linear-gradient(150deg, #23253a 0%, #16182a 46%, #0d0f18 100%);
+  --grad-accent: linear-gradient(135deg, #6366f1 0%, #4f46e5 55%, #4338ca 100%);
+  --grad-vivid: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+
+  /* 타이포 스케일 */
+  --fs-xs: 11.5px;
+  --fs-sm: 12.5px;
+  --fs-base: 14px;
+  --fs-md: 15px;
+  --fs-lg: 17px;
+  --fs-xl: 20px;
+  --fs-2xl: 26px;
+
+  /* 라운드 스케일 */
+  --r-sm: 9px;
+  --r-md: 13px;
+  --r-lg: 18px;
+  --r-xl: 22px;
 
   --safe-top: env(safe-area-inset-top, 0);
   --safe-bottom: env(safe-area-inset-bottom, 0);
@@ -56,8 +84,8 @@ html, body {
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
   background: var(--bg);
   color: var(--text);
-  font-size: 13px;
-  line-height: 1.55;
+  font-size: var(--fs-base);
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   letter-spacing: -0.014em;
 }
@@ -76,7 +104,7 @@ button { font-family: inherit; cursor: pointer; }
 .header {
   position: sticky;
   top: 0;
-  background: rgba(250, 250, 247, 0.94);
+  background: rgba(244, 245, 248, 0.86);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   padding: calc(12px + var(--safe-top)) 16px 11px;
@@ -86,37 +114,41 @@ button { font-family: inherit; cursor: pointer; }
   justify-content: space-between;
   align-items: center;
 }
-.header-brand { display: flex; align-items: center; gap: 9px; }
+.header-brand { display: flex; align-items: center; gap: 10px; }
 .header-logo {
-  width: 36px; height: 36px;
-  background: var(--accent);
-  border-radius: 9px;
+  width: 38px; height: 38px;
+  background: var(--grad-vivid);
+  border-radius: 12px;
   display: flex; align-items: center; justify-content: center;
   color: #fff;
-  font-size: 11.5px;
-  font-weight: 600;
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  box-shadow: var(--shadow-accent);
 }
 .header-text { line-height: 1.2; }
 .header-title {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--text-soft);
   font-weight: 500;
 }
 .header-page {
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: -0.025em;
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  letter-spacing: -0.03em;
   margin-top: 1px;
 }
-.header-actions { display: flex; gap: 4px; }
+.header-actions { display: flex; gap: 6px; }
 .header-btn {
   position: relative;
-  width: 32px; height: 32px;
+  width: 40px; height: 40px;
   border-radius: 50%;
   background: var(--bg-elevated);
   display: flex; align-items: center; justify-content: center;
   border: 0.5px solid var(--border-mid);
-  color: var(--text-soft);
+  color: var(--text-mid);
+  box-shadow: var(--shadow-xs);
+  transition: transform 0.12s, background 0.12s;
 }
 .header-btn:active { transform: scale(0.95); }
 .header-btn-dot {
@@ -131,431 +163,686 @@ button { font-family: inherit; cursor: pointer; }
 /* ===== 페이지 ===== */
 .page { padding: 0; }
 .page.hidden { display: none; }
-.page-content { padding: 12px 14px 18px; }
+.page-content { padding: 14px 14px 22px; }
 
-/* ===== 안내사항 라인 ===== */
+/* ===== 안내사항 배너 ===== */
 .notice-bar {
   display: flex;
   align-items: flex-start;
-  gap: 9px;
-  padding: 10px 14px;
-  background: var(--notice);
-  border-bottom: 0.5px solid #f0e6c8;
+  gap: 11px;
+  margin: 12px 14px 0;
+  padding: 13px 14px 13px 13px;
+  background: linear-gradient(180deg, #f8f7ff 0%, var(--notice) 100%);
+  border: 0.5px solid #ddd9fb;
+  border-left: 3px solid var(--accent-mid);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-xs);
 }
 .notice-icon {
-  width: 13px; height: 13px;
+  width: 17px; height: 17px;
   flex-shrink: 0;
   margin-top: 1px;
   color: var(--notice-label);
 }
 .notice-content { flex: 1; min-width: 0; }
 .notice-label {
-  font-size: 10.5px;
-  font-weight: 600;
+  font-size: var(--fs-xs);
+  font-weight: 700;
   color: var(--notice-label);
-  letter-spacing: 0.04em;
-  margin-bottom: 3px;
+  letter-spacing: 0.03em;
+  margin-bottom: 4px;
 }
 .notice-text {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   color: var(--notice-text);
-  line-height: 1.6;
+  line-height: 1.65;
   letter-spacing: -0.012em;
   word-break: keep-all;
   white-space: pre-wrap;
 }
-.notice-text b { font-weight: 600; color: var(--notice-strong); }
+.notice-text b { font-weight: 700; color: var(--notice-strong); }
 
-/* ===== 요약 영역 ===== */
-.summary {
-  padding: 12px 14px;
-  border-bottom: 0.5px solid var(--border);
+/* ===== 이벤트 배너 (시간 비례 자동 슬라이드) ===== */
+.banner-wrap {
+  margin: 14px 14px 0;
+  position: relative;
+  --banner-dur: 5000ms;
 }
-.day-row {
+/* 슬라이드가 옆으로 미끄러지는 창 */
+.banner-viewport {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-md);
+  touch-action: pan-y;
+  cursor: grab;
+}
+.banner-viewport.dragging { cursor: grabbing; }
+.banner-track {
   display: flex;
-  align-items: baseline;
-  gap: 8px;
-  margin-bottom: 11px;
+  width: 100%;
+  will-change: transform;
+  transition: transform 560ms cubic-bezier(0.33, 0.9, 0.28, 1);
 }
-.day-num {
-  font-size: 21px;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  line-height: 1;
-}
-.day-label {
-  font-size: 11.5px;
-  color: var(--text-soft);
-  font-weight: 500;
-}
-
-.gauge-card {
-  background: var(--bg-elevated);
-  border: 0.5px solid var(--border);
-  border-radius: 10px;
-  padding: 10px 11px;
-  margin-bottom: 6px;
-  box-shadow: var(--shadow-xs);
-}
-.gauge-row {
+.banner-track.no-anim { transition: none; }
+.banner-slide {
+  position: relative;
+  flex: 0 0 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--grad-vivid);
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 6px;
+  flex-direction: column;
+  justify-content: flex-end;
+  isolation: isolate;
+  user-select: none;
+  -webkit-user-select: none;
 }
-.gauge-name {
-  font-size: 11.5px;
-  font-weight: 600;
-  letter-spacing: -0.012em;
+.banner-slide img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+  -webkit-user-drag: none;
+  pointer-events: none;
 }
-.gauge-pct {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--accent);
-  font-variant-numeric: tabular-nums;
+/* 텍스트 가독성용 오버레이 */
+.banner-slide::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(9,10,18,0) 22%, rgba(9,10,18,0.62) 72%, rgba(9,10,18,0.86) 100%);
 }
-.gauge-pct.danger { color: var(--danger); }
-.gauge-bar {
-  height: 5px;
-  background: rgba(0,0,0,0.06);
-  border-radius: 3px;
+/* 이미지가 없는 슬라이드는 그라데이션 위에 패턴 */
+.banner-slide.no-img::after {
+  content: '';
+  position: absolute;
+  top: -40%; right: -18%;
+  width: 68%; aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0) 68%);
+  z-index: -1;
+}
+.banner-body {
+  position: relative;
+  padding: 14px 16px 16px;
+  color: #fff;
+  pointer-events: none;
+}
+.banner-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 3px 9px;
+  border-radius: 100px;
+  background: rgba(255,255,255,0.92);
+  color: var(--accent-deep);
+  margin-bottom: 7px;
+}
+.banner-badge.hot { background: #e11d48; color: #fff; }
+.banner-title {
+  font-size: var(--fs-lg);
+  font-weight: 800;
+  letter-spacing: -0.032em;
+  line-height: 1.3;
+  text-shadow: 0 1px 10px rgba(0,0,0,0.4);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.gauge-fill {
-  height: 100%;
-  background: var(--accent);
-  border-radius: 3px;
-  transition: width 0.5s ease;
+.banner-sub {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: rgba(255,255,255,0.82);
+  margin-top: 4px;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.35);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.gauge-meta {
+/* 슬라이드 카운터 (우상단) */
+.banner-counter {
+  position: absolute;
+  top: 11px; right: 12px;
+  background: rgba(9, 10, 18, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 100px;
+  font-variant-numeric: tabular-nums;
+  z-index: 2;
+  pointer-events: none;
+}
+/* 남은 시간이 차오르는 인디케이터 */
+.banner-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+}
+.banner-dot {
+  position: relative;
+  height: 5px;
+  width: 12px;
+  border-radius: 100px;
+  background: var(--border-strong);
+  overflow: hidden;
+  cursor: pointer;
+  transition: width 0.4s cubic-bezier(0.33, 0.9, 0.28, 1), background 0.3s;
+  flex-shrink: 0;
+}
+.banner-dot.active {
+  width: 38px;
+  background: rgba(79, 70, 229, 0.20);
+}
+/* 이 막대가 남은 시간에 비례해 차오른다 */
+.banner-dot-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: 100px;
+  background: var(--grad-accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+.banner-dot.active .banner-dot-fill {
+  animation: bannerProgress var(--banner-dur) linear forwards;
+}
+.banner-wrap.paused .banner-dot.active .banner-dot-fill {
+  animation-play-state: paused;
+}
+@keyframes bannerProgress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+/* 모션을 줄이도록 설정한 기기에서는 미끄러짐과 차오름을 끈다 */
+@media (prefers-reduced-motion: reduce) {
+  .banner-track { transition-duration: 1ms; }
+  .banner-dot.active .banner-dot-fill { animation: none; transform: scaleX(1); }
+}
+
+/* ===== 홈 히어로 (오늘 + 진행률 + 통계) ===== */
+.hero {
+  margin: 12px 14px 0;
+  padding: 17px 17px 15px;
+  border-radius: var(--r-xl);
+  background: var(--grad-hero);
+  color: #fff;
+  box-shadow: var(--shadow-hero);
+  position: relative;
+  overflow: hidden;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  top: -80px; right: -70px;
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(124, 92, 246, 0.42) 0%, rgba(99, 102, 241, 0.14) 45%, rgba(255,255,255,0) 72%);
+  pointer-events: none;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  bottom: -90px; left: -50px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(217, 70, 239, 0.20) 0%, rgba(217, 70, 239, 0) 70%);
+  pointer-events: none;
+}
+.hero-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+.hero-date {
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+}
+.hero-day {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: rgba(255,255,255,0.68);
+  margin-top: 4px;
+  letter-spacing: -0.01em;
+}
+.hero-dday {
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.16);
+  border: 0.5px solid rgba(255,255,255,0.22);
+  color: #fff;
+  font-size: var(--fs-md);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  padding: 7px 13px;
+  border-radius: 100px;
+  font-variant-numeric: tabular-nums;
+  backdrop-filter: blur(6px);
+}
+.hero-dday.urgent {
+  background: linear-gradient(135deg, #fb7185 0%, #e11d48 100%);
+  border-color: rgba(255,255,255,0.28);
+  box-shadow: 0 3px 12px rgba(225, 29, 72, 0.45);
+}
+
+.hero-course {
+  position: relative;
+  z-index: 1;
+  margin-top: 15px;
+  padding-top: 14px;
+  border-top: 0.5px solid rgba(255,255,255,0.16);
+}
+.hero-course-name {
+  font-size: var(--fs-md);
+  font-weight: 700;
+  letter-spacing: -0.022em;
+  line-height: 1.35;
+  word-break: keep-all;
+}
+.hero-course-state {
+  font-weight: 600;
+  color: rgba(255,255,255,0.6);
+  font-size: var(--fs-sm);
+}
+.hero-bar {
+  height: 9px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 100px;
+  overflow: hidden;
+  margin-top: 11px;
+}
+.hero-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #818cf8 0%, #c4b5fd 60%, #f0abfc 100%);
+  border-radius: 100px;
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.55);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 4px;
+}
+.hero-meta {
   display: flex;
   justify-content: space-between;
-  font-size: 10.5px;
-  color: var(--text-faint);
-  margin-top: 5px;
+  align-items: center;
+  gap: 8px;
+  margin-top: 9px;
+  font-size: var(--fs-xs);
+  color: rgba(255,255,255,0.62);
   font-variant-numeric: tabular-nums;
   font-weight: 500;
 }
+.hero-meta b {
+  color: #fff;
+  font-weight: 700;
+}
 
-.stat-row {
+.hero-stats {
+  position: relative;
+  z-index: 1;
   display: flex;
-  gap: 6px;
+  gap: 8px;
+  margin-top: 14px;
 }
-.stat {
+.hero-stat {
   flex: 1;
-  background: var(--bg-elevated);
-  border-radius: 8px;
-  padding: 8px 10px;
-  border: 0.5px solid var(--border);
-  box-shadow: var(--shadow-xs);
+  background: rgba(255,255,255,0.11);
+  border: 0.5px solid rgba(255,255,255,0.16);
+  border-radius: var(--r-md);
+  padding: 10px 12px;
 }
-.stat-num {
-  font-size: 15.5px;
+.hero-stat-num {
+  font-size: var(--fs-lg);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+.hero-stat-num small {
+  font-size: var(--fs-xs);
   font-weight: 600;
-  letter-spacing: -0.022em;
-  color: var(--accent);
-  line-height: 1.1;
+  color: rgba(255,255,255,0.6);
+  margin-left: 3px;
 }
-.stat-num small {
-  font-size: 10.5px;
+.hero-stat-label {
+  font-size: var(--fs-xs);
+  color: rgba(255,255,255,0.62);
   font-weight: 500;
-  color: var(--text-faint);
-  margin-left: 2px;
-}
-.stat-label {
-  font-size: 10.5px;
-  color: var(--text-soft);
-  margin-top: 3px;
-  font-weight: 500;
+  margin-top: 2px;
 }
 
-/* ===== 메뉴 (5칸 한 줄) ===== */
-.menu5 {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 5px;
-  padding: 14px 12px 6px;
-}
+/* 과정 정보가 없을 때의 심플 히어로 */
+.hero.hero-plain { padding-bottom: 17px; }
 
-/* ===== 새 홈 메뉴 그리드 (hm-grid) - 2x2 카드 + 미리보기 ===== */
+/* ===== 홈 메뉴 그리드 (2x2 카드 + 미리보기) ===== */
 .hm-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  padding: 14px 12px 6px;
+  gap: 10px;
+  padding: 16px 14px 4px;
 }
 .hm-card {
   background: var(--bg-elevated);
-  border: 0.5px solid var(--border);
-  border-radius: 12px;
-  padding: 13px 12px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 0;
   cursor: pointer;
-  transition: transform 0.12s, box-shadow 0.15s;
-  box-shadow: var(--shadow-xs);
+  transition: transform 0.12s, box-shadow 0.18s;
+  box-shadow: var(--shadow-sm);
   font-family: inherit;
   text-align: left;
   display: flex;
   flex-direction: column;
-  min-height: 130px;
+  overflow: hidden;
+  min-height: 168px;
 }
 .hm-card:active {
   transform: scale(0.985);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
 }
 .hm-head {
   display: flex;
   align-items: center;
-  gap: 9px;
-  margin-bottom: 10px;
+  gap: 10px;
+  padding: 13px 12px 12px;
 }
 .hm-icon-wrap {
-  width: 34px; height: 34px;
-  border-radius: 9px;
+  width: 40px; height: 40px;
+  border-radius: var(--r-md);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 .hm-icon-wrap svg {
-  width: 17px; height: 17px;
+  width: 20px; height: 20px;
 }
-/* 진한 색상 톤 - 시인성 ↑ */
-.hm-icon-wrap.cal { background: #e9e3f9; color: #5b3aa3; }
-.hm-icon-wrap.book { background: #d4f0e0; color: #047857; }
-.hm-icon-wrap.zoom { background: #ffeacc; color: #b85a00; }
-.hm-icon-wrap.users { background: #fbe1eb; color: #b21f5b; }
+/* 아이콘 톤 - 시인성 우선 */
+.hm-icon-wrap.cal { background: #eaeaff; color: #4f46e5; }
+.hm-icon-wrap.book { background: #d9f5f1; color: #0d9488; }
+.hm-icon-wrap.zoom { background: #fdf0d8; color: #d97706; }
+.hm-icon-wrap.users { background: #fde8f2; color: #db2777; }
 
+.hm-title-wrap { flex: 1; min-width: 0; }
 .hm-name {
-  font-size: 13px;
+  font-size: var(--fs-base);
   font-weight: 700;
-  letter-spacing: -0.018em;
+  letter-spacing: -0.024em;
   color: var(--text);
+  line-height: 1.25;
+}
+.hm-count {
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+  font-weight: 500;
+  margin-top: 1px;
 }
 .hm-divider {
   height: 0.5px;
-  background: rgba(0,0,0,0.06);
-  margin-bottom: 9px;
+  background: var(--border);
+  margin: 0 12px;
 }
 .hm-items {
   display: flex;
   flex-direction: column;
-  gap: 5px;
   flex: 1;
+  padding: 4px 6px 6px;
 }
+/* 미리보기 항목 = 실제 탭 가능한 행 (터치 영역 36px 이상) */
 .hm-item {
-  font-size: 11px;
-  color: var(--text-soft);
+  font-size: var(--fs-sm);
+  color: var(--text-mid);
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: -0.014em;
+  min-height: 34px;
+  padding: 4px 6px;
+  border-radius: var(--r-sm);
+  line-height: 1.3;
+}
+.hm-item-text {
+  flex: 1;
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  letter-spacing: -0.012em;
-}
-.hm-item.clickable {
-  cursor: pointer;
-  padding: 3px 6px;
-  margin: 0 -6px;
-  border-radius: 5px;
-  transition: background 0.12s, color 0.12s;
-}
-.hm-item.clickable:hover {
-  background: rgba(0, 0, 0, 0.04);
-  color: var(--text);
-}
-.hm-item.clickable:active {
-  background: rgba(0, 0, 0, 0.08);
-}
-.hm-item.clickable {
-  padding: 3px 4px;
-  margin: -3px -4px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background 0.12s;
-}
-.hm-item.clickable:active {
-  background: rgba(0, 0, 0, 0.06);
-}
-@media (hover: hover) {
-  .hm-item.clickable:hover {
-    background: rgba(0, 0, 0, 0.04);
-    color: var(--text);
-  }
 }
 .hm-item .dot {
   display: inline-block;
-  width: 4px; height: 4px;
+  width: 5px; height: 5px;
   border-radius: 50%;
-  background: #b5b5b5;
+  background: #c3c3c3;
   flex-shrink: 0;
 }
+.hm-item .hm-chev {
+  width: 13px; height: 13px;
+  flex-shrink: 0;
+  color: #c0c0c0;
+  transition: color 0.12s, transform 0.12s;
+}
+.hm-item.clickable { cursor: pointer; transition: background 0.12s; }
+.hm-item.clickable:active {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.hm-item.clickable:active .hm-chev { color: var(--accent); transform: translateX(1px); }
+@media (hover: hover) {
+  .hm-item.clickable:hover { background: rgba(0, 0, 0, 0.035); color: var(--text); }
+  .hm-item.clickable:hover .hm-chev { color: var(--text-soft); }
+}
 .hm-empty {
-  font-size: 10.5px;
+  font-size: var(--fs-sm);
   color: var(--text-faint);
   font-weight: 500;
-  font-style: italic;
+  padding: 8px 6px;
 }
-.hm-more {
-  font-size: 10px;
-  color: var(--text-faint);
-  font-weight: 600;
-  margin-top: 1px;
-  padding-left: 9px;
-}
-
-.menu-item {
-  background: var(--bg-elevated);
-  border: 0.5px solid var(--border);
-  border-radius: 12px;
-  padding: 13px 2px 11px;
-  text-align: center;
-  min-width: 0;
-  cursor: pointer;
-  transition: transform 0.12s, box-shadow 0.15s;
-  box-shadow: var(--shadow-xs);
-  font-family: inherit;
-}
-.menu-item:active {
-  transform: scale(0.94);
-  box-shadow: var(--shadow-sm);
-}
-.menu-icon-wrap {
-  width: 38px; height: 38px;
-  border-radius: 11px;
-  margin: 0 auto 8px;
+/* 카드 하단 전체보기 */
+.hm-foot {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  gap: 4px;
+  margin-top: auto;
+  padding: 9px 12px 10px;
+  border-top: 0.5px solid var(--border);
+  background: var(--bg-section);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.014em;
 }
-.menu-icon { width: 19px; height: 19px; stroke-width: 2; }
-.menu-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text);
-  line-height: 1.3;
-  letter-spacing: -0.025em;
-  min-height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-}
-.menu-item[data-color="1"] .menu-icon-wrap { background: var(--m-1-bg); }
-.menu-item[data-color="1"] .menu-icon { color: var(--m-1); }
-.menu-item[data-color="2"] .menu-icon-wrap { background: var(--m-2-bg); }
-.menu-item[data-color="2"] .menu-icon { color: var(--m-2); }
-.menu-item[data-color="3"] .menu-icon-wrap { background: var(--m-3-bg); }
-.menu-item[data-color="3"] .menu-icon { color: var(--m-3); }
-.menu-item[data-color="4"] .menu-icon-wrap { background: var(--m-4-bg); }
-.menu-item[data-color="4"] .menu-icon { color: var(--m-4); }
-.menu-item[data-color="5"] .menu-icon-wrap { background: var(--m-5-bg); }
-.menu-item[data-color="5"] .menu-icon { color: var(--m-5); }
+.hm-foot svg { width: 13px; height: 13px; }
 
 /* ===== 섹션 ===== */
 .section {
-  padding: 13px 14px 4px;
+  padding: 20px 14px 0;
 }
 .section-h {
   display: flex;
-  align-items: baseline;
-  margin-bottom: 7px;
+  align-items: center;
+  margin-bottom: 10px;
   gap: 8px;
+  padding: 0 2px;
 }
 .section-t {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: -0.018em;
+  font-size: var(--fs-md);
+  font-weight: 700;
+  letter-spacing: -0.026em;
 }
 .section-meta {
-  font-size: 10.5px;
+  font-size: var(--fs-xs);
   color: var(--text-faint);
-  font-weight: 500;
+  font-weight: 600;
+  background: var(--bg-soft);
+  padding: 2px 8px;
+  border-radius: 100px;
 }
 .section-link {
   margin-left: auto;
-  font-size: 10.5px;
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--fs-sm);
   color: var(--accent);
-  font-weight: 600;
+  font-weight: 700;
   background: none;
   border: none;
-  padding: 4px 6px;
-  border-radius: 4px;
+  padding: 0 9px;
+  margin-right: -9px;
+  border-radius: var(--r-sm);
   font-family: inherit;
+  letter-spacing: -0.014em;
 }
-.section-link:active { background: var(--bg-soft); }
+.section-link:active { background: var(--accent-soft); }
+
+/* 카드형 리스트 컨테이너 */
+.card-list {
+  background: var(--bg-elevated);
+  border: 0.5px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.card-list:empty { display: none; }
 
 /* ===== 일정 행 ===== */
 .event {
   display: flex;
   align-items: center;
-  padding: 7px 0;
-  gap: 9px;
-  border-bottom: 0.5px solid rgba(0,0,0,0.05);
+  padding: 12px 13px;
+  gap: 11px;
+  border-bottom: 0.5px solid var(--border);
   cursor: pointer;
+  min-height: 56px;
+  transition: background 0.12s;
 }
 .event:last-child { border-bottom: none; }
-.event-date {
-  font-size: 11.5px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
+.event:active { background: var(--bg-section); }
+.event-datebox {
   flex-shrink: 0;
-  min-width: 38px;
+  width: 42px;
+  text-align: center;
+  border-radius: var(--r-sm);
+  padding: 5px 0 6px;
+  background: var(--bg-section);
+  border: 0.5px solid var(--border);
+}
+.event-datebox.today {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.event-datebox.today .event-date,
+.event-datebox.today .event-day { color: #fff; }
+.event-date {
+  font-size: var(--fs-md);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--text);
 }
 .event-day {
-  font-size: 11px;
+  font-size: 10.5px;
   color: var(--text-faint);
-  font-weight: 500;
-  flex-shrink: 0;
+  font-weight: 600;
+  margin-top: 1px;
 }
-.event-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
+.event-main { flex: 1; min-width: 0; }
 .event-title {
-  font-size: 12.5px;
-  flex: 1;
+  font-size: var(--fs-base);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-weight: 600;
+  letter-spacing: -0.018em;
+}
+.event-sub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 3px;
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
   font-weight: 500;
 }
+.event-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
 .event-dday {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: var(--fs-xs);
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
   flex-shrink: 0;
-  color: var(--text-faint);
+  color: var(--text-soft);
+  background: var(--bg-soft);
+  padding: 4px 9px;
+  border-radius: 100px;
+  letter-spacing: -0.01em;
 }
-.event-dday.urgent { color: var(--danger); }
+.event-dday.urgent { color: #fff; background: var(--danger); }
 
-/* ===== 공지 행 ===== */
+/* ===== 공지 행 (카드형) ===== */
 .post {
   display: flex;
-  align-items: flex-start;
-  gap: 9px;
-  padding: 8px 0;
-  border-bottom: 0.5px solid rgba(0,0,0,0.05);
+  align-items: center;
+  gap: 12px;
+  padding: 13px;
+  border-bottom: 0.5px solid var(--border);
   cursor: pointer;
-  transition: opacity 0.15s;
+  transition: background 0.12s;
+  position: relative;
+  min-height: 64px;
 }
 .post:last-child { border-bottom: none; }
-.post.read { opacity: 0.55; }
+.post:active { background: var(--bg-section); }
+/* 읽지 않은 공지 - 좌측 액센트 바 */
+.post.unread::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 10px; bottom: 10px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--accent);
+}
+.post.read { opacity: 0.62; }
 .post-tag {
-  font-size: 10.5px;
-  font-weight: 600;
-  padding: 2px 7px;
-  border-radius: 4px;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 100px;
   flex-shrink: 0;
-  margin-top: 1px;
+  letter-spacing: -0.01em;
 }
 .post-body { flex: 1; min-width: 0; }
+.post-headline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
 .post-thumb {
-  width: 56px;
-  height: 56px;
-  border-radius: 8px;
+  width: 62px;
+  height: 62px;
+  border-radius: var(--r-md);
   object-fit: cover;
   flex-shrink: 0;
   border: 0.5px solid var(--border);
@@ -563,7 +850,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 .detail-image {
   margin: 6px 0 16px;
-  border-radius: 12px;
+  border-radius: var(--r-lg);
   overflow: hidden;
   border: 0.5px solid var(--border);
   background: var(--bg-soft);
@@ -576,15 +863,20 @@ button { font-family: inherit; cursor: pointer; }
   object-fit: cover;
 }
 .post-title {
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: -0.012em;
-  line-height: 1.4;
+  font-size: var(--fs-base);
+  font-weight: 600;
+  letter-spacing: -0.018em;
+  line-height: 1.45;
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .post-meta {
-  font-size: 10.5px;
+  font-size: var(--fs-xs);
   color: var(--text-faint);
-  margin-top: 2px;
+  margin-top: 4px;
   font-variant-numeric: tabular-nums;
   font-weight: 500;
   display: flex;
@@ -595,26 +887,31 @@ button { font-family: inherit; cursor: pointer; }
   font-size: 10px;
   background: var(--danger);
   color: #fff;
-  padding: 1px 5px;
-  border-radius: 3px;
-  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 100px;
+  font-weight: 800;
   letter-spacing: 0.04em;
+  flex-shrink: 0;
 }
-.tag-학사 { background: #fce8e9; color: #8a1c23; }
-.tag-세미나 { background: #ebe9fc; color: #3a2e8a; }
-.tag-특강 { background: #ebe9fc; color: #3a2e8a; }
-.tag-시설 { background: #ddf3eb; color: #084d3a; }
-.tag-평가 { background: #fbecd5; color: #683800; }
-.tag-이벤트 { background: #fce8e9; color: #8a1c23; }
-.tag-취업 { background: #dfeefa; color: #154d92; }
-.tag-기타 { background: #ebe9e3; color: #3d3d38; }
+.tag-학사 { background: #eaeaff; color: #4338ca; }
+.tag-세미나 { background: #f0eafe; color: #6d28d9; }
+.tag-특강 { background: #f0eafe; color: #6d28d9; }
+.tag-시설 { background: #d9f5f1; color: #0f766e; }
+.tag-평가 { background: #fdf0d8; color: #b45309; }
+.tag-이벤트 { background: #fde8f2; color: #be1863; }
+.tag-취업 { background: #dcf0fd; color: #0369a1; }
+.tag-기타 { background: #ecedf1; color: #475069; }
 
 /* ===== 빈 상태 ===== */
 .empty {
   text-align: center;
-  padding: 38px 16px;
+  padding: 34px 16px;
   color: var(--text-faint);
-  font-size: 12px;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  background: var(--bg-elevated);
+  border: 0.5px dashed var(--border-mid);
+  border-radius: var(--r-lg);
 }
 .empty-icon {
   width: 32px; height: 32px;
@@ -684,32 +981,93 @@ button { font-family: inherit; cursor: pointer; }
 
 /* ===== 카테고리 필터 ===== */
 .filter-bar {
-  display: flex; gap: 5px;
+  display: flex; gap: 7px;
   overflow-x: auto;
-  margin-bottom: 12px;
-  padding-bottom: 4px;
+  margin: 0 -14px 14px;
+  padding: 2px 14px 6px;
   -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
 }
 .filter-bar::-webkit-scrollbar { display: none; }
+@media (min-width: 0px) {
+  .filter-bar {
+    -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 26px), transparent 100%);
+    mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 26px), transparent 100%);
+  }
+}
 .filter-chip {
   flex-shrink: 0;
-  padding: 6px 12px;
+  min-height: 38px;
+  padding: 0 15px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   border: 0.5px solid var(--border-mid);
-  border-radius: 16px;
+  border-radius: 100px;
   background: var(--bg-elevated);
-  font-size: 12px;
+  font-size: var(--fs-sm);
   cursor: pointer;
   font-family: inherit;
   color: var(--text-mid);
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: -0.014em;
+  box-shadow: var(--shadow-xs);
+  scroll-snap-align: start;
+  transition: background 0.14s, color 0.14s, transform 0.1s;
 }
-.filter-chip:active { background: var(--bg-soft); }
+.filter-chip:active { transform: scale(0.95); }
 .filter-chip.active {
-  background: var(--text);
-  color: var(--bg-elevated);
-  border-color: var(--text);
+  background: var(--grad-accent);
+  color: #fff;
+  border-color: transparent;
+  font-weight: 700;
+  box-shadow: var(--shadow-accent);
+}
+.filter-chip-count {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--text-faint);
+  background: var(--bg-soft);
+  padding: 1px 6px;
+  border-radius: 100px;
+  font-variant-numeric: tabular-nums;
+}
+.filter-chip.active .filter-chip-count {
+  color: #fff;
+  background: rgba(255,255,255,0.22);
+}
+
+/* 게시판 상단 요약 바 */
+.posts-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 0 2px;
+}
+.posts-count {
+  font-size: var(--fs-sm);
+  color: var(--text-soft);
   font-weight: 600;
 }
+.posts-count b { color: var(--text); font-weight: 800; }
+.posts-search-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 13px;
+  border-radius: 100px;
+  border: 0.5px solid var(--border-mid);
+  background: var(--bg-elevated);
+  color: var(--text-mid);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  font-family: inherit;
+  box-shadow: var(--shadow-xs);
+}
+.posts-search-btn:active { background: var(--bg-soft); transform: scale(0.96); }
 
 /* ===== 검색 ===== */
 .search-bar {
@@ -744,8 +1102,8 @@ button { font-family: inherit; cursor: pointer; }
   color: var(--text-faint);
 }
 .search-highlight {
-  background: #fef3c7;
-  color: #78350f;
+  background: #e5e2ff;
+  color: #3730a3;
   padding: 0 2px;
   border-radius: 2px;
   font-weight: 600;
@@ -806,7 +1164,7 @@ button { font-family: inherit; cursor: pointer; }
   color: var(--text-soft);
 }
 .cal-week-day.sun { color: var(--danger); }
-.cal-week-day.sat { color: #1d4ed8; }
+.cal-week-day.sat { color: #4f46e5; }
 .cal-days {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -855,14 +1213,14 @@ button { font-family: inherit; cursor: pointer; }
 
 /* 오늘 - 빨간 원 → 하늘색 배경 */
 .cal-day.today {
-  background: #dbeafe;
+  background: var(--accent-soft);
 }
 .cal-day.today .cal-day-num {
-  color: #1d4ed8;
+  color: var(--accent);
   font-weight: 700;
 }
 .cal-day.today.selected {
-  background: #c7dafc;
+  background: #ded9ff;
 }
 
 .cal-day-num {
@@ -872,7 +1230,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 .cal-day.other-month .cal-day-num { color: var(--text-faint); }
 .cal-day.sun .cal-day-num { color: var(--danger); }
-.cal-day.sat .cal-day-num { color: #1d4ed8; }
+.cal-day.sat .cal-day-num { color: #4f46e5; }
 .cal-day.other-month.sun .cal-day-num,
 .cal-day.other-month.sat .cal-day-num { opacity: 0.5; }
 .cal-events {
@@ -918,7 +1276,7 @@ button { font-family: inherit; cursor: pointer; }
 /* 수업일정 정보 배너 */
 .cal-course-banner {
   background: var(--accent-soft);
-  border: 0.5px solid rgba(30, 58, 95, 0.2);
+  border: 0.5px solid rgba(79, 70, 229, 0.18);
   border-radius: 10px;
   padding: 10px 14px;
   margin-bottom: 8px;
@@ -938,10 +1296,10 @@ button { font-family: inherit; cursor: pointer; }
 }
 .cal-course-cancel {
   font-size: 11px;
-  color: #be185d;
+  color: #db2777;
   margin-top: 4px;
   padding-top: 4px;
-  border-top: 0.5px dashed rgba(190, 24, 93, 0.25);
+  border-top: 0.5px dashed rgba(219, 39, 119, 0.25);
   font-variant-numeric: tabular-nums;
   font-weight: 500;
   word-break: keep-all;
@@ -955,7 +1313,7 @@ button { font-family: inherit; cursor: pointer; }
   left: 0; right: 0;
   bottom: 0;
   height: 3px;
-  background: #047857;
+  background: #0d9488;
   z-index: 1;
 }
 /* 시작일: 띠가 30%부터 시작 (왼쪽 비움) */
@@ -979,15 +1337,15 @@ button { font-family: inherit; cursor: pointer; }
 .cal-day.start-day::after {
   content: '개강';
   left: 4px;
-  color: #047857;
+  color: #0d9488;
 }
 .cal-day.end-day::after {
   content: '종강';
   right: 4px;
-  color: #be185d;
+  color: #db2777;
 }
 .cal-day.end-day::before {
-  background: #be185d;
+  background: #db2777;
 }
 
 .cal-selected-day { margin-top: 14px; }
@@ -1011,7 +1369,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 .cal-selected-title-today {
   font-size: 10.5px;
-  background: #1d4ed8;
+  background: var(--accent);
   color: #fff;
   padding: 2px 6px;
   border-radius: 3px;
@@ -1266,7 +1624,7 @@ button { font-family: inherit; cursor: pointer; }
   left: 0;
   right: 0;
   z-index: 999;
-  background: #1e3a5f;
+  background: var(--grad-hero);
   color: #fff;
   padding: 10px 12px;
   padding-top: max(10px, env(safe-area-inset-top));
@@ -1281,7 +1639,7 @@ button { font-family: inherit; cursor: pointer; }
 .inapp-banner.show { transform: translateY(0); }
 .inapp-banner-icon {
   flex-shrink: 0;
-  color: #fcd34d;
+  color: #a5b4fc;
 }
 .inapp-banner-text {
   flex: 1;
@@ -1301,7 +1659,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 .inapp-banner-open {
   background: #fff;
-  color: #1e3a5f;
+  color: var(--accent-deep);
   border: none;
   padding: 7px 11px;
   border-radius: 7px;
@@ -1513,55 +1871,62 @@ button { font-family: inherit; cursor: pointer; }
   word-break: keep-all;
 }
 
-/* 홈 세미나 자동 슬라이드 캐러셀 */
+/* 홈 세미나 캐러셀 (수동 스와이프 + 스냅) */
 .seminar-carousel-wrap {
-  margin: 18px -16px 16px;
+  margin: 22px 0 4px;
   padding: 0;
-  overflow: hidden;
   position: relative;
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
-  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+.seminar-carousel-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  margin-bottom: 11px;
 }
 .seminar-carousel-track-title {
-  font-size: 12px;
+  font-size: var(--fs-md);
   font-weight: 700;
-  letter-spacing: -0.018em;
-  color: var(--text-soft);
-  padding: 0 16px;
-  margin-bottom: 10px;
+  letter-spacing: -0.026em;
+  color: var(--text);
+}
+.seminar-carousel-hint {
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+  font-weight: 500;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 .seminar-carousel-track {
   display: flex;
-  gap: 10px;
-  width: max-content;
-  padding: 0 6px;
-  animation: seminarMarquee 28s linear infinite;
+  gap: 11px;
+  padding: 2px 14px 6px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
-.seminar-carousel-wrap:hover .seminar-carousel-track,
-.seminar-carousel-wrap:focus-within .seminar-carousel-track {
-  animation-play-state: paused;
-}
-@keyframes seminarMarquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
+.seminar-carousel-track::-webkit-scrollbar { display: none; }
 .seminar-carousel-item {
   flex: 0 0 auto;
-  width: 200px;
+  width: 208px;
+  scroll-snap-align: center;
   background: var(--bg-elevated);
   border: 0.5px solid var(--border);
-  border-radius: 11px;
+  border-radius: var(--r-lg);
   overflow: hidden;
-  box-shadow: var(--shadow-xs);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.15s;
   display: flex;
   flex-direction: column;
 }
-.seminar-carousel-item:active { transform: scale(0.98); }
-.seminar-carousel-item:hover { box-shadow: var(--shadow-sm); }
+.seminar-carousel-item:active { transform: scale(0.975); box-shadow: var(--shadow-md); }
 .seminar-carousel-imgwrap {
   width: 100%;
+  aspect-ratio: 4 / 3;
   background: var(--bg-soft);
   display: flex;
   align-items: center;
@@ -1571,43 +1936,62 @@ button { font-family: inherit; cursor: pointer; }
 .seminar-carousel-img {
   display: block;
   width: 100%;
-  height: auto;
-  max-height: 260px;
-  object-fit: contain;
+  height: 100%;
+  object-fit: cover;
 }
 .seminar-carousel-noimg {
   width: 100%;
   aspect-ratio: 4 / 3;
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+  background: var(--grad-hero);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 0 10px;
+  padding: 0 12px;
   font-weight: 700;
-  font-size: 13px;
-  letter-spacing: -0.018em;
+  font-size: var(--fs-base);
+  letter-spacing: -0.022em;
   line-height: 1.4;
+  word-break: keep-all;
 }
 .seminar-carousel-info {
-  padding: 9px 11px 11px;
+  padding: 11px 12px 13px;
 }
 .seminar-carousel-title {
-  font-size: 12px;
+  font-size: var(--fs-sm);
   font-weight: 700;
-  letter-spacing: -0.018em;
-  line-height: 1.35;
-  white-space: nowrap;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
+  min-height: 2.8em;
 }
 .seminar-carousel-meta {
-  font-size: 10px;
+  font-size: var(--fs-xs);
   color: var(--text-faint);
-  margin-top: 3px;
+  margin-top: 5px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
+}
+/* 캐러셀 페이지 인디케이터 */
+.seminar-carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 8px;
+}
+.seminar-carousel-dot {
+  width: 6px; height: 6px;
+  border-radius: 100px;
+  background: var(--border-strong);
+  transition: width 0.2s, background 0.2s;
+}
+.seminar-carousel-dot.active {
+  width: 18px;
+  background: var(--accent);
 }
 
 /* ===== 학칙 (이용안내) ===== */
@@ -1793,7 +2177,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 .book-thumb-noimg {
   width: 100%; height: 100%;
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
+  background: var(--grad-accent);
   color: #fff;
   display: flex;
   align-items: center;
@@ -1985,7 +2369,7 @@ button { font-family: inherit; cursor: pointer; }
   position: fixed;
   bottom: 0; left: 0; right: 0;
   max-width: 480px; margin: 0 auto;
-  background: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   border-top: 0.5px solid var(--border);
@@ -1996,25 +2380,27 @@ button { font-family: inherit; cursor: pointer; }
 .tab {
   flex: 1;
   background: none; border: none;
-  padding: 5px 0;
+  padding: 7px 0;
   text-align: center;
   position: relative;
   font-family: inherit;
 }
 .tab-icon {
-  width: 21px; height: 21px;
-  margin: 0 auto 3px;
+  width: 23px; height: 23px;
+  margin: 0 auto 4px;
   color: var(--text-faint);
   display: block;
   stroke-width: 2;
+  transition: color 0.14s, transform 0.14s;
 }
 .tab-label {
-  font-size: 11px;
+  font-size: var(--fs-xs);
   color: var(--text-faint);
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: -0.016em;
 }
-.tab.active .tab-icon { color: var(--accent); stroke-width: 2.4; }
-.tab.active .tab-label { color: var(--accent); font-weight: 700; }
+.tab.active .tab-icon { color: var(--accent); stroke-width: 2.5; transform: translateY(-1px); }
+.tab.active .tab-label { color: var(--accent); font-weight: 800; }
 .tab-badge {
   position: absolute;
   top: 4px;
@@ -2028,31 +2414,35 @@ button { font-family: inherit; cursor: pointer; }
 .admin-link {
   display: block;
   text-align: center;
-  margin-top: 24px;
-  padding: 10px;
-  font-size: 11px;
+  margin: 26px 14px 0;
+  padding: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-faint);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
+  border: 0.5px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--bg-elevated);
 }
+.admin-link:active { background: var(--bg-soft); }
 </style>
 </head>
 <body>
 
 <header class="header">
   <div class="header-brand">
-    <div class="header-logo">SBS</div>
+    <div class="header-logo">AIX</div>
     <div class="header-text">
-      <div class="header-title">컴퓨터아트학원</div>
+      <div class="header-title">SBS AIX학원</div>
       <div class="header-page" id="page-name">홈</div>
     </div>
   </div>
   <div class="header-actions">
-    <button class="header-btn" onclick="navigate('search')" title="검색">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <button class="header-btn" onclick="navigate('search')" title="검색" aria-label="검색">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </button>
-    <button class="header-btn" onclick="navigate('posts')" title="공지">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+    <button class="header-btn" onclick="navigate('posts')" title="공지" aria-label="공지">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
       <span class="header-btn-dot" id="bell-dot" style="display: none;"></span>
     </button>
   </div>
@@ -2073,69 +2463,90 @@ button { font-family: inherit; cursor: pointer; }
     </div>
   </div>
 
-  <!-- 요약: 날짜 + 진행률 게이지 + 통계 -->
-  <div class="summary">
-    <div class="day-row">
-      <div class="day-num" id="day-num">5월 4일</div>
-      <div class="day-label" id="day-label">월요일</div>
+  <!-- 이벤트 배너 (자동 순환) -->
+  <div class="banner-wrap" id="banner-wrap" style="display: none;">
+    <div class="banner-viewport" id="banner-viewport">
+      <div class="banner-counter" id="banner-counter"></div>
+      <div class="banner-track" id="banner-track"></div>
     </div>
-    <div id="gauge-area"></div>
-    <div class="stat-row" id="stat-row" style="display: none;">
-      <div class="stat">
-        <div class="stat-num" id="stat-cancel"><span id="stat-cancel-num">0</span><small>일</small></div>
-        <div class="stat-label" id="stat-cancel-label">이번 달 휴강</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num" id="stat-new"><span id="stat-new-num">0</span><small>건</small></div>
-        <div class="stat-label">새 공지</div>
-      </div>
-    </div>
+    <div class="banner-dots" id="banner-dots"></div>
   </div>
+
+  <!-- 히어로: 오늘 + 과정 진행률 + 통계 -->
+  <div id="hero-area"></div>
 
   <!-- 메뉴 (2x2 카드 + 미리보기) -->
   <div class="hm-grid" id="home-menu-grid">
     <div class="hm-card" data-key="schedule" onclick="navigate('schedule')" role="button" tabindex="0">
       <div class="hm-head">
         <div class="hm-icon-wrap cal">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         </div>
-        <div class="hm-name">수업일정</div>
+        <div class="hm-title-wrap">
+          <div class="hm-name">수업일정</div>
+          <div class="hm-count" id="hm-count-schedule"></div>
+        </div>
       </div>
       <div class="hm-divider"></div>
       <div class="hm-items" id="hm-preview-schedule"></div>
+      <div class="hm-foot">
+        <span>캘린더 보기</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
     </div>
-    
+
     <div class="hm-card" data-key="materials" onclick="navigate('materials')" role="button" tabindex="0">
       <div class="hm-head">
         <div class="hm-icon-wrap book">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
         </div>
-        <div class="hm-name">수업안내</div>
+        <div class="hm-title-wrap">
+          <div class="hm-name">수업안내</div>
+          <div class="hm-count" id="hm-count-materials"></div>
+        </div>
       </div>
       <div class="hm-divider"></div>
       <div class="hm-items" id="hm-preview-materials"></div>
+      <div class="hm-foot">
+        <span>전체 보기</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
     </div>
-    
+
     <div class="hm-card" data-key="classrooms" onclick="navigate('classrooms')" role="button" tabindex="0">
       <div class="hm-head">
         <div class="hm-icon-wrap zoom">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
         </div>
-        <div class="hm-name">비대면</div>
+        <div class="hm-title-wrap">
+          <div class="hm-name">비대면</div>
+          <div class="hm-count" id="hm-count-classrooms"></div>
+        </div>
       </div>
       <div class="hm-divider"></div>
       <div class="hm-items" id="hm-preview-classrooms"></div>
+      <div class="hm-foot">
+        <span>접속 안내</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
     </div>
-    
+
     <div class="hm-card" data-key="seminars" onclick="navigate('seminars')" role="button" tabindex="0">
       <div class="hm-head">
         <div class="hm-icon-wrap users">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         </div>
-        <div class="hm-name">특강·세미나</div>
+        <div class="hm-title-wrap">
+          <div class="hm-name">특강·세미나</div>
+          <div class="hm-count" id="hm-count-seminars"></div>
+        </div>
       </div>
       <div class="hm-divider"></div>
       <div class="hm-items" id="hm-preview-seminars"></div>
+      <div class="hm-foot">
+        <span>전체 보기</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
     </div>
   </div>
 
@@ -2153,15 +2564,23 @@ button { font-family: inherit; cursor: pointer; }
   <div class="section">
     <div class="section-h">
       <span class="section-t">최신 공지</span>
+      <span class="section-meta" id="home-post-count"></span>
       <button class="section-link" onclick="navigate('posts')">전체 ›</button>
     </div>
     <div id="home-posts"></div>
   </div>
 
-  <!-- 세미나 자동 슬라이드 캐러셀 (페이지 하단) -->
+  <!-- 세미나 캐러셀 (수동 스와이프) -->
   <div id="home-seminar-carousel" class="seminar-carousel-wrap" style="display: none;">
-    <div class="seminar-carousel-track-title">진행 중인 특강·세미나</div>
+    <div class="seminar-carousel-head">
+      <div class="seminar-carousel-track-title">진행 중인 특강·세미나</div>
+      <div class="seminar-carousel-hint">
+        옆으로 밀기
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>
     <div class="seminar-carousel-track" id="seminar-carousel-track"></div>
+    <div class="seminar-carousel-dots" id="seminar-carousel-dots"></div>
   </div>
 
   <a href="admin.html" class="admin-link">관리자 페이지</a>
@@ -2171,6 +2590,13 @@ button { font-family: inherit; cursor: pointer; }
 <main id="page-posts" class="page hidden">
   <div class="page-content">
     <div class="filter-bar" id="post-filters"></div>
+    <div class="posts-toolbar">
+      <div class="posts-count" id="posts-count"></div>
+      <button class="posts-search-btn" onclick="navigate('search')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        검색
+      </button>
+    </div>
     <div id="posts-list"></div>
   </div>
 </main>
@@ -2365,7 +2791,11 @@ const state = {
   },
   matCatsCache: null,
   searchData: null,
-  allPosts: null
+  allPosts: null,
+  postFilter: '전체',
+  bannerIndex: 0,
+  bannerCount: 0,
+  bannerTimer: null
 };
 
 // ============================================================
@@ -2522,48 +2952,330 @@ function escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 // 홈 메뉴 카드 미리보기 (수업일정 / 수업안내 / 비대면 / 특강·세미나)
 // ============================================================
 function renderHomeMenuPreviews({ courses, matCats, classrooms, seminars }) {
+  const CHEV = '<svg class="hm-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+  const row = (label, onclick) =>
+    `<div class="hm-item clickable" role="button" tabindex="0" onclick="event.stopPropagation(); ${onclick}">` +
+    `<span class="dot"></span><span class="hm-item-text">${label}</span>${CHEV}</div>`;
+  const setCount = (id, text) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  };
+
   // === 1. 수업일정 - 최신 시작일 순 3개 ===
   const sortedCourses = (courses || [])
     .filter(c => c.startDate && c.endDate)
     .sort((a, b) => (b.startDate || '').localeCompare(a.startDate || ''));
   const showC = sortedCourses.slice(0, 3);
-  const moreC = sortedCourses.length - showC.length;
+  setCount('hm-count-schedule', sortedCourses.length > 0 ? `과정 ${sortedCourses.length}개` : '등록 없음');
   document.getElementById('hm-preview-schedule').innerHTML = showC.length === 0
     ? '<div class="hm-empty">등록된 수업일정 없음</div>'
-    : showC.map(c => 
-        `<div class="hm-item clickable" onclick="event.stopPropagation(); navigate('schedule', { courseId: '${c.id}' })"><span class="dot"></span>${escapeHtml(c.name)}</div>`
-      ).join('') +
-      (moreC > 0 ? `<div class="hm-more">+${moreC}개</div>` : '');
-  
-  // === 2. 수업안내 - 카테고리 이름 (최대 3개 + 더보기) ===
-  // parentId 없는 (최상위) 카테고리만
+    : showC.map(c => row(escapeHtml(c.name), `navigate('schedule', { courseId: '${c.id}' })`)).join('');
+
+  // === 2. 수업안내 - 최상위 카테고리 3개 ===
   const topCats = (matCats || []).filter(c => !c.parentId);
   const showM = topCats.slice(0, 3);
-  const moreM = topCats.length - showM.length;
+  setCount('hm-count-materials', topCats.length > 0 ? `${topCats.length}개 분류` : '등록 없음');
   document.getElementById('hm-preview-materials').innerHTML = showM.length === 0
     ? '<div class="hm-empty">등록된 카테고리 없음</div>'
-    : showM.map(c => 
-        `<div class="hm-item clickable" onclick="event.stopPropagation(); navigate('materials-list', { categoryId: '${c.id}' })"><span class="dot"></span>${escapeHtml(c.name)}</div>`
-      ).join('') +
-      (moreM > 0 ? `<div class="hm-more">+${moreM}개</div>` : '');
-  
-  // === 3. 비대면 - 줌 접속방법 + 강의장 N개 ===
+    : showM.map(c => row(escapeHtml(c.name), `navigate('materials-list', { categoryId: '${c.id}' })`)).join('');
+
+  // === 3. 비대면 - 줌 접속방법 + 강의장 ===
   const cls = classrooms || [];
-  document.getElementById('hm-preview-classrooms').innerHTML = `
-    <div class="hm-item clickable" onclick="event.stopPropagation(); navigate('classrooms')"><span class="dot"></span>줌 접속 방법</div>
-    <div class="hm-item clickable" onclick="event.stopPropagation(); navigate('classrooms')"><span class="dot"></span>${cls.length > 0 ? `강의장 ${cls.length}개` : '강의장 정보'}</div>
-  `;
-  
-  // === 4. 특강·세미나 - 최신 등록 3개 (제목만) ===
-  // 항목 클릭 시 해당 세미나 상세 페이지로 바로 이동
-  const showS = (seminars || []).slice(0, 3);
-  const moreS = (seminars || []).length - showS.length;
+  setCount('hm-count-classrooms', cls.length > 0 ? `강의장 ${cls.length}개` : '접속 정보');
+  document.getElementById('hm-preview-classrooms').innerHTML =
+    row('줌 접속 방법', "navigate('classrooms')") +
+    row(cls.length > 0 ? `강의장 ${cls.length}개` : '강의장 정보', "navigate('classrooms')");
+
+  // === 4. 특강·세미나 - 최신 3개 ===
+  const allS = seminars || [];
+  const showS = allS.slice(0, 3);
+  setCount('hm-count-seminars', allS.length > 0 ? `${allS.length}건 진행` : '등록 없음');
   document.getElementById('hm-preview-seminars').innerHTML = showS.length === 0
     ? '<div class="hm-empty">등록된 세미나 없음</div>'
-    : showS.map(s => 
-        `<div class="hm-item clickable" onclick="event.stopPropagation(); navigate('seminar-detail', { id: '${s.id}' })"><span class="dot"></span>${escapeHtml(s.title)}</div>`
-      ).join('') +
-      (moreS > 0 ? `<div class="hm-more">+${moreS}개</div>` : '');
+    : showS.map(s => row(escapeHtml(s.title), `navigate('seminar-detail', { id: '${s.id}' })`)).join('');
+}
+
+// ============================================================
+// 이벤트 배너 (시간 비례 자동 슬라이드)
+// ============================================================
+// 운영자가 등록한 배너(getBanners)를 우선 사용하고,
+// 없으면 이벤트/특강 성격의 공지 + 예정 세미나로 자동 구성한다.
+function buildBanners({ banners, posts, seminars }) {
+  // 클릭 시 어디로 갈지를 문자열이 아니라 유형+대상으로 들고 다닌다
+  const linkOf = (o) => {
+    if (o.postId) return { type: 'post', target: o.postId };
+    if (o.seminarId) return { type: 'seminar', target: o.seminarId };
+    if (o.linkUrl) return { type: 'link', target: o.linkUrl };
+    return { type: 'posts', target: '' };
+  };
+
+  const registered = (banners || []).filter(b => b && (b.imageUrl || b.title));
+  if (registered.length > 0) {
+    return registered.slice(0, 6).map(b => Object.assign({
+      title: b.title || '',
+      sub: b.subtitle || b.sub || '',
+      badge: b.badge || '이벤트',
+      hot: !!b.hot,
+      imageUrl: b.imageUrl || ''
+    }, linkOf(b)));
+  }
+
+  // 등록된 배너가 없으면 예정 세미나와 이벤트성 공지로 대신 채운다
+  const out = [];
+  const eventCats = ['이벤트', '특강', '세미나'];
+
+  (seminars || []).slice(0, 3).forEach(sm => {
+    const meta = [sm.date ? formatDate(sm.date) : '', sm.time || ''].filter(Boolean).join(' · ');
+    out.push({
+      title: sm.title || '',
+      sub: meta || '자세히 보기',
+      badge: '특강·세미나',
+      hot: sm.date ? isNew(sm.date, 0) : false,
+      imageUrl: sm.imageUrl || '',
+      type: 'seminar',
+      target: sm.id
+    });
+  });
+
+  (posts || [])
+    .filter(pt => eventCats.includes(pt.category))
+    .slice(0, 3)
+    .forEach(pt => {
+      out.push({
+        title: pt.title || '',
+        sub: formatDate(pt.date),
+        badge: pt.category || '이벤트',
+        hot: isNew(pt.date),
+        imageUrl: pt.imageUrl || '',
+        type: 'post',
+        target: pt.id
+      });
+    });
+
+  return out.slice(0, 5);
+}
+
+function openBannerTarget(type, target) {
+  if (type === 'post') openPost(target);
+  else if (type === 'seminar') navigate('seminar-detail', { id: target });
+  else if (type === 'link' && target) openExternalBrowser(target);
+  else navigate('posts');
+}
+
+const BANNER_MS = 5000;      // 한 장이 머무는 시간
+const BANNER_SLIDE_MS = 560; // 옆으로 미끄러지는 시간
+const BANNER_DRAG_MIN = 44;  // 넘길지 되돌릴지 가르는 드래그 거리(px)
+
+function renderBanners(items) {
+  const wrap = document.getElementById('banner-wrap');
+  const view = document.getElementById('banner-viewport');
+  const track = document.getElementById('banner-track');
+  const dots = document.getElementById('banner-dots');
+  const counter = document.getElementById('banner-counter');
+  if (!wrap || !track || !view) return;
+
+  stopBannerAuto();
+
+  if (!items || items.length === 0) {
+    wrap.style.display = 'none';
+    return;
+  }
+
+  const slideHtml = (b) => {
+    const img = b.imageUrl
+      ? `<img src="${escapeHtml(b.imageUrl)}" alt="" loading="lazy" draggable="false">`
+      : '';
+    return `
+      <div class="banner-slide ${b.imageUrl ? '' : 'no-img'}" role="button" tabindex="0" data-type="${escapeHtml(b.type)}" data-target="${escapeHtml(b.target)}">
+        ${img}
+        <div class="banner-body">
+          <span class="banner-badge ${b.hot ? 'hot' : ''}">${escapeHtml(b.badge)}</span>
+          <div class="banner-title">${escapeHtml(b.title)}</div>
+          ${b.sub ? `<div class="banner-sub">${escapeHtml(b.sub)}</div>` : ''}
+        </div>
+      </div>
+    `;
+  };
+
+  const multi = items.length > 1;
+
+  // 마지막 장 다음에 첫 장 사본을 붙여 두면, 되감지 않고 계속 왼쪽으로 흐른다
+  track.innerHTML = items.map(slideHtml).join('') + (multi ? slideHtml(items[0]) : '');
+  wrap.style.setProperty('--banner-dur', BANNER_MS + 'ms');
+
+  dots.innerHTML = multi
+    ? items.map((_, i) =>
+        `<span class="banner-dot${i === 0 ? ' active' : ''}" role="button" tabindex="0" aria-label="${i + 1}번째 배너" onclick="goBanner(${i})"><span class="banner-dot-fill"></span></span>`
+      ).join('')
+    : '';
+  dots.style.display = multi ? 'flex' : 'none';
+  counter.style.display = multi ? 'block' : 'none';
+
+  state.bannerCount = items.length;
+  state.bannerIndex = 0;
+  state.bannerBusy = false;
+  wrap.style.display = 'block';
+  setBannerTransform(0, false);
+  setBannerIndicator(0);
+
+  if (!multi) return;
+
+  bindBannerDrag(view, track);
+  startBannerAuto();
+}
+
+// 트랙을 통째로 옆으로 밀어 i번째 장을 보여준다
+function setBannerTransform(i, animate, dragPx) {
+  const track = document.getElementById('banner-track');
+  if (!track) return;
+  track.classList.toggle('no-anim', !animate);
+  const offset = dragPx ? ` + ${dragPx}px` : '';
+  track.style.transform = `translateX(calc(${-i * 100}%${offset}))`;
+  if (!animate) void track.offsetWidth; // 되감기 직후 애니메이션이 되살아나도록 강제 리플로우
+}
+
+function setBannerIndicator(idx) {
+  state.bannerIndex = idx;
+  const dots = document.getElementById('banner-dots');
+  const counter = document.getElementById('banner-counter');
+  const real = state.bannerCount ? ((idx % state.bannerCount) + state.bannerCount) % state.bannerCount : 0;
+
+  if (dots) {
+    [...dots.children].forEach((d, i) => {
+      const on = i === real;
+      d.classList.toggle('active', on);
+      // 차오르는 막대를 매번 처음부터 다시 시작시킨다
+      const fill = d.firstElementChild;
+      if (fill && on) {
+        fill.style.animation = 'none';
+        void fill.offsetWidth;
+        fill.style.animation = '';
+      }
+    });
+  }
+  if (counter && state.bannerCount) counter.textContent = `${real + 1} / ${state.bannerCount}`;
+}
+
+// idx는 사본(=bannerCount)까지 허용한다
+function goBanner(idx, fromAuto) {
+  const n = state.bannerCount;
+  if (!n || state.bannerBusy) return;
+
+  let target = idx;
+  if (target < 0) target = 0;
+  if (target > n) target = n;
+
+  state.bannerBusy = true;
+  setBannerTransform(target, true);
+  setBannerIndicator(target);
+
+  setTimeout(() => {
+    // 사본에 도착했으면 애니메이션 없이 첫 장으로 갈아끼운다
+    if (target === n) {
+      setBannerTransform(0, false);
+      state.bannerIndex = 0;
+    }
+    state.bannerBusy = false;
+  }, BANNER_SLIDE_MS + 20);
+
+  if (!fromAuto) startBannerAuto();
+}
+
+function startBannerAuto() {
+  stopBannerAuto();
+  const wrap = document.getElementById('banner-wrap');
+  if (wrap) wrap.classList.remove('paused');
+  if (state.bannerCount < 2) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  state.bannerTimer = setInterval(() => {
+    if (state.currentPage !== 'home' || document.hidden) return;
+    goBanner(state.bannerIndex + 1, true);
+  }, BANNER_MS);
+}
+
+function stopBannerAuto() {
+  if (state.bannerTimer) { clearInterval(state.bannerTimer); state.bannerTimer = null; }
+}
+
+function pauseBannerAuto() {
+  stopBannerAuto();
+  const wrap = document.getElementById('banner-wrap');
+  if (wrap) wrap.classList.add('paused');
+}
+
+// 손가락으로 미는 동안 트랙이 손끝을 따라오게 한다
+function bindBannerDrag(view, track) {
+  let startX = 0, startY = 0, dx = 0, dragging = false, decided = false, horizontal = false, swiped = false;
+
+  const down = (e) => {
+    if (state.bannerBusy) return;
+    const pt = e.touches ? e.touches[0] : e;
+    startX = pt.clientX; startY = pt.clientY;
+    dx = 0; dragging = true; decided = false; horizontal = false; swiped = false;
+    pauseBannerAuto();
+  };
+
+  const move = (e) => {
+    if (!dragging) return;
+    const pt = e.touches ? e.touches[0] : e;
+    const mx = pt.clientX - startX;
+    const my = pt.clientY - startY;
+
+    // 세로로 긋는 동작이면 페이지 스크롤에 양보한다
+    if (!decided) {
+      if (Math.abs(mx) < 6 && Math.abs(my) < 6) return;
+      horizontal = Math.abs(mx) > Math.abs(my);
+      decided = true;
+      if (!horizontal) { dragging = false; startBannerAuto(); return; }
+      view.classList.add('dragging');
+    }
+    dx = mx;
+    // 양 끝에서는 저항을 줘서 끝에 닿았음을 손에 알린다
+    if ((state.bannerIndex === 0 && dx > 0) || (state.bannerIndex >= state.bannerCount && dx < 0)) dx *= 0.35;
+    setBannerTransform(state.bannerIndex, false, dx);
+    if (e.cancelable) e.preventDefault();
+  };
+
+  const up = () => {
+    if (!dragging) return;
+    dragging = false;
+    view.classList.remove('dragging');
+    if (!horizontal) { startBannerAuto(); return; }
+
+    if (Math.abs(dx) >= BANNER_DRAG_MIN) {
+      goBanner(state.bannerIndex + (dx < 0 ? 1 : -1));
+    } else {
+      setBannerTransform(state.bannerIndex, true);
+      setBannerIndicator(state.bannerIndex);
+      startBannerAuto();
+    }
+    // 조금이라도 밀었다면 뒤이어 오는 click은 배너 열기로 치지 않는다
+    swiped = Math.abs(dx) > 6;
+    dx = 0;
+  };
+
+  view.addEventListener('touchstart', down, { passive: true });
+  view.addEventListener('touchmove', move, { passive: false });
+  view.addEventListener('touchend', up);
+  view.addEventListener('touchcancel', up);
+  view.addEventListener('mousedown', down);
+  window.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', up);
+
+  // 밀고 난 직후의 클릭은 배너 열기로 치지 않는다
+  track.addEventListener('click', (e) => {
+    const slide = e.target.closest('.banner-slide');
+    if (!slide) return;
+    if (swiped) { swiped = false; return; }
+    openBannerTarget(slide.dataset.type, slide.dataset.target);
+  });
+
+  // 다른 탭에 가 있는 동안에는 차오름을 멈춘다
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) pauseBannerAuto();
+    else if (state.currentPage === 'home' && state.bannerCount > 1) startBannerAuto();
+  });
 }
 
 // ============================================================
@@ -2572,14 +3284,14 @@ function renderHomeMenuPreviews({ courses, matCats, classrooms, seminars }) {
 function renderSeminarCarousel(seminars) {
   const wrap = document.getElementById('home-seminar-carousel');
   const track = document.getElementById('seminar-carousel-track');
+  const dotsWrap = document.getElementById('seminar-carousel-dots');
   if (!wrap || !track) return;
-  
+
   if (!seminars || seminars.length === 0) {
     wrap.style.display = 'none';
     return;
   }
-  
-  // 한 번 렌더링한 카드들을 두 번 반복해서 무한 슬라이드 효과
+
   const renderItem = (s) => {
     const dateInfo = [
       s.date ? formatDate(s.date) : '',
@@ -2589,7 +3301,7 @@ function renderSeminarCarousel(seminars) {
       ? `<div class="seminar-carousel-imgwrap"><img class="seminar-carousel-img" src="${escapeHtml(s.imageUrl)}" alt="" loading="lazy"></div>`
       : `<div class="seminar-carousel-noimg">${escapeHtml(s.title)}</div>`;
     return `
-      <div class="seminar-carousel-item" onclick="navigate('seminar-detail', { id: '${s.id}' })">
+      <div class="seminar-carousel-item" role="button" tabindex="0" onclick="navigate('seminar-detail', { id: '${s.id}' })">
         ${visual}
         <div class="seminar-carousel-info">
           <div class="seminar-carousel-title">${escapeHtml(s.title)}</div>
@@ -2598,29 +3310,47 @@ function renderSeminarCarousel(seminars) {
       </div>
     `;
   };
-  
-  // 적은 개수일 때도 슬라이드 효과를 보장하기 위해 반복 횟수 동적 결정
-  const minCount = 6;
-  let items = [...seminars];
-  while (items.length < minCount) {
-    items = items.concat(seminars);
+
+  track.innerHTML = seminars.map(renderItem).join('');
+
+  // 페이지 인디케이터 - 카드가 2개 이상일 때만
+  if (dotsWrap) {
+    if (seminars.length > 1) {
+      dotsWrap.innerHTML = seminars
+        .map((_, i) => `<span class="seminar-carousel-dot${i === 0 ? ' active' : ''}"></span>`)
+        .join('');
+      dotsWrap.style.display = 'flex';
+      let ticking = false;
+      track.onscroll = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          const items = track.children;
+          if (items.length > 0) {
+            const step = items[0].offsetWidth + 11;
+            const idx = Math.min(
+              seminars.length - 1,
+              Math.max(0, Math.round(track.scrollLeft / step))
+            );
+            [...dotsWrap.children].forEach((d, i) => d.classList.toggle('active', i === idx));
+          }
+          ticking = false;
+        });
+      };
+    } else {
+      dotsWrap.innerHTML = '';
+      dotsWrap.style.display = 'none';
+    }
   }
-  // translateX -50% 트릭을 위해 두 번 복제
-  const html = items.map(renderItem).join('') + items.map(renderItem).join('');
-  track.innerHTML = html;
-  
-  // 카드 개수에 따라 애니메이션 길이 조절
-  const totalCards = items.length;
-  track.style.animationDuration = (totalCards * 4.5) + 's';
-  
+
   wrap.style.display = 'block';
 }
 
 async function loadHome() {
-  let data, schedule, colors, settings, courses, seminars, matCats, classrooms;
-  
+  let data, schedule, colors, settings, courses, seminars, matCats, classrooms, banners;
+
   try {
-    [data, schedule, colors, settings, courses, seminars, matCats, classrooms] = await Promise.all([
+    [data, schedule, colors, settings, courses, seminars, matCats, classrooms, banners] = await Promise.all([
       window.api.call('getHome'),
       window.api.call('getSchedule'),
       window.api.call('getScheduleColors'),
@@ -2628,15 +3358,23 @@ async function loadHome() {
       window.api.call('getCourses').catch(() => []),
       window.api.call('getSeminars').catch(() => []),
       window.api.call('getMaterialCategories').catch(() => []),
-      window.api.call('getClassrooms').catch(() => [])
+      window.api.call('getClassrooms').catch(() => []),
+      window.api.call('getBanners').catch(() => [])
     ]);
   } catch (e) {
     data = { posts: [], schedule: [], settings: {} };
-    schedule = []; colors = []; settings = {}; courses = []; seminars = []; matCats = []; classrooms = [];
+    schedule = []; colors = []; settings = {}; courses = []; seminars = []; matCats = []; classrooms = []; banners = [];
   }
-  
+
   state.cal.colors = colors || [];
-  
+
+  // 이벤트 배너
+  renderBanners(buildBanners({
+    banners: banners || [],
+    posts: data.posts || [],
+    seminars: seminars || []
+  }));
+
   // 세미나 캐러셀
   renderSeminarCarousel(seminars || []);
   
@@ -2658,90 +3396,96 @@ async function loadHome() {
     document.getElementById('notice-bar').style.display = 'none';
   }
 
-  // 오늘 날짜
-  document.getElementById('day-num').textContent = `${TODAY.getMonth() + 1}월 ${TODAY.getDate()}일`;
+  // ===== 히어로 (오늘 + 과정 진행률 + 통계) =====
   const days = ['일','월','화','수','목','금','토'];
-  document.getElementById('day-label').textContent = `${days[TODAY.getDay()]}요일`;
+  const heroDate = `${TODAY.getMonth() + 1}월 ${TODAY.getDate()}일`;
+  const heroDay = `${days[TODAY.getDay()]}요일`;
 
-  // 진행률 게이지 - 진행 중인 과정 기준
-  // active=true이고 오늘 기준 가장 가까운 종강일 (또는 진행 중) 1개를 선택
   const todayStr = `${TODAY.getFullYear()}-${String(TODAY.getMonth() + 1).padStart(2, '0')}-${String(TODAY.getDate()).padStart(2, '0')}`;
   const activeCourses = (courses || []).filter(c => c.active && c.startDate && c.endDate);
-  
-  // 우선순위: 1) 현재 진행 중 (start <= today <= end) 중 종강 가까운 순
-  //          2) 미래 시작 예정 중 시작일 가까운 순
-  //          3) 종강 지난 것 중 가장 최근
+
+  // 우선순위: 진행 중(종강 가까운 순) > 시작 예정(시작 가까운 순) > 종강한 것 중 최근
   const inProgress = activeCourses.filter(c => c.startDate <= todayStr && c.endDate >= todayStr);
   inProgress.sort((a, b) => a.endDate.localeCompare(b.endDate));
-  
   const upcomingCourses = activeCourses.filter(c => c.startDate > todayStr);
   upcomingCourses.sort((a, b) => a.startDate.localeCompare(b.startDate));
-  
   const past = activeCourses.filter(c => c.endDate < todayStr);
   past.sort((a, b) => b.endDate.localeCompare(a.endDate));
-  
+
   const targetCourse = inProgress[0] || upcomingCourses[0] || past[0];
-  
-  const progress = targetCourse 
+  const progress = targetCourse
     ? window.computeCourseProgress(targetCourse, schedule || [], colors || [])
     : null;
-  
-  if (progress) {
+  const newPostCount = (data.posts || []).filter(p => isNew(p.date) && !isRead(p.id)).length;
+
+  const heroTop = (ddayHtml) => `
+    <div class="hero-top">
+      <div>
+        <div class="hero-date">${heroDate}</div>
+        <div class="hero-day">${heroDay}</div>
+      </div>
+      ${ddayHtml}
+    </div>`;
+
+  const heroEl = document.getElementById('hero-area');
+
+  if (progress && targetCourse) {
     const ddayNum = parseInt((progress.dDay.match(/-?\d+/) || ['0'])[0]);
-    const dDayClass = (progress.dDay.startsWith('D-') && progress.dDay !== 'D-DAY' && ddayNum > 7) ? '' : 'danger';
-    
+    const urgent = !(progress.dDay.startsWith('D-') && progress.dDay !== 'D-DAY' && ddayNum > 7);
+
     let stateLabel = '';
     if (targetCourse.startDate > todayStr) stateLabel = ' · 시작 예정';
     else if (targetCourse.endDate < todayStr) stateLabel = ' · 종강';
-    
-    document.getElementById('gauge-area').innerHTML = `
-      <div class="gauge-card">
-        <div class="gauge-row">
-          <span class="gauge-name">${escapeHtml(targetCourse.name)}${stateLabel}</span>
-          <span class="gauge-pct ${dDayClass}">${progress.dDay}</span>
+
+    heroEl.innerHTML = `
+      <section class="hero">
+        ${heroTop(`<div class="hero-dday ${urgent ? 'urgent' : ''}">${progress.dDay}</div>`)}
+        <div class="hero-course">
+          <div class="hero-course-name">${escapeHtml(targetCourse.name)}<span class="hero-course-state">${stateLabel}</span></div>
+          <div class="hero-bar"><div class="hero-fill" style="width: ${progress.percent}%;"></div></div>
+          <div class="hero-meta">
+            <span>${formatDate(targetCourse.startDate)} 시작</span>
+            <span><b>${progress.completedSessions}</b> / ${progress.totalSessions}회차</span>
+            <span>${formatDate(targetCourse.endDate)} 종강</span>
+          </div>
         </div>
-        <div class="gauge-bar"><div class="gauge-fill" style="width: ${progress.percent}%;"></div></div>
-        <div class="gauge-meta">
-          <span>${formatDate(targetCourse.startDate)} 시작</span>
-          <span>${progress.totalSessions}회 중 ${progress.completedSessions}회차</span>
-          <span>${formatDate(targetCourse.endDate)} 종강</span>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="hero-stat-num">${progress.cancelDays}<small>일</small></div>
+            <div class="hero-stat-label">과정 휴강일</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-num">${newPostCount}<small>건</small></div>
+            <div class="hero-stat-label">읽지 않은 공지</div>
+          </div>
         </div>
-      </div>
+      </section>
     `;
-    
-    // 통계 (휴강일 + 새 공지)
-    const newPostCount = (data.posts || []).filter(p => isNew(p.date) && !isRead(p.id)).length;
-    document.getElementById('stat-row').style.display = 'flex';
-    document.getElementById('stat-cancel-num').textContent = progress.cancelDays;
-    document.getElementById('stat-cancel-label').textContent = '과정 휴강일';
-    document.getElementById('stat-new-num').textContent = newPostCount;
   } else if (targetCourse) {
-    // 과정은 있는데 일정이 안 맞아서 진행률 계산 불가
+    // 과정은 있으나 회차 계산이 불가한 경우
     const ddayObj = new Date(targetCourse.endDate);
     ddayObj.setHours(0, 0, 0, 0);
-    const ddayNum = Math.round((ddayObj - TODAY) / (1000 * 60 * 60 * 24));
-    let dDay;
-    if (ddayNum > 0) dDay = `D-${ddayNum}`;
-    else if (ddayNum === 0) dDay = 'D-DAY';
-    else dDay = `D+${Math.abs(ddayNum)}`;
-    
-    document.getElementById('gauge-area').innerHTML = `
-      <div class="gauge-card">
-        <div class="gauge-row">
-          <span class="gauge-name">${escapeHtml(targetCourse.name)}</span>
-          <span class="gauge-pct">${dDay}</span>
+    const diff = Math.round((ddayObj - TODAY) / (1000 * 60 * 60 * 24));
+    const dDay = diff > 0 ? `D-${diff}` : (diff === 0 ? 'D-DAY' : `D+${Math.abs(diff)}`);
+
+    heroEl.innerHTML = `
+      <section class="hero">
+        ${heroTop(`<div class="hero-dday ${diff <= 7 ? 'urgent' : ''}">${dDay}</div>`)}
+        <div class="hero-course">
+          <div class="hero-course-name">${escapeHtml(targetCourse.name)}</div>
+          <div class="hero-meta" style="margin-top: 10px;">
+            <span>${formatDate(targetCourse.startDate)} 시작</span>
+            <span>${formatDate(targetCourse.endDate)} 종강</span>
+          </div>
         </div>
-        <div class="gauge-bar"><div class="gauge-fill" style="width: 0%;"></div></div>
-        <div class="gauge-meta">
-          <span>${formatDate(targetCourse.startDate)} 시작</span>
-          <span>${formatDate(targetCourse.endDate)} 종강</span>
-        </div>
-      </div>
+      </section>
     `;
-    document.getElementById('stat-row').style.display = 'none';
   } else {
-    document.getElementById('gauge-area').innerHTML = '';
-    document.getElementById('stat-row').style.display = 'none';
+    heroEl.innerHTML = `
+      <section class="hero hero-plain">
+        ${heroTop(newPostCount > 0 ? `<div class="hero-dday">새 공지 ${newPostCount}</div>` : '')}
+      </section>
+    `;
   }
 
   // 다가오는 일정
@@ -2749,13 +3493,14 @@ async function loadHome() {
   document.getElementById('upcoming-count').textContent = upcoming.length > 0 ? `${upcoming.length}건` : '';
   document.getElementById('home-schedule').innerHTML = upcoming.length === 0
     ? `<div class="empty">다가오는 일정이 없습니다</div>`
-    : upcoming.map(renderEventRow).join('');
+    : `<div class="card-list">${upcoming.map(renderEventRow).join('')}</div>`;
 
   // 최신 공지
   const posts = (data.posts || []).slice(0, 3);
+  document.getElementById('home-post-count').textContent = newPostCount > 0 ? `새 글 ${newPostCount}` : '';
   document.getElementById('home-posts').innerHTML = posts.length === 0
     ? `<div class="empty">아직 공지가 없습니다</div>`
-    : posts.map(renderPostRow).join('');
+    : `<div class="card-list">${posts.map(renderPostRow).join('')}</div>`;
 
   const hasUnread = posts.some(p => isNew(p.date) && !isRead(p.id));
   document.getElementById('bell-dot').style.display = hasUnread ? 'block' : 'none';
@@ -2768,35 +3513,47 @@ function renderEventRow(s) {
   d.setHours(0, 0, 0, 0);
   const diff = Math.round((d - TODAY) / (1000 * 60 * 60 * 24));
   const ddayClass = diff <= 3 && diff >= 0 ? 'urgent' : '';
-  
+  const todayClass = diff === 0 ? 'today' : '';
+
   const color = getColorById(s.colorId);
   const dotColor = color ? color.color : '#64748b';
-  
+  const colorName = color && color.name ? escapeHtml(color.name) : '';
+
   return `
-    <div class="event">
-      <div class="event-date">${formatDateShort(s.date)}</div>
-      <div class="event-day">${formatDayShort(s.date)}</div>
-      <div class="event-dot" style="background: ${dotColor}"></div>
-      <div class="event-title">${escapeHtml(s.title)}</div>
+    <div class="event" role="button" tabindex="0">
+      <div class="event-datebox ${todayClass}">
+        <div class="event-date">${formatDateShort(s.date)}</div>
+        <div class="event-day">${formatDayShort(s.date)}</div>
+      </div>
+      <div class="event-main">
+        <div class="event-title">${escapeHtml(s.title)}</div>
+        <div class="event-sub">
+          <span class="event-dot" style="background: ${dotColor}"></span>
+          <span>${colorName || (diff === 0 ? '오늘' : formatDate(s.date))}</span>
+        </div>
+      </div>
       <div class="event-dday ${ddayClass}">${dday}</div>
     </div>
   `;
 }
 
 function renderPostRow(p) {
+  const unread = isNew(p.date) && !isRead(p.id);
   const newBadge = isNew(p.date) ? '<span class="post-new">NEW</span>' : '';
-  const readClass = isRead(p.id) ? 'read' : '';
-  const thumb = p.imageUrl 
-    ? `<img class="post-thumb" src="${escapeHtml(p.imageUrl)}" alt="" loading="lazy">` 
+  const readClass = isRead(p.id) ? 'read' : (unread ? 'unread' : '');
+  const thumb = p.imageUrl
+    ? `<img class="post-thumb" src="${escapeHtml(p.imageUrl)}" alt="" loading="lazy">`
     : '';
   return `
-    <div class="post ${readClass}" onclick="openPost('${p.id}')">
-      <span class="post-tag ${tagClass(p.category)}">${escapeHtml(p.category || '기타')}</span>
+    <div class="post ${readClass}" role="button" tabindex="0" onclick="openPost('${p.id}')">
       <div class="post-body">
+        <div class="post-headline">
+          <span class="post-tag ${tagClass(p.category)}">${escapeHtml(p.category || '기타')}</span>
+          ${newBadge}
+        </div>
         <div class="post-title">${escapeHtml(p.title)}</div>
         <div class="post-meta">
           <span>${formatDate(p.date)}</span>
-          ${newBadge}
         </div>
       </div>
       ${thumb}
@@ -2814,29 +3571,48 @@ function openPost(id) {
 // ============================================================
 async function loadPosts() {
   const posts = await window.api.call('getPosts');
-  const categories = ['전체', '북마크', ...new Set(posts.map(p => p.category).filter(Boolean))];
-  document.getElementById('post-filters').innerHTML = categories.map(c => 
-    `<button class="filter-chip ${c === '전체' ? 'active' : ''}" onclick="filterPosts('${c}')">${escapeHtml(c)}</button>`
-  ).join('');
   state.allPosts = posts;
+
+  const cats = [...new Set(posts.map(p => p.category).filter(Boolean))];
+  const bookmarkCount = posts.filter(p => isBookmarked(p.id)).length;
+
+  const chip = (label, count, active) =>
+    `<button class="filter-chip ${active ? 'active' : ''}" data-cat="${escapeHtml(label)}" onclick="filterPosts('${label}')">` +
+    `${escapeHtml(label)}<span class="filter-chip-count">${count}</span></button>`;
+
+  document.getElementById('post-filters').innerHTML =
+    chip('전체', posts.length, true) +
+    chip('북마크', bookmarkCount, false) +
+    cats.map(c => chip(c, posts.filter(p => p.category === c).length, false)).join('');
+
+  state.postFilter = '전체';
   renderPostsList(posts);
 }
 
 function filterPosts(category) {
   document.querySelectorAll('#post-filters .filter-chip').forEach(c => {
-    c.classList.toggle('active', c.textContent === category);
+    c.classList.toggle('active', c.dataset.cat === category);
   });
   let filtered;
   if (category === '전체') filtered = state.allPosts;
   else if (category === '북마크') filtered = state.allPosts.filter(p => isBookmarked(p.id));
   else filtered = state.allPosts.filter(p => p.category === category);
+  state.postFilter = category;
   renderPostsList(filtered);
 }
 
 function renderPostsList(posts) {
+  const countEl = document.getElementById('posts-count');
+  const label = state.postFilter && state.postFilter !== '전체' ? state.postFilter : '전체 공지';
+  if (countEl) countEl.innerHTML = `${escapeHtml(label)} <b>${posts.length}</b>건`;
+
+  const emptyMsg = state.postFilter === '북마크'
+    ? '북마크한 공지가 없습니다'
+    : '해당 분류의 공지가 없습니다';
+
   document.getElementById('posts-list').innerHTML = posts.length === 0
-    ? '<div class="empty">공지가 없습니다</div>'
-    : posts.map(renderPostRow).join('');
+    ? `<div class="empty">${emptyMsg}</div>`
+    : `<div class="card-list">${posts.map(renderPostRow).join('')}</div>`;
 }
 
 async function loadPostDetail(id) {
@@ -3164,18 +3940,23 @@ function renderSelectedDayEvents() {
     return;
   }
   
-  document.getElementById('cal-selected-events').innerHTML = events.map(e => {
-    const color = getColorById(e.colorId);
-    const dotColor = color ? color.color : '#64748b';
-    const colorName = color ? color.name : (e.category || '기타');
-    return `
-      <div class="event">
-        <div class="event-dot" style="background: ${dotColor}"></div>
-        <div class="event-title">${escapeHtml(e.title)}</div>
-        <div class="event-day" style="color: ${dotColor}; font-weight: 600;">${escapeHtml(colorName)}</div>
-      </div>
-    `;
-  }).join('');
+  document.getElementById('cal-selected-events').innerHTML =
+    `<div class="card-list">` + events.map(e => {
+      const color = getColorById(e.colorId);
+      const dotColor = color ? color.color : '#64748b';
+      const colorName = color ? color.name : (e.category || '기타');
+      return `
+        <div class="event">
+          <div class="event-main">
+            <div class="event-title">${escapeHtml(e.title)}</div>
+            <div class="event-sub">
+              <span class="event-dot" style="background: ${dotColor}"></span>
+              <span style="color: ${dotColor}; font-weight: 600;">${escapeHtml(colorName)}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('') + `</div>`;
 }
 
 // ============================================================
@@ -3235,14 +4016,14 @@ function runSearch(q) {
     return;
   }
   
-  let html = `<div style="font-size: 11px; color: var(--text-soft); margin: 4px 4px 10px;">총 ${totalCount}건의 결과</div>`;
+  let html = `<div class="posts-count" style="margin: 2px 2px 12px;">검색 결과 <b>${totalCount}</b>건</div>`;
   if (matchedPosts.length > 0) {
-    html += `<div class="section-h" style="padding: 0 4px;"><span class="section-t">공지 ${matchedPosts.length}건</span></div>`;
-    html += matchedPosts.map(p => renderPostRowHighlight(p, q)).join('');
+    html += `<div class="section-h" style="padding: 0 2px;"><span class="section-t">공지</span><span class="section-meta">${matchedPosts.length}건</span></div>`;
+    html += `<div class="card-list">${matchedPosts.map(p => renderPostRowHighlight(p, q)).join('')}</div>`;
   }
   if (matchedSchedule.length > 0) {
-    html += `<div class="section-h" style="padding: 12px 4px 4px;"><span class="section-t">일정 ${matchedSchedule.length}건</span></div>`;
-    html += matchedSchedule.map(renderEventRow).join('');
+    html += `<div class="section-h" style="padding: 18px 2px 10px;"><span class="section-t">일정</span><span class="section-meta">${matchedSchedule.length}건</span></div>`;
+    html += `<div class="card-list">${matchedSchedule.map(renderEventRow).join('')}</div>`;
   }
   document.getElementById('search-results').innerHTML = html;
 }
@@ -3255,20 +4036,21 @@ function highlightText(text, q) {
 }
 
 function renderPostRowHighlight(p, q) {
+  const unread = isNew(p.date) && !isRead(p.id);
   const newBadge = isNew(p.date) ? '<span class="post-new">NEW</span>' : '';
-  const readClass = isRead(p.id) ? 'read' : '';
-  const thumb = p.imageUrl 
-    ? `<img class="post-thumb" src="${escapeHtml(p.imageUrl)}" alt="" loading="lazy">` 
+  const readClass = isRead(p.id) ? 'read' : (unread ? 'unread' : '');
+  const thumb = p.imageUrl
+    ? `<img class="post-thumb" src="${escapeHtml(p.imageUrl)}" alt="" loading="lazy">`
     : '';
   return `
-    <div class="post ${readClass}" onclick="openPost('${p.id}')">
-      <span class="post-tag ${tagClass(p.category)}">${escapeHtml(p.category || '기타')}</span>
+    <div class="post ${readClass}" role="button" tabindex="0" onclick="openPost('${p.id}')">
       <div class="post-body">
-        <div class="post-title">${highlightText(p.title, q)}</div>
-        <div class="post-meta">
-          <span>${formatDate(p.date)}</span>
+        <div class="post-headline">
+          <span class="post-tag ${tagClass(p.category)}">${escapeHtml(p.category || '기타')}</span>
           ${newBadge}
         </div>
+        <div class="post-title">${highlightText(p.title, q)}</div>
+        <div class="post-meta"><span>${formatDate(p.date)}</span></div>
       </div>
       ${thumb}
     </div>
@@ -3391,7 +4173,7 @@ function flashCopyBtn(btn) {
   const original = btn.innerHTML;
   btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
   btn.style.background = '#d1fae5';
-  btn.style.color = '#047857';
+  btn.style.color = '#0d9488';
   setTimeout(() => {
     btn.innerHTML = original;
     btn.style.background = '';
