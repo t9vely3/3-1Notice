@@ -1412,9 +1412,10 @@ input, textarea, select { font-family: inherit; }
     <div class="login-logo">SBS</div>
     <div class="login-title">관리자 로그인</div>
     <div class="login-subtitle">SBS 아카데미 컴퓨터아트학원</div>
-    <input type="password" class="login-input" id="login-password" placeholder="관리자 비밀번호" autocomplete="current-password">
+    <input type="email" class="login-input" id="login-email" placeholder="직원 이메일" autocomplete="username" style="margin-bottom:8px">
+    <input type="password" class="login-input" id="login-password" placeholder="비밀번호" autocomplete="current-password">
     <button class="login-btn" onclick="login()">로그인</button>
-    <div class="login-error" id="login-error">비밀번호가 일치하지 않습니다</div>
+    <div class="login-error" id="login-error">이메일 또는 비밀번호가 맞지 않습니다</div>
   </div>
 </div>
 
@@ -2271,9 +2272,10 @@ input, textarea, select { font-family: inherit; }
 <div class="toast" id="toast"></div>
 
 <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 <script src="config.js"></script>
 <script>
 const ADMIN_TOKEN_KEY = 'admin_token';
@@ -2283,20 +2285,19 @@ let pendingAction = null;
 // ============================================================
 // 인증
 // ============================================================
-function isLoggedIn() { return !!localStorage.getItem(ADMIN_TOKEN_KEY); }
-function getAuth() { return localStorage.getItem(ADMIN_TOKEN_KEY) || ''; }
+// 예전 방식(관리자 비밀번호) 흔적 정리
+try { localStorage.removeItem(ADMIN_TOKEN_KEY); } catch (e) {}
+function isLoggedIn() { return !!firebase.auth().currentUser; }
+function getAuth() { return firebase.auth().currentUser ? 'firebase-user' : ''; }
 
 async function login() {
+  const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
-  if (!password) return;
+  if (!email || !password) return;
   try {
-    const ok = await window.api.verifyAuth(password);
-    if (ok) {
-      localStorage.setItem(ADMIN_TOKEN_KEY, password);
-      showApp();
-    } else {
-      showLoginError();
-    }
+    await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    await firebase.auth().signInWithEmailAndPassword(email, password);
+    // 화면 전환은 onAuthStateChanged 가 처리
   } catch (e) {
     console.error(e);
     showLoginError();
@@ -2309,8 +2310,8 @@ function showLoginError() {
   setTimeout(() => err.style.display = 'none', 3000);
 }
 
-function logout() {
-  localStorage.removeItem(ADMIN_TOKEN_KEY);
+async function logout() {
+  try { await firebase.auth().signOut(); } catch (e) {}
   location.reload();
 }
 
@@ -4252,8 +4253,10 @@ document.querySelectorAll('.modal-backdrop').forEach(el => {
   });
 });
 
-document.getElementById('login-password').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') login();
+['login-email', 'login-password'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') login();
+  });
 });
 
 function confirmAction() {
@@ -4261,11 +4264,14 @@ function confirmAction() {
   closeModal('confirm-modal');
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (isLoggedIn()) {
-    showApp();
-  } else {
-    document.getElementById('login-password').focus();
+let appShown = false;
+firebase.auth().onAuthStateChanged(user => {
+  if (user && !appShown) { appShown = true; showApp(); }
+  if (!user) {
+    appShown = false;
+    document.getElementById('login-screen').style.display = '';
+    document.getElementById('app').classList.remove('active');
+    setTimeout(() => document.getElementById('login-email').focus(), 50);
   }
 });
 </script>
