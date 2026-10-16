@@ -1413,9 +1413,16 @@ input, textarea, select { font-family: inherit; }
     <div class="login-title">관리자 로그인</div>
     <div class="login-subtitle">SBS 아카데미 컴퓨터아트학원</div>
     <input type="email" class="login-input" id="login-email" placeholder="직원 이메일" autocomplete="username" style="margin-bottom:8px">
-    <input type="password" class="login-input" id="login-password" placeholder="비밀번호" autocomplete="current-password">
-    <button class="login-btn" onclick="login()">로그인</button>
+    <input type="password" class="login-input" id="login-password" placeholder="비밀번호 (6자 이상)" autocomplete="current-password">
+    <input type="password" class="login-input" id="login-code" placeholder="학원 코드" autocomplete="off" style="margin-top:8px;display:none">
+    <button class="login-btn" onclick="login()" id="login-btn">로그인</button>
     <div class="login-error" id="login-error">이메일 또는 비밀번호가 맞지 않습니다</div>
+    <div style="margin-top:14px;text-align:center;font-size:13px;color:#777">
+      <a href="#" onclick="toggleJoin();return false" id="join-link" style="color:#2f6b52;font-weight:600;text-decoration:none">처음이신가요? 계정 만들기</a>
+    </div>
+    <div id="join-help" style="display:none;margin-top:10px;font-size:12.5px;color:#777;line-height:1.7;text-align:center">
+      본인 이메일과 쓰실 비밀번호를 넣고,<br>학원 코드를 받아서 넣으시면 바로 쓸 수 있습니다.
+    </div>
   </div>
 </div>
 
@@ -2290,24 +2297,71 @@ try { localStorage.removeItem(ADMIN_TOKEN_KEY); } catch (e) {}
 function isLoggedIn() { return !!firebase.auth().currentUser; }
 function getAuth() { return firebase.auth().currentUser ? 'firebase-user' : ''; }
 
+// 멘토가 직접 계정을 만들 때 넣는 학원 코드
+const JOIN_CODE = 'ghkdlxld11!';
+let joinMode = false;
+
+function toggleJoin() {
+  joinMode = !joinMode;
+  document.getElementById('login-code').style.display = joinMode ? 'block' : 'none';
+  document.getElementById('join-help').style.display = joinMode ? 'block' : 'none';
+  document.getElementById('login-btn').textContent = joinMode ? '계정 만들고 시작하기' : '로그인';
+  document.getElementById('join-link').textContent = joinMode ? '이미 계정이 있어요' : '처음이신가요? 계정 만들기';
+}
+
 async function login() {
-  const email = document.getElementById('login-email').value.trim();
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
   const password = document.getElementById('login-password').value;
-  if (!email || !password) return;
+  if (!email || !password) return showLoginError('이메일과 비밀번호를 넣어 주세요');
+  if (password.length < 6) return showLoginError('비밀번호는 6자 이상이어야 합니다');
+
+  const auth = firebase.auth();
+  try { await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL); } catch (e) {}
+
+  // 계정 만들기
+  if (joinMode) {
+    const code = document.getElementById('login-code').value.trim();
+    if (code !== JOIN_CODE) return showLoginError('학원 코드가 맞지 않습니다. 담당자에게 확인해 주세요');
+    try {
+      await auth.createUserWithEmailAndPassword(email, password);
+      return;   // 화면 전환은 onAuthStateChanged 가 처리
+    } catch (e) {
+      if (e.code === 'auth/email-already-in-use') {
+        try { await auth.signInWithEmailAndPassword(email, password); return; }
+        catch (e2) { return showLoginError('이미 만든 계정입니다. 비밀번호가 다르면 담당자에게 알려 주세요'); }
+      }
+      return showLoginError(msgOfAuth(e));
+    }
+  }
+
+  // 로그인 (계정이 없으면 코드 입력창을 열어 준다)
   try {
-    await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-    await firebase.auth().signInWithEmailAndPassword(email, password);
-    // 화면 전환은 onAuthStateChanged 가 처리
+    await auth.signInWithEmailAndPassword(email, password);
   } catch (e) {
-    console.error(e);
-    showLoginError();
+    if (e.code === 'auth/user-not-found' || e.code === 'auth/invalid-login-credentials') {
+      if (!joinMode) toggleJoin();
+      return showLoginError('아직 계정이 없습니다. 학원 코드를 넣고 계정을 만들어 주세요');
+    }
+    showLoginError(msgOfAuth(e));
   }
 }
 
-function showLoginError() {
+function msgOfAuth(e) {
+  const c = (e && e.code) || '';
+  if (c === 'auth/wrong-password' || c === 'auth/invalid-credential') return '비밀번호가 맞지 않습니다';
+  if (c === 'auth/invalid-email') return '이메일 형식을 확인해 주세요';
+  if (c === 'auth/too-many-requests') return '잠시 뒤 다시 시도해 주세요';
+  if (c === 'auth/network-request-failed') return '인터넷 연결을 확인해 주세요';
+  if (c === 'auth/operation-not-allowed') return '로그인 기능이 꺼져 있습니다. 담당자에게 알려 주세요';
+  return '로그인하지 못했습니다 (' + c + ')';
+}
+
+function showLoginError(text) {
   const err = document.getElementById('login-error');
+  if (text) err.textContent = text;
   err.style.display = 'block';
-  setTimeout(() => err.style.display = 'none', 3000);
+  clearTimeout(window.__loginErrT);
+  window.__loginErrT = setTimeout(() => err.style.display = 'none', 5000);
 }
 
 async function logout() {

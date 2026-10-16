@@ -29,13 +29,11 @@ window.DEFAULT_SCHEDULE_COLORS = [
 // API 헬퍼
 // ============================================================
 window.api = {
-  async verifyAuth(password) {
+  // 이메일 로그인 여부로 확인 (실제 쓰기 권한은 Firestore 규칙이 판단)
+  async verifyAuth() {
     try {
-      const doc = await db.collection('_admin').doc('password').get();
-      if (!doc.exists) throw new Error('관리자 비밀번호가 설정되지 않았습니다');
-      return doc.data().value === password;
+      return !!(firebase.auth && firebase.auth().currentUser);
     } catch (err) {
-      console.error('verifyAuth error:', err);
       return false;
     }
   },
@@ -59,10 +57,15 @@ window.api = {
     if (action === 'getMaterials')   return await this._getMaterials(data.categoryId, data.includeHidden);
     if (action === 'getMaterial')    return await this._getMaterial(data.id);
 
-    // ===== 쓰기 (인증 필요) =====
+    // ===== 쓰기 (로그인 필요) =====
     if (auth) {
-      const ok = await this.verifyAuth(auth);
-      if (!ok) throw new Error('인증 실패');
+      let ok = await this.verifyAuth(auth);
+      if (!ok) {
+        // 로그인 상태가 늦게 복원되는 경우가 있어 잠깐 기다려 본다
+        await new Promise(r => setTimeout(r, 1200));
+        ok = await this.verifyAuth(auth);
+      }
+      if (!ok) throw new Error('로그인이 풀렸습니다. 화면을 새로고침한 뒤 다시 로그인해 주세요');
     }
 
     if (action === 'savePost')         return await this._save('posts', data);
@@ -287,13 +290,24 @@ window.api = {
 
   // ===== Storage =====
   async uploadImage(file, path = 'materials') {
+    if (!(firebase.auth && firebase.auth().currentUser))
+      throw new Error('로그인이 풀렸습니다. 화면을 새로고침한 뒤 다시 로그인해 주세요');
     const timestamp = Date.now();
     const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
     const fullPath = `${path}/${timestamp}_${safeName}`;
     const ref = storage.ref(fullPath);
-    const snap = await ref.put(file);
-    const url = await snap.ref.getDownloadURL();
-    return { url, path: fullPath };
+    try {
+      const snap = await ref.put(file);
+      const url = await snap.ref.getDownloadURL();
+      return { url, path: fullPath };
+    } catch (e) {
+      const c = (e && e.code) || '';
+      if (/unauthorized|permission/i.test(c))
+        throw new Error('사진 올릴 권한이 없습니다. 담당자에게 알려 주세요 (Storage 규칙)');
+      if (/quota/i.test(c)) throw new Error('저장 공간이 가득 찼습니다. 담당자에게 알려 주세요');
+      if (/retry-limit|network/i.test(c)) throw new Error('인터넷 연결을 확인하고 다시 올려 주세요');
+      throw new Error('사진을 올리지 못했습니다 (' + c + ')');
+    }
   },
 
   async deleteImage(path) {
